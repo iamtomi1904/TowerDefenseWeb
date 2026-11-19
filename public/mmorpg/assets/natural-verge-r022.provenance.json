@@ -1,0 +1,21 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Create a pixel-art game sprite atlas matching the reference cropped castle-front natural vegetation, reference is style only. Transparent alpha. EXACT3 columns x2 rows equal square cells, isolated sprites with35pixels clear padding from all cell boundaries. Row1: 1 wide LOW irregular creeping green shrub mat, asymmetric foliage, very few tiny white and yellow wildflowers, no stones; 2 small airy fern/leaf clump, several unequal fronds, no flowers; 3 three unequal small gray moss-covered rocks with grass in gaps and only2tiny daisies. Row2: 4 ragged grass fringe with thin exposed roots, FLAT GROUND PLANT only, no floating land, no rock cliff; 5 sparse tiny white/yellow meadow flowers scattered in an irregular low ground patch with visible transparent gaps; 6 scattered small gravel and cobbles with a few blades of grass. Important: groundcover for a natural castle verge, not ornamental flowerbeds. No symmetric round bouquets, no big evenly distributed blossoms, no walls, fences, flags, lanterns, weapons, crates, signs or buildings. Crisp hand-placed pixel clusters, medium fine detail like original reference, dark cool green foliage, restrained yellow-green highlights, tiny white/yellow flowers. 3/4 top-down 2D pixel RPG camera, upper-left light, no smooth painterly gradient, no blur. Keep all six sprites strictly in own cells. Each should read as a different useful small ground module.",
+  "cleanupPrompt": "Clean this six-sprite atlas for game use. Preserve the six pixel-art plant/stone designs and their 3 columns x2 rows order, but make ALL background truly transparent alpha: remove every blurred green/yellow glow, haze, shadow halo and dark backdrop. Only crisp opaque pixel plant/rock shapes remain. Reduce each sprite to fit within the central75percent of its own equal square cell with transparent gutters on ALL sides; no sprite can cross a column/row boundary. No added content, no glow, no blurry pixels. Do not put ground rectangles behind sprites. Actual transparent background, not black background.",
+  "source": "C:/Users/Admin/.codex/generated_images/01a14361-6033-7670-8c0e-846dfa6a69fc/exec-6c3f1124-c5e0-4546-8207-a2464ee1db59.png",
+  "asset": "/mmorpg/assets/natural-verge-r022.png",
+  "runtimeFrames": {
+    "columns": [
+      0,
+      0.38,
+      0.67,
+      1
+    ],
+    "rows": [
+      0,
+      0.5,
+      1
+    ],
+    "alphaThreshold": 128
+  }
+}

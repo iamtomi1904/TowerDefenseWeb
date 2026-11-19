@@ -1,0 +1,25 @@
+{
+  "fortress": 1,
+  "arrival": [
+    920,
+    186.66666666666666
+  ],
+  "fenceViews": [
+    0,
+    2,
+    1,
+    3
+  ],
+  "treeAzimuths": [
+    0,
+    180,
+    90
+  ],
+  "stairsBelowActor": true,
+  "stairs": 4,
+  "trees": 362,
+  "treeTextures": true,
+  "cropTextures": true,
+  "transparentStairs": true,
+  "errors": []
+}

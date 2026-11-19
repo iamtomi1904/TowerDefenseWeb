@@ -1,0 +1,21 @@
+{
+  "tool": "Built-in imagegen",
+  "date": "2026-10-25",
+  "assets": [
+    {
+      "file": "tree-directions-r013.png",
+      "source": "exec-14fd5e56-c181-4fd8-96fe-72dde5c8035b.png",
+      "reference": "trees-reference-r012.png",
+      "prompt": "Create a production pixel-art tree variation atlas derived from the reference trees, true transparent background. Exactly 4 rows by 3 columns, 12 isolated complete upright tree sprites. Each row is the SAME tree species viewed around its vertical trunk axis at three different azimuths, not rotating the flat image. Row 1 broad twisting-root oak, row 2 white-bark birch, row 3 weeping willow, row 4 low red-fruit orchard tree. Column 1 front view, column 2 viewed 90 degrees around trunk, column 3 rear view 180 degrees. Distinct branch/root/crown silhouettes per direction while preserving species, crown size and root anchor. Camera remains three-quarter top-down in all 12, trunks remain vertical, sunlight always from screen upper left. Match the reference's dark teal shadows, olive gold leaf clusters, crisp pixel clusters and detailed RPG style. All trees wholly inside their equal-size cell with generous transparent gutters and identical floor baseline within each row. No labels, no grid lines, no scenery, no ground slab, no cast shadow rectangles. Do not overlap neighboring cells."
+    },
+    {
+      "file": "fence-directions-r013.png",
+      "source": "exec-cf344675-1dd4-4a44-864d-4d1f75034c3d.png",
+      "originalSource": "exec-10c1bbfa-0b0a-41f4-a4d9-b939840e96f8.png",
+      "reference": "v01-complete-map-r001/binh-minh-full-map-r001.png",
+      "prompt": "Production game sprite atlas matching the supplied detailed crisp pixel-art top-down 2.5D RPG map. Four isolated versions of the SAME rustic wooden fence panel in a 2 by 2 grid, identical dark brown square timber posts, two horizontal wooden rails, warm light upper left. Each panel has exactly two posts and two rails, open transparent gaps, no grass or other props, no cast ground shadow. Top left panel extends screen left to right horizontally. Top right panel extends from screen bottom left to screen top right on a 30 degree diagonal. Bottom left panel extends from screen top left to screen bottom right on a 30 degree diagonal. Bottom right panel extends almost vertically away from camera, with correctly foreshortened rails and both upright vertical posts still visible, not rotated flat. Keep timber upright in the world in every version, NOT rotating a finished picture. Equal cells with very wide transparent gutters. Genuine transparent background, no labels. Match pixel clarity and scale of village fences in the reference.",
+      "editPrompt": "Precise background extraction edit. Preserve all four wooden fence sprites and their positions, shapes, colors and pixel art exactly. Remove the entire brown/black glowing backdrop and all backdrop visible in the gaps between rails. Replace it with genuine fully transparent alpha. The only visible opaque pixels should belong to the wooden posts, two rails and metal bolts. Remove all halos, glow, shadow gradients and background rectangles around and inside the fences. Keep the 2 by 2 layout unchanged. No new objects, no white background, no checkerboard drawing.",
+      "runtime": "Alpha threshold when preparing sprite textures."
+    }
+  ]
+}

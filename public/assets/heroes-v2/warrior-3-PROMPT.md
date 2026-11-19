@@ -1,0 +1,3 @@
+Built-in image_gen, transparent PNG. Saved as warrior-3.png.
+
+Production pixel-art sprite sheet, transparent PNG, EXACT 6 columns x 6 rows, no text/grid/background. Same full-body hero faces RIGHT in all 36 cells, consistent scale, feet baseline96%, body76% cell, all weapons inside cells. Crisp 32-bit woodland fantasy pixel art matching dark steel muted jade/crimson game sprites. Rows each six chronological frames: idle breathing, running, basic attack, skill cast, hurt, death ending collapsed. Broad muscular indomitable vanguard champion, bronze-dark steel heavy armor, burgundy mantle, long war SPEAR and broad steel SHIELD. Basic attack thrusts spear; casting braces shield then raises spear. No sword or axe.

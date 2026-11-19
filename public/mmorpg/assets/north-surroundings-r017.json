@@ -1,0 +1,701 @@
+{
+  "removed": [
+    {
+      "id": 456,
+      "at": [
+        2448.6197995604016,
+        1039.282384607941
+      ],
+      "reason": "reveal terrain / approach"
+    },
+    {
+      "id": 486,
+      "at": [
+        1679.735246684868,
+        1288.921164907515
+      ],
+      "reason": "reveal terrain / approach"
+    },
+    {
+      "id": 548,
+      "at": [
+        2662.597489077598,
+        902.3024748312309
+      ],
+      "reason": "reveal terrain / approach"
+    },
+    {
+      "id": 613,
+      "at": [
+        3186.2780119059607,
+        955.4173102369532
+      ],
+      "reason": "reveal terrain / approach"
+    },
+    {
+      "id": 629,
+      "at": [
+        3392.2074743779376,
+        836.7234674049541
+      ],
+      "reason": "reveal terrain / approach"
+    },
+    {
+      "id": 636,
+      "at": [
+        2977.2170634940267,
+        1010.4313084157184
+      ],
+      "reason": "reveal terrain / approach"
+    },
+    {
+      "id": 649,
+      "at": [
+        2331.0485967434943,
+        924.3446248816326
+      ],
+      "reason": "reveal terrain / approach"
+    },
+    {
+      "id": 659,
+      "at": [
+        3283.682724600658,
+        830.0176529446617
+      ],
+      "reason": "reveal terrain / approach"
+    },
+    {
+      "id": 661,
+      "at": [
+        3461.070816766005,
+        730.133816273883
+      ],
+      "reason": "reveal terrain / approach"
+    },
+    {
+      "id": 671,
+      "at": [
+        2544.414890545886,
+        946.5366133023053
+      ],
+      "reason": "reveal terrain / approach"
+    },
+    {
+      "id": 720,
+      "at": [
+        3025.6294510443695,
+        921.775771304965
+      ],
+      "reason": "reveal terrain / approach"
+    },
+    {
+      "id": 767,
+      "at": [
+        3942.408439319115,
+        771.4286756236106
+      ],
+      "reason": "reveal terrain / approach"
+    },
+    {
+      "id": 818,
+      "at": [
+        3618.6336922924966,
+        836.99854335282
+      ],
+      "reason": "reveal terrain / approach"
+    },
+    {
+      "id": 821,
+      "at": [
+        2215.361251286231,
+        903.2509188866243
+      ],
+      "reason": "reveal terrain / approach"
+    },
+    {
+      "id": 3351,
+      "at": [
+        3975.9491763432306,
+        782.7035787795342
+      ],
+      "reason": "old spring bank"
+    },
+    {
+      "id": 3378,
+      "at": [
+        1907.8348274567554,
+        789.9830651518016
+      ],
+      "reason": "old spring bank"
+    },
+    {
+      "id": 3379,
+      "at": [
+        1986.1115075022135,
+        861.038033641384
+      ],
+      "reason": "old spring bank"
+    },
+    {
+      "id": 3380,
+      "at": [
+        2010.8274240271737,
+        920.6395936894638
+      ],
+      "reason": "old spring bank"
+    },
+    {
+      "id": 3381,
+      "at": [
+        2040.4570192530716,
+        976.750274164937
+      ],
+      "reason": "old spring bank"
+    },
+    {
+      "id": 3409,
+      "at": [
+        2251.394011330221,
+        974.7482984339852
+      ],
+      "reason": "old spring bank"
+    },
+    {
+      "id": 3410,
+      "at": [
+        2227.875763896405,
+        933.5883923270646
+      ],
+      "reason": "old spring bank"
+    },
+    {
+      "id": 3411,
+      "at": [
+        2225.18204084626,
+        852.6449382575836
+      ],
+      "reason": "old spring bank"
+    }
+  ],
+  "resized": [
+    {
+      "id": 383,
+      "before": {
+        "kind": "birch",
+        "width": 210
+      },
+      "after": {
+        "kind": "birch",
+        "width": 200
+      }
+    },
+    {
+      "id": 388,
+      "before": {
+        "kind": "birch",
+        "width": 228.42823008075356
+      },
+      "after": {
+        "kind": "birch",
+        "width": 200
+      }
+    },
+    {
+      "id": 391,
+      "before": {
+        "kind": "oak",
+        "width": 294.92211238946766
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 427,
+      "before": {
+        "kind": "birch",
+        "width": 205.83526238799095
+      },
+      "after": {
+        "kind": "birch",
+        "width": 200
+      }
+    },
+    {
+      "id": 429,
+      "before": {
+        "kind": "birch",
+        "width": 227.54337520338595
+      },
+      "after": {
+        "kind": "birch",
+        "width": 200
+      }
+    },
+    {
+      "id": 434,
+      "before": {
+        "kind": "oak",
+        "width": 280.41772321332246
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 459,
+      "before": {
+        "kind": "oak",
+        "width": 271.956887699198
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 481,
+      "before": {
+        "kind": "oak",
+        "width": 253.50179668399505
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 483,
+      "before": {
+        "kind": "oak",
+        "width": 249.42542805685662
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 534,
+      "before": {
+        "kind": "oak",
+        "width": 262.9554200428538
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 559,
+      "before": {
+        "kind": "oak",
+        "width": 292.752276371466
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 590,
+      "before": {
+        "kind": "birch",
+        "width": 232.688900642097
+      },
+      "after": {
+        "kind": "birch",
+        "width": 200
+      }
+    },
+    {
+      "id": 601,
+      "before": {
+        "kind": "oak",
+        "width": 269.79805590119213
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 611,
+      "before": {
+        "kind": "birch",
+        "width": 210
+      },
+      "after": {
+        "kind": "birch",
+        "width": 200
+      }
+    },
+    {
+      "id": 635,
+      "before": {
+        "kind": "birch",
+        "width": 210
+      },
+      "after": {
+        "kind": "birch",
+        "width": 200
+      }
+    },
+    {
+      "id": 654,
+      "before": {
+        "kind": "birch",
+        "width": 231.1462485883385
+      },
+      "after": {
+        "kind": "birch",
+        "width": 200
+      }
+    },
+    {
+      "id": 676,
+      "before": {
+        "kind": "oak",
+        "width": 260
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 677,
+      "before": {
+        "kind": "oak",
+        "width": 275.56535296025686
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 680,
+      "before": {
+        "kind": "oak",
+        "width": 242.88985782070085
+      },
+      "after": {
+        "kind": "oak",
+        "width": 242.88985782070085
+      }
+    },
+    {
+      "id": 692,
+      "before": {
+        "kind": "oak",
+        "width": 270.9800303832162
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 702,
+      "before": {
+        "kind": "oak",
+        "width": 291.48389128851704
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 707,
+      "before": {
+        "kind": "oak",
+        "width": 258.825363003416
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 718,
+      "before": {
+        "kind": "oak",
+        "width": 280.026002060622
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 752,
+      "before": {
+        "kind": "oak",
+        "width": 277.1463928988669
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 766,
+      "before": {
+        "kind": "birch",
+        "width": 217.772038532421
+      },
+      "after": {
+        "kind": "birch",
+        "width": 200
+      }
+    },
+    {
+      "id": 790,
+      "before": {
+        "kind": "oak",
+        "width": 260
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 807,
+      "before": {
+        "kind": "oak",
+        "width": 276.16437637712806
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 812,
+      "before": {
+        "kind": "oak",
+        "width": 288.34984385059215
+      },
+      "after": {
+        "kind": "oak",
+        "width": 245
+      }
+    },
+    {
+      "id": 824,
+      "before": {
+        "kind": "birch",
+        "width": 210
+      },
+      "after": {
+        "kind": "birch",
+        "width": 200
+      }
+    }
+  ],
+  "added": [
+    {
+      "id": 3611,
+      "type": "boulders",
+      "at": [
+        2200,
+        810
+      ]
+    },
+    {
+      "id": 3612,
+      "type": "flowers",
+      "at": [
+        2255,
+        830
+      ]
+    },
+    {
+      "id": 3613,
+      "type": "grass",
+      "at": [
+        2155,
+        845
+      ]
+    },
+    {
+      "id": 3614,
+      "type": "boulders",
+      "at": [
+        2370,
+        865
+      ]
+    },
+    {
+      "id": 3615,
+      "type": "flowers",
+      "at": [
+        2425,
+        885
+      ]
+    },
+    {
+      "id": 3616,
+      "type": "grass",
+      "at": [
+        2325,
+        900
+      ]
+    },
+    {
+      "id": 3617,
+      "type": "boulders",
+      "at": [
+        2530,
+        940
+      ]
+    },
+    {
+      "id": 3618,
+      "type": "flowers",
+      "at": [
+        2585,
+        960
+      ]
+    },
+    {
+      "id": 3619,
+      "type": "grass",
+      "at": [
+        2485,
+        975
+      ]
+    },
+    {
+      "id": 3620,
+      "type": "boulders",
+      "at": [
+        3020,
+        930
+      ]
+    },
+    {
+      "id": 3621,
+      "type": "flowers",
+      "at": [
+        3075,
+        950
+      ]
+    },
+    {
+      "id": 3622,
+      "type": "grass",
+      "at": [
+        2975,
+        965
+      ]
+    },
+    {
+      "id": 3623,
+      "type": "boulders",
+      "at": [
+        3230,
+        870
+      ]
+    },
+    {
+      "id": 3624,
+      "type": "flowers",
+      "at": [
+        3285,
+        890
+      ]
+    },
+    {
+      "id": 3625,
+      "type": "grass",
+      "at": [
+        3185,
+        905
+      ]
+    },
+    {
+      "id": 3626,
+      "type": "boulders",
+      "at": [
+        3460,
+        805
+      ]
+    },
+    {
+      "id": 3627,
+      "type": "flowers",
+      "at": [
+        3515,
+        825
+      ]
+    },
+    {
+      "id": 3628,
+      "type": "grass",
+      "at": [
+        3415,
+        840
+      ]
+    },
+    {
+      "id": 3629,
+      "type": "boulders",
+      "at": [
+        3710,
+        745
+      ]
+    },
+    {
+      "id": 3630,
+      "type": "flowers",
+      "at": [
+        3765,
+        765
+      ]
+    },
+    {
+      "id": 3631,
+      "type": "grass",
+      "at": [
+        3665,
+        780
+      ]
+    },
+    {
+      "id": 3632,
+      "type": "oak",
+      "at": [
+        3190,
+        1080
+      ]
+    },
+    {
+      "id": 3633,
+      "type": "oak",
+      "at": [
+        3410,
+        1000
+      ]
+    },
+    {
+      "id": 3634,
+      "type": "oak",
+      "at": [
+        1740,
+        900
+      ]
+    }
+  ],
+  "changes": [
+    "Expose cliff foot and stair approach",
+    "Mixed broadleaf groups rather than willow wall",
+    "Stream head below northern terrace",
+    "Wider final approach"
+  ]
+}

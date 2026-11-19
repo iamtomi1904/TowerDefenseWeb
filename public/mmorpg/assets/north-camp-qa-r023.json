@@ -1,0 +1,29 @@
+{
+  "wallSlices": 40,
+  "wallDepthSpan": 294.3224299065421,
+  "wallFramePixels": 2140,
+  "wallSourcePixels": 2140,
+  "fortress": 1,
+  "arrival": [
+    1020.718232044199,
+    167.12707182320443
+  ],
+  "fenceViews": [
+    0,
+    2,
+    1,
+    3
+  ],
+  "treeAzimuths": [
+    0,
+    180,
+    90
+  ],
+  "stairsBelowActor": true,
+  "stairs": 4,
+  "trees": 394,
+  "treeTextures": true,
+  "cropTextures": true,
+  "transparentStairs": true,
+  "errors": []
+}

@@ -1,0 +1,8 @@
+{
+  "tool": "image_gen",
+  "date": "2026-10-25",
+  "prompt": "Create a production MATERIAL TEXTURE atlas for a lush medieval top-down 2.5D PIXEL ART game matching the supplied map reference. Exactly 3 equal columns by 2 equal rows, six fully opaque square material swatches, clean transparent gutters only, no text, no props, no whole scene, no borders. Readable hand-placed pixel clusters, restrained texture, natural palette. Top row: 1 fine pale river gravel with irregular tiny rounded stones, mostly small sand grains and occasional medium pebble, no cobblestone grid; 2 clear shallow turquoise creek surface with subtle long directional broken flow streaks and sparse tiny foam flecks, NO swimming-pool caustic net, NO circular outlines, NO repeating pebble circles; 3 deeper teal blue flowing river surface with a few elongated broken currents, no large waves. Bottom row: 4 damp mossy brown soil and a few roots, restrained detail; 5 pale dusty path gravel and earth with little irregular stones; 6 moist olive meadow ground with minute grass tufts and brown soil, no large plants. Every square should be seamless tileable and have even lighting. Avoid photorealism, avoid smooth gradients, avoid dense noisy pixels. Match pixel scale and colors of the attached environment.",
+  "reference": "public/design-preview/v01-complete-map-r001/binh-minh-full-map-r001.png",
+  "file": "water-materials-r010.png",
+  "usage": "Six material samples; gravel, shallow/deep water and damp soil currently sampled by the runtime terrain renderer."
+}

@@ -1,0 +1,8 @@
+{
+  "tool": "Built-in imagegen",
+  "date": "2026-10-25",
+  "file": "north-rampart-r015.png",
+  "source": "exec-ba5c7acf-2a99-404d-b22d-65903577a4a9.png",
+  "reference": "public/design-preview/v01-complete-map-r001/binh-minh-full-map-r001.png",
+  "prompt": "Create one isolated production game asset: the NORTHERN RAMPART COMPLEX from the top of the supplied reference map, in exactly its detailed 2D pixel-art three-quarter top-down style and warm olive-gold / gray-stone palette. A broad gently convex curved front curtain wall, central CLOSED tall arched timber gate facing viewer, flanking square stone towers integrated into the wall, crenellations and mossy age, a few brown-roofed timber buildings visible behind the parapet. All wall sections form one cohesive large fortified frontage, not separate floating props. Front face is a gentle shallow arc: central gate stands slightly farther forward/lower on screen, ends recede slightly toward top corners. No isometric diamond base. No surrounding forest, terrain, dirt road, map, labels, banner, UI, sky, ground rectangle or cast-shadow slab. Actual transparent background around the structure. Entire castle frontage visible uncropped, very wide composition approximately 3:1. Crisp readable pixel clusters, dark contact shadows, restrained detail at game scale, NOT painterly realism or smooth vector. Gate occupies the center 12 percent of width. Keep the bottom of gate and adjoining wall masonry clean so it can be aligned to a gameplay collider."
+}

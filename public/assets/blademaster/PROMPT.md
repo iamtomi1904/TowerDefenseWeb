@@ -1,0 +1,11 @@
+# Kiếm Chủ katana / song katana
+
+Tool: built-in image_gen. Transparent PNG. Generated source copied to katana-forms.png. The source is retained in the Codex generated_images folder.
+
+## Final prompt
+
+Use case: stylized-concept. Production game asset: a precise pixel-art animation sprite sheet for a 2D side-view dark woodland fantasy tower defense. Create ONE PNG transparent 1024 square, arranged EXACTLY 6 columns x 6 rows equal square cells, 36 individual sprites. No labels, borders, backgrounds, shadows on ground or text. SAME adult male Japanese katana swordsman in every cell: long tied black hair, ivory headband, dark charcoal and muted jade samurai robes, worn bronze armor on shoulders, burgundy sash, visible strong stance. Classic hand-drawn 32-bit pixel art, crisp pixel clusters, dark outlines, NOT vector, NOT blurry, NOT chibi. Facing RIGHT in every frame. Each cell contains whole character including feet and blade with generous margin. Feet baseline at 88% cell height, body centered at x=50%; character body roughly 65% cell height. Single katana form rows 1-3, dual katana form rows 4-6. Row 1 single sword idle breathing loop six frames; row 2 single sword walking loop six frames; row 3 single sword powerful overhead katana attack six ordered frames: preparation, raised blade, windup, downward slash, followthrough, recover. Row 4 same character holding TWO distinct curved Japanese katana blades, one in each hand, idle six frames; row 5 dual katana walking six frames; row 6 dual katana attack six ordered frames: windup, right slash, left slash, crossed strike, followthrough, recover. All frames are consistent same scale same clothing same face, aligned feet, realistic compact pixel sprite silhouettes. Blades clearly visible metallic silver with subtle pale ivory highlight, no huge magic effect covering the character. Separate sprites must never overlap adjacent cells. Transparent alpha around every individual sprite.
+
+## Runtime registration
+
+The returned sheet is 1254 x 1254 with 209px cells. Row extraction uses its measured dimensions, not the requested size. Runtime feet origin is .98 and body height .85 cells, matching the observed sprite bounds. Idle, walk and attack have separate frames for both forms; existing original hurt/dead animations remain available.

@@ -1,0 +1,16 @@
+{
+  "version": "r025",
+  "date": "2026-10-26",
+  "generator": "image_gen",
+  "materials": {
+    "prompt": "Production material atlas for a detailed 2D pixel fantasy RPG, top-down 3/4 style of the supplied map reference. Exactly3 columns x2 rows equal SQUARE cells, all six cells FULLY OPAQUE flat seamless material samples, no margins or labels. Row1 left-to-right:1 muted natural compacted brown earth path, fine dirt grains, very sparse tiny pebbles, no orange/yellow sand;2 slightly darker damp brown soil with scattered fine gray grit, no big puddles;3 light irregular river gravel and fine wet sand, small rounded gray/beige pebbles. Row2:4 shallow clear turquoise water over visible light gravel bed, subtle short ripples and refracted highlights, no shore or big foam border;5 mixed grassy soil verge, sparse fine grass rooted in earthy brown, natural dark/medium green, no flowers;6 weathered gray stone tread material, subtle moss only in tiny cracks, rough irregular stone surface, NOT masonry wall or a scene. Crisp pixel clusters with controlled density, no blur, no gradients, no objects, no raised land, no lighting sphere, no vignette, uniform flat material lighting upper-left very subtle. This atlas is sampled into terrain masks and connected road/bank/ford/landing modules, not pasted whole into map.",
+    "source": "exec-1ec670a3-7c89-4b0c-b992-097f408f6dde.png",
+    "output": "terrain-materials-r025.png"
+  },
+  "stairs": {
+    "prompt": "Create a production sprite atlas for a pixel fantasy RPG staircase. Transparent alpha background. EXACT three equal square cells in ONE HORIZONTAL ROW, generous transparent gutters. Cell1 front-view ascending rough gray stone staircase, Cell2 same stair ascending diagonally up-left, Cell3 same stair ascending diagonally up-right. 10 broad uneven but functional stone treads, subtle warm stone highlights, narrow moss cracks, low rugged stone shoulders. No surrounding grass carpet, no forest, no flowers, no large rock piles, no ground rectangle and NO aprons/landings at either end: only stair run and two narrow stone cheek ends. Top tread and bottom tread fully visible, all three sprites same width and visual scale. Game camera is 2D top-down three-quarter, NOT true isometric diamond. Match the supplied reference's crisp medium-detailed pixel style; no smooth blur, no painterly illustration, no ornamental effects, no labels. Keep each sprite completely within its own cell with at least12percent transparent margin. Upper/lower anchor points are the centers of the first/last walkable tread, easy to identify.",
+    "source": "exec-a1d36d0b-64a6-4cb1-92ba-70c4ab3ab64e.png",
+    "output": "terrain-stairs-r025.png",
+    "runtime": "Front view fitted to authored top/bottom sockets for current placements; other source views reserved."
+  }
+}

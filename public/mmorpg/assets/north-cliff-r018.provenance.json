@@ -1,0 +1,7 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Production pixel art terrain asset for the game in the reference. Reference is style and natural cliff geology only. Draw one wide horizontal natural escarpment rock face texture strip, aspect ratio 4:1. The rocky embankment directly beneath the northern fortress in the reference: tall irregular gray vertical granite pillars and fractured angular slabs, varied column widths, deep vertical crevices, moss in seams, grass tufts and exposed roots at upper rim, a few fallen stones and flowers along bottom. NOT masonry, NOT brick courses, NOT stacked rows of small stones, NOT retaining wall. Organic uneven top silhouette and broken footline, varied large planar rock facets like the reference cliff below the castle. Camera front-facing three-quarter top-down pixel RPG, light from upper left, crisp pixel clusters with medium detail, gray warm olive stone and rich green grass, no painterly blur. Horizontal band fills width, mostly solid rock from 15 percent to90 percent image height; transparent above grass and below rocks. No fortress, no buildings, no stairs, no water, no trees, no text. This will be mapped along an actual 3D-height terrain contour.",
+  "reference": "/design-preview/v01-complete-map-r001/binh-minh-full-map-r001.png",
+  "source": "C:/Users/Admin/.codex/generated_images/01a14361-6033-7670-8c0e-846dfa6a69fc/exec-29e8b3e6-9fab-44ea-bc35-f24c2d591ebe.png",
+  "asset": "/mmorpg/assets/north-cliff-r018.png"
+}

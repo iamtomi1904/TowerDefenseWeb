@@ -1,0 +1,20 @@
+<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tỉ lệ chiều cao nhân vật</title>
+<style>body{margin:0;background:#15261e;color:#e6dec2;font:16px system-ui}main{max-width:1280px;margin:auto;padding:24px}a{color:#bee8d1}canvas{width:100%;height:auto;image-rendering:pixelated;border:1px solid #506149;border-radius:10px}p{color:#bdcbb7}</style>
+<main><h1>Tỉ lệ chiều cao nhân vật</h1><p>Chung đường chân, chung tỉ lệ. Goblin thấp; chiến binh và trọng giáp cao hơn nhóm kiếm khách, cung thủ, pháp sư. Dạng cưỡi lớn hơn dạng đi bộ.</p><p><a href="/class-gallery.html">← Xem kỹ năng</a></p><canvas id="lineup" width="1260" height="1060"></canvas></main>
+<script type="module">
+import {heroDisplayHeight} from './hero-stature.js';
+import {HERO_BODY_RATIO} from './hero-body-layout.js';
+import {KNIGHT_LAYOUT} from './knight-frame-layout.js';
+const groups=[['goblin-assassin','samurai-archer','dark-elf','fire-wizard','lightning-mage','wanderer-magican','samurai'],['samurai-commander','warrior-1','warrior-2','warrior-3','knight-1','knight-2','knight-3']];
+const names={'goblin-assassin':'Quỷ Ảnh','samurai-archer':'Cung Thủ','dark-elf':'Dạ Tiễn','fire-wizard':'Hỏa Sư','lightning-mage':'Lôi Sư','wanderer-magican':'Du Pháp',samurai:'Phong Kiếm','samurai-commander':'Kiếm Chủ','warrior-1':'Chiến Binh','warrior-2':'Cuồng Chiến','warrior-3':'Chiến Tướng','knight-1':'Thiết Vệ','knight-2':'Thánh Kỵ Sĩ','knight-3':'Hắc Kỵ Sĩ'};
+const entries=[];
+function add(hero,x,y,mount=false){const form=hero==='knight-2'?(mount?'holy-mounted':'holy-foot'):hero==='knight-3'?(mount?'dark-mounted':'dark-foot'):null,src=form?'/assets/knights-v2/'+form+'.png':hero==='warrior-2'?'/assets/ravager/hero-v2.png':hero==='samurai-commander'?'/assets/blademaster/katana-forms.png':'/assets/heroes-v2/'+hero+'.png',im=new Image();im.src=src;entries.push({hero,x,y,mount,form,im});}
+groups.forEach((row,j)=>row.forEach((hero,i)=>add(hero,90+i*180,240+j*300)));
+add('knight-2',170,965);add('knight-2',470,965,true);add('knight-3',790,965);add('knight-3',1090,965,true);
+const c=document.querySelector('canvas').getContext('2d');c.imageSmoothingEnabled=false;
+function draw(time){c.fillStyle='#20382c';c.fillRect(0,0,1260,1060);c.strokeStyle='#728364';c.setLineDash([4,8]);for(const y of [240,540,965]){c.beginPath();c.moveTo(0,y);c.lineTo(1260,y);c.stroke();}c.setLineDash([]);
+ for(const e of entries){if(!e.im.complete||!e.im.naturalWidth)continue;const f=Math.floor(time/140)%6,w=e.im.width/6,h=e.im.height/6,x0=Math.round(f*w),x1=Math.round((f+1)*w),height=heroDisplayHeight({hero:e.hero,holyMounted:e.mount&&e.hero==='knight-2',fallenMounted:e.mount&&e.hero==='knight-3'},82),ratio=e.form?KNIGHT_LAYOUT[e.form].bodyRatio:HERO_BODY_RATIO[e.hero]|| (e.hero==='samurai-commander'?.85:.8),scale=height/(h*ratio),oy=e.form?KNIGHT_LAYOUT[e.form].originY[f]:.98;
+  c.drawImage(e.im,x0,0,x1-x0,Math.round(h),e.x-w*scale*.5,e.y-h*scale*oy,(x1-x0)*scale,h*scale);c.fillStyle='#eee5c8';c.font='14px system-ui';c.textAlign='center';c.fillText(names[e.hero]+(e.mount?' · cưỡi':''),e.x,e.y+29);c.fillStyle='#a8c2ad';c.font='12px system-ui';c.fillText(Math.round(height)+' px thân hiển thị',e.x,e.y+49);
+ }requestAnimationFrame(draw);
+}requestAnimationFrame(draw);
+</script></html>

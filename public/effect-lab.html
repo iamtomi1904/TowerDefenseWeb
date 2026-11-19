@@ -1,0 +1,104 @@
+<!doctype html><html lang="vi"><meta charset="utf-8"><title>Xưởng hiệu ứng — Giữ Cổng Thành</title><link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1">
+<style>body{margin:0;background:#18271f;color:#f1e2bc;font:16px system-ui;text-align:center}h1{font-size:22px}button,a{background:#344a36;color:#ffe7b1;border:1px solid #ad9561;padding:10px;margin:4px;cursor:pointer;display:inline-block;text-decoration:none}canvas{max-width:100%;height:auto}p{font-size:14px}</style>
+<h1>Xưởng hiệu ứng kỹ năng & Hào quang</h1>
+<p>
+  <a href="/map-viewer.html">Xem 10 Bản đồ chiến trường</a>
+  <a href="/class-gallery.html">14 Class — Xem nhân vật và thử bộ kỹ năng Q/E/R</a>
+  <a href="/aura-stats.html">Thống kê & Xem trước 3 lớp Hào quang</a>
+  <a href="/skill-gallery.html">Thư viện 42 kỹ năng</a>
+  <a href="/actor-lab.html">Xem nhân vật cường hóa</a>
+</p>
+<p>Chọn kỹ năng bên dưới để xem ngay hiệu ứng Phát động, Hào quang duy trì và Buff dưới chân trên sân khấu:</p>
+<label>Trạng thái thử nghiệm: <select id="status-preview">
+  <option value="none">Không có</option>
+  <option value="holy">Hào Quang Hộ Thể (Thánh Kỵ Sĩ — Khiên & Cổ ngữ Thần Thánh)</option>
+  <option value="fallen">Sát Khí Hắc Ám (Hắc Kỵ Sĩ — Đầu lâu, Dơi đêm & Cổ ngữ Quỷ)</option>
+  <option value="rally">Hiệu Triệu (Thiết Vệ — Khiên Thánh Có Cánh & Kết giới Bát Giác)</option>
+  <option value="tide">Thủy Dưỡng (Thủy Pháp Sư — Sóng nước & Bong bóng nước)</option>
+  <option value="wind">Thanh Phong Hộ Thể (Phong Kiếm — Lốc xoáy & Dải lụa gió)</option>
+  <option value="shield">Thành Đồng (Khiên Pháo Đài xoay)</option>
+  <option value="power">Cuồng Huyết / Huyết Nộ (Vòng Ký Tự Cổ Màu Đỏ Khát Máu)</option>
+  <option value="healing">Hồi máu</option>
+  <option value="drain">Hút máu</option>
+  <option value="stun">Choáng</option>
+  <option value="poison">Trúng độc</option>
+  <option value="ice">Chậm do băng</option>
+  <option value="fire">Chậm do lửa</option>
+  <option value="speed">Tăng tốc chạy</option>
+  <option value="haste">Tăng tốc đánh</option>
+</select></label>
+<nav id="buttons"></nav>
+<div id="stage"></div>
+<p><a href="/">Về trò chơi</a></p>
+<script src="/vendor/phaser.js"></script><script type="module">
+import {CLASSES} from './skills.js';
+import {CLASS_ART} from './class-art.js';
+import {renderEvent,updateVFX,unitVFX} from './effects.js';
+import {drawHolyAura} from './holy-vfx.js';
+import {drawFallenState} from './fallen-vfx.js';
+import {drawWindState} from './wind-vfx.js';
+const catalog=await(await fetch('/catalog-v4.json')).json();
+const names={'holy-aura':'Thánh Kỵ E — Hào Quang Hộ Thể (350)','fallen-aura':'Hắc Kỵ E — Sát Khí Hắc Ám (350)',rally:'Thiết Vệ R — Hiệu Triệu (400)','healing-tide':'Thủy Pháp E — Thủy Dưỡng (520)','wind-guard':'Phong Kiếm E — Thanh Phong Hộ Thể',bulwark:'Thiết Vệ E — Thành Đồng',fury:'Chiến Binh E — Cuồng Huyết','blood-rage':'Cuồng Chiến E — Huyết Nộ','wind-dash':'Phong Kiếm Q — Phong Ảnh Trảm','wind-storm':'Phong Kiếm R — Phong Bạo Kiếm Vực','vanguard-charge':'Chiến Tướng Q — Xung Phong Phá Trận','vanguard-flurry':'Chiến Tướng E — Bách Thương Liên Kích','vanguard-giant':'Chiến Tướng R — Cự Nhân Chiến Cuồng','fallen-sunder':'Hắc Kỵ Q — Liệt Hồn Trảm','fallen-doom':'Hắc Kỵ R — Kỵ Mã Diệt Vong','holy-slash':'Thánh Kỵ Q — Thánh Trảm','holy-ascend':'Thánh Kỵ R — Thiên Mã Giáng Thế','elf-piercer':'Dạ Tiễn Q — Tên Xuyên Đêm','elf-spirit':'Dạ Tiễn E — Gọi Tinh Linh Cây','elf-eclipse':'Dạ Tiễn R — Nguyệt Thực','assassin-double':'Sát thủ Q — Song Đao','assassin-veil':'Sát thủ E — Ảnh Bộ','assassin-flurry':'Sát thủ R — Ảnh Trảm','dash-cut':'Kiếm Chủ Q — Trọng Kiếm Trảm','windstep':'Kiếm Chủ E — Song Kiếm / Nhất Kiếm','bladestorm':'Kiếm Chủ R — Thiên Kiếm Giáng','blood-cleave':'Cuồng Chiến Q — Huyết Liên Trảm','bloodstorm':'Cuồng Chiến R — Cuồng Sát Phong',cleave:'Chiến binh Q — Bổ Rìu',earthquake:'Chiến binh R — Địa Chấn',multishot:'Cung thủ Q — Liên Tiễn',venom:'Cung thủ E — Độc Tiễn','arrow-rain':'Cung thủ R — Vũ Tiễn','chain-lightning':'Lôi sư Q — Lôi Liên',thunderstrike:'Lôi sư E — Lôi Kích',tempest:'Lôi sư R — Lôi Trận','shield-bash':'Hộ vệ Q — Khiên Chấn',fireburst:'Hỏa Bộc',flamefield:'Biển Lửa',meteor:'Thiên Thạch',frostnova:'Hàn Triều',blizzard:'Băng Vực'};
+let scene,id=0,active=null,remaining=0;const seen=new Set();
+const auraSkills=['bulwark','rally','fury','blood-rage','holy-aura','fallen-aura','wind-guard','healing-tide'];
+for(const [key,name]of Object.entries(names)){
+  const b=document.createElement('button');b.textContent=name;b.disabled=true;
+  b.onclick=()=>{
+    if(!scene?.add)return;
+    active=key;
+    remaining=auraSkills.includes(key)?6:0;
+    if(key==='holy-aura'){renderEvent(scene,{id:++id,type:'holy-vfx',action:'aura',mounted:true,x:360,y:290,radius:210},seen);return;}
+    if(key==='fallen-aura'){renderEvent(scene,{id:++id,type:'fallen-vfx',action:'aura',mounted:true,x:360,y:290,radius:210},seen);return;}
+    if(key==='healing-tide'){renderEvent(scene,{id:++id,type:'tide-field',x:360,y:290,radius:220,duration:6},seen);return;}
+    if(key==='rally'){renderEvent(scene,{id:++id,type:'aura',skill:'rally',x:360,y:290,radius:210,color:0xffdc94},seen);return;}
+    if(key==='bulwark'){renderEvent(scene,{id:++id,type:'aura',skill:'bulwark',x:360,y:290,radius:90,color:0xffdc94},seen);return;}
+    if(key==='fury'||key==='blood-rage'){renderEvent(scene,{id:++id,type:'aura',skill:'fury',x:360,y:290,radius:95,color:0xff4d58},seen);return;}
+    if(key==='wind-guard'){renderEvent(scene,{id:++id,type:'wind-vfx',action:'guard',sourceId:'preview',x:360,y:290,radius:65},seen);return;}
+    const hero=Object.keys(CLASS_ART).find(h=>CLASSES[CLASS_ART[h].classId].skills.includes(key));
+    if(hero&&!['fireburst','flamefield','meteor','frostnova','blizzard','chain-lightning','thunderstrike','tempest','shield-bash','cleave','earthquake','multishot','venom','arrow-rain'].includes(key)){
+      const slot=['Q','E','R'][CLASSES[CLASS_ART[hero].classId].skills.indexOf(key)];
+      location.href='/class-gallery.html?hero='+encodeURIComponent(hero)+'&slot='+slot;return;
+    }
+    renderEvent(scene,{id:++id,type:key==='meteor'?'meteor-fall':key==='chain-lightning'?'lightning':key==='venom'?'projectile':'aoe',skill:key,projectileType:key==='venom'?'venom':undefined,tx:530,ty:290,x:360,y:290,radius:135,previewDuration:2.5,duration:1.1,color:['fireburst','flamefield','meteor','fury'].includes(key)?0xffac65:['shield-bash','rally','bulwark'].includes(key)?0xffdc94:0xa3eaff},seen);
+    if(key==='meteor')scene.time.delayedCall(1100,()=>renderEvent(scene,{id:++id,type:'meteor-impact',x:360,y:290,radius:145,color:0xffac65},seen));
+  };
+  document.querySelector('#buttons').append(b);
+}
+new Phaser.Game({type:Phaser.AUTO,width:760,height:480,parent:'stage',backgroundColor:'#2a3e30',pixelArt:true,scene:{
+ preload(){this.load.image('class-auras-1','/assets/auras/class-auras-1.png');this.load.image('class-auras-2','/assets/auras/class-auras-2.png');this.load.image('aura-rims-topdown','/assets/auras/aura-rims-topdown.png');this.load.image('paladin-divine-auras','/assets/auras/paladin-divine-auras.png');for(const a of catalog.spellArt||[])this.load.image('art:'+a.id,a.url);for(const fx of catalog.effects)this.load.spritesheet('fx:'+fx.id,fx.url,{frameWidth:fx.frame,frameHeight:fx.frame});const a=catalog.actors.find(a=>a.id==='knight-1');this.heroInfo=a;this.load.spritesheet('hero',a.actions.idle.url,{frameWidth:a.frame,frameHeight:a.frame});},
+ create(){scene=this;for(const b of document.querySelectorAll('#buttons button'))b.disabled=false;for(const fx of catalog.effects)this.anims.create({key:'fx:'+fx.id,frames:this.anims.generateFrameNumbers('fx:'+fx.id,{start:0,end:fx.frames-1}),frameRate:15,repeat:0});this.add.grid(380,240,760,480,32,32,0x2a3e30,1,0x78926c,.09);this.unitGlow=this.add.graphics().setDepth(2800);this.unitGround=this.add.graphics().setDepth(2);this.sprite=this.add.sprite(380,290,'hero').setScale(64/this.heroInfo.bodyHeight).setOrigin(this.heroInfo.originX,this.heroInfo.originY).setDepth(1800);this.obj={sprite:this.sprite,groundY:290,size:64};this.actorObjects=new Map([['preview',this.obj]]);this.label=this.add.text(380,445,'Chọn một kỹ năng hoặc trạng thái hào quang bên trên',{fontSize:'16px',color:'#ffe7b1'}).setOrigin(.5);},
+ update(time,delta){
+  remaining=Math.max(0,remaining-delta/1000);this.unitGlow.clear();this.unitGround.clear();const status=document.querySelector('#status-preview').value;
+  const isHoly=(remaining&&active==='holy-aura')||status==='holy';
+  const isFallen=(remaining&&active==='fallen-aura')||status==='fallen';
+  const isRally=(remaining&&active==='rally')||status==='rally';
+  const isTide=(remaining&&active==='healing-tide')||status==='tide';
+  const isWind=(remaining&&active==='wind-guard')||status==='wind';
+  const isShield=(remaining&&active==='bulwark')||status==='shield';
+  const isFury=(remaining&&(active==='fury'||active==='blood-rage'))||status==='power';
+  const buffs=[];
+  if(isFury)buffs.push({time:2,lifesteal:.25,haste:.3});
+  if(isRally)buffs.push({time:2,aura:'rally',haste:.2});
+  if(isTide)buffs.push({time:2,aura:'tide'});
+  if(isShield)buffs.push({time:2,shield:true,armor:6});
+  if(status==='haste')buffs.push({time:1,haste:.3});if(status==='speed')buffs.push({time:1,speed:.3});
+  this.sprite.x=status==='speed'?380+Math.sin(time/600)*100:380;
+  const u={
+    id:'preview',hp:100,stats:{hp:100},hero:'knight-1',x:this.sprite.x,y:290,face:1,
+    classId:isHoly?'paladin':isFallen?'fallen':isWind?'windblade':isFury?'berserker':'guardian',
+    holyMounted:isHoly,holyAuraTime:isHoly?5:0,holyAura:isHoly?{enhanced:true}:null,
+    fallenMounted:isFallen,fallenAuraTime:isFallen?5:0,fallenAura:isFallen?{enhanced:true}:null,
+    windGuard:isWind?5:0,windFieldBuff:isWind,
+    skills:{'holy-aura':1,'fallen-aura':1},
+    shield:isShield?100:0,buffs,
+    stun:status==='stun'?1:0,poisonTime:status==='poison'?1:0,slowTime:['ice','fire','physical'].includes(status)?1:0,slowType:status
+  };
+  unitVFX(this,u,this.obj,time);
+  drawHolyAura(this,u,this.obj,time);
+  drawFallenState(this,u,this.obj,time);
+  drawWindState(this,u,this.obj,time);
+  if(['healing','drain'].includes(status)&&time-(this.lastHeal||0)>1000){this.lastHeal=time;renderEvent(this,{id:++id,type:'healing',targetId:'preview',x:this.sprite.x,y:265,amount:12,drainFrom:status==='drain'?{x:520,y:260}:null},seen);}
+  updateVFX(this,delta/1000);this.label.setText(active?(names[active]+(remaining?' · '+remaining.toFixed(1)+'s':'')):'Xem thử trạng thái & hào quang nhân vật');
+ }
+}});
+</script></html>

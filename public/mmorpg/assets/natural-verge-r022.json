@@ -1,0 +1,586 @@
+{
+  "revision": 22,
+  "removed": [
+    {
+      "id": 3603,
+      "asset": "watchpost",
+      "reason": "Not present in approved reference"
+    },
+    {
+      "id": 3604,
+      "asset": "watchpost",
+      "reason": "Not present in approved reference"
+    },
+    {
+      "id": 3605,
+      "asset": "supply",
+      "reason": "Not present in approved reference"
+    },
+    {
+      "id": 3606,
+      "asset": "armory",
+      "reason": "Not present in approved reference"
+    },
+    {
+      "id": 3607,
+      "asset": "notice",
+      "reason": "Not present in approved reference"
+    },
+    {
+      "id": 3608,
+      "asset": "trough",
+      "reason": "Not present in approved reference"
+    },
+    {
+      "id": 3681,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3682,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3683,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3684,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3685,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3686,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3687,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3688,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3689,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3690,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3691,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3692,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3693,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3694,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3695,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3696,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3697,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3698,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3699,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3701,
+      "asset": "grassroots",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3702,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3703,
+      "asset": "grassroots",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3704,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3706,
+      "asset": "grassroots",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3707,
+      "asset": "grassroots",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3709,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3711,
+      "asset": "grassroots",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3712,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3714,
+      "asset": "grassroots",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3715,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3716,
+      "asset": "grassroots",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3717,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3719,
+      "asset": "grassroots",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3720,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3722,
+      "asset": "grassroots",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3723,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3725,
+      "asset": "grassroots",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3726,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3728,
+      "asset": "grassroots",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3729,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3731,
+      "asset": "grassroots",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3732,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3734,
+      "asset": "grassroots",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3735,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3737,
+      "asset": "grassroots",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3758,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3759,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3760,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3761,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3762,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3763,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3764,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3765,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3766,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3767,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3768,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3769,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3770,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3771,
+      "asset": "fernrocks",
+      "reason": "Replace repeated fringe"
+    },
+    {
+      "id": 3772,
+      "asset": "wallflowers",
+      "reason": "Replace repeated fringe"
+    }
+  ],
+  "placed": [
+    {
+      "id": 3782,
+      "asset": "bushmat",
+      "x": 1949.654696132597,
+      "y": 235.83287292817684,
+      "width": 180,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3783,
+      "asset": "mossstones",
+      "x": 2014.654696132597,
+      "y": 271.8328729281768,
+      "width": 65,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3784,
+      "asset": "wildflowers",
+      "x": 1894.654696132597,
+      "y": 298.8328729281768,
+      "width": 85,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3785,
+      "asset": "bushmat",
+      "x": 2262.154696132597,
+      "y": 361.1453729281768,
+      "width": 204,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3786,
+      "asset": "fernclump",
+      "x": 2232.154696132597,
+      "y": 397.1453729281768,
+      "width": 90,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3787,
+      "asset": "bushmat",
+      "x": 2549.654696132597,
+      "y": 427.6297479281768,
+      "width": 228,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3788,
+      "asset": "fernclump",
+      "x": 2614.654696132597,
+      "y": 463.6297479281768,
+      "width": 65,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3789,
+      "asset": "wildflowers",
+      "x": 2494.654696132597,
+      "y": 490.6297479281768,
+      "width": 85,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3790,
+      "asset": "bushmat",
+      "x": 2787.154696132597,
+      "y": 459.5828729281768,
+      "width": 180,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3791,
+      "asset": "mossstones",
+      "x": 2757.154696132597,
+      "y": 495.5828729281768,
+      "width": 90,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3792,
+      "asset": "bushmat",
+      "x": 3362.154696132597,
+      "y": 457.0828729281768,
+      "width": 204,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3793,
+      "asset": "fernclump",
+      "x": 3427.154696132597,
+      "y": 493.0828729281768,
+      "width": 65,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3794,
+      "asset": "wildflowers",
+      "x": 3307.154696132597,
+      "y": 520.0828729281768,
+      "width": 85,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3795,
+      "asset": "bushmat",
+      "x": 3649.654696132597,
+      "y": 410.2859979281768,
+      "width": 228,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3796,
+      "asset": "fernclump",
+      "x": 3619.654696132597,
+      "y": 446.2859979281768,
+      "width": 90,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3797,
+      "asset": "bushmat",
+      "x": 3924.654696132597,
+      "y": 344.1662062615102,
+      "width": 180,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3798,
+      "asset": "mossstones",
+      "x": 3989.654696132597,
+      "y": 380.1662062615102,
+      "width": 65,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3799,
+      "asset": "wildflowers",
+      "x": 3869.654696132597,
+      "y": 407.1662062615102,
+      "width": 85,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3800,
+      "asset": "bushmat",
+      "x": 4199.654696132597,
+      "y": 224.9995395948435,
+      "width": 204,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3801,
+      "asset": "fernclump",
+      "x": 4169.654696132597,
+      "y": 260.9995395948435,
+      "width": 90,
+      "zone": "Chân tường"
+    },
+    {
+      "id": 3802,
+      "asset": "grassedge",
+      "x": 1890,
+      "y": 545.9379515512112,
+      "width": 130,
+      "zone": "Mép gò"
+    },
+    {
+      "id": 3803,
+      "asset": "wildflowers",
+      "x": 1825,
+      "y": 526.9379515512112,
+      "width": 65,
+      "zone": "Mép gò"
+    },
+    {
+      "id": 3804,
+      "asset": "bushmat",
+      "x": 2220,
+      "y": 616.2651933701658,
+      "width": 152,
+      "zone": "Mép gò"
+    },
+    {
+      "id": 3805,
+      "asset": "mossstones",
+      "x": 2290,
+      "y": 610.2651933701658,
+      "width": 85,
+      "zone": "Mép gò"
+    },
+    {
+      "id": 3806,
+      "asset": "grassedge",
+      "x": 2540,
+      "y": 680.4506131249159,
+      "width": 174,
+      "zone": "Mép gò"
+    },
+    {
+      "id": 3807,
+      "asset": "wildflowers",
+      "x": 2475,
+      "y": 661.4506131249159,
+      "width": 65,
+      "zone": "Mép gò"
+    },
+    {
+      "id": 3808,
+      "asset": "bushmat",
+      "x": 3240,
+      "y": 708.2209944751381,
+      "width": 130,
+      "zone": "Mép gò"
+    },
+    {
+      "id": 3809,
+      "asset": "grassedge",
+      "x": 3510,
+      "y": 666.3247470761283,
+      "width": 152,
+      "zone": "Mép gò"
+    },
+    {
+      "id": 3810,
+      "asset": "mossstones",
+      "x": 3580,
+      "y": 660.3247470761283,
+      "width": 85,
+      "zone": "Mép gò"
+    },
+    {
+      "id": 3811,
+      "asset": "wildflowers",
+      "x": 3445,
+      "y": 647.3247470761283,
+      "width": 65,
+      "zone": "Mép gò"
+    },
+    {
+      "id": 3812,
+      "asset": "bushmat",
+      "x": 3760,
+      "y": 676.0650068163881,
+      "width": 174,
+      "zone": "Mép gò"
+    }
+  ],
+  "reason": "Remove invented gate props and replace repeated round flower/rock fringe with asymmetric natural groundcover"
+}

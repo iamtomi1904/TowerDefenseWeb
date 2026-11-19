@@ -1,0 +1,115 @@
+{
+  "total": 2702,
+  "kinds": [
+    {
+      "kind": "building",
+      "count": 17,
+      "policy": "Giữ mặt trước; CHƯA VẼ đủ hông/lưng"
+    },
+    {
+      "kind": "crop",
+      "count": 4,
+      "policy": "Giữ hướng ô ruộng"
+    },
+    {
+      "kind": "lamp",
+      "count": 7,
+      "policy": "Giữ đứng và mặt chức năng"
+    },
+    {
+      "kind": "barrel",
+      "count": 15,
+      "policy": "Giữ đứng và mặt chức năng"
+    },
+    {
+      "kind": "pot",
+      "count": 15,
+      "policy": "Giữ đứng và mặt chức năng"
+    },
+    {
+      "kind": "fence",
+      "count": 51,
+      "policy": "4 phối cảnh; bám hướng đường viền"
+    },
+    {
+      "kind": "bridge",
+      "count": 1,
+      "policy": "Giữ trục mặt cầu"
+    },
+    {
+      "kind": "footbridge",
+      "count": 1,
+      "policy": "Giữ trục mặt cầu"
+    },
+    {
+      "kind": "entrance",
+      "count": 3,
+      "policy": "Giữ hướng cửa khớp tương tác"
+    },
+    {
+      "kind": "rampart",
+      "count": 5,
+      "policy": "Giữ mặt kết cấu"
+    },
+    {
+      "kind": "fort-gate",
+      "count": 1,
+      "policy": "Giữ mặt kết cấu"
+    },
+    {
+      "kind": "mountain",
+      "count": 7,
+      "policy": "Giữ đứng; đối xứng trái/phải"
+    },
+    {
+      "kind": "birch",
+      "count": 114,
+      "policy": "3 hình từ các phía quanh thân"
+    },
+    {
+      "kind": "oak",
+      "count": 215,
+      "policy": "3 hình từ các phía quanh thân"
+    },
+    {
+      "kind": "orchard",
+      "count": 36,
+      "policy": "3 hình từ các phía quanh thân"
+    },
+    {
+      "kind": "willow",
+      "count": 27,
+      "policy": "3 hình từ các phía quanh thân"
+    },
+    {
+      "kind": "flora",
+      "count": 1884,
+      "policy": "Giữ đứng; đối xứng trái/phải"
+    },
+    {
+      "kind": "boulders",
+      "count": 83,
+      "policy": "Giữ đứng; đối xứng trái/phải"
+    },
+    {
+      "kind": "sign",
+      "count": 9,
+      "policy": "Giữ mặt chữ có thể đọc"
+    },
+    {
+      "kind": "detail",
+      "count": 167,
+      "policy": "Cây thấp đối xứng; đồ có mặt trước giữ hướng"
+    },
+    {
+      "kind": "pebbles",
+      "count": 36,
+      "policy": "Khối đá đứng: đối xứng; không xoay phẳng90°"
+    },
+    {
+      "kind": "rail-collider",
+      "count": 4,
+      "policy": "Chỉ va chạm, không có hình"
+    }
+  ]
+}

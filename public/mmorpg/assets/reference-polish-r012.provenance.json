@@ -1,0 +1,22 @@
+{
+  "tool": "Built-in imagegen",
+  "reference": "public/design-preview/v01-complete-map-r001/binh-minh-full-map-r001.png",
+  "date": "2026-10-25",
+  "assets": [
+    {
+      "file": "stone-stairs-r012.png",
+      "source": "exec-2a0bd79e-38a5-4b69-bcd8-8144cab30344.png",
+      "prompt": "Create a production game sprite atlas for the supplied pixel art RPG environment reference. Actual transparent background. Three isolated assets in one horizontal row, widely separated equal cells: left a front-facing outdoor stone stairway going north uphill, center same stairway going northwest uphill, right same stairway going northeast uphill. Each stairway has 8 irregular broad sandstone and gray stone treads, earthen gaps, short natural rock shoulders and moss/grass at the edges, upper and lower open landings. Match the reference's crisp detailed 2D pixel art, warm golden light from upper left, top-down three-quarter RPG view, no isometric diamond. No whole landscape, no house, no text, no panels, no ground rectangle, no shadow rectangle. Width approx 110 native pixels per stair, height 140 native pixels. Should be natural steps carved into a rocky grass hill, NOT a tall formal staircase with banisters. Clean opaque step surfaces and genuinely transparent surrounding background. Keep all three assets separated by generous transparent gutters so each can be extracted as an individual sprite."
+    },
+    {
+      "file": "trees-reference-r012.png",
+      "source": "exec-630210fe-1058-4980-9999-3c97087ffd79.png",
+      "prompt": "Production 2D pixel art tree sprite atlas matching the supplied RPG map reference exactly in palette, light direction and degree of detail. Four separate whole trees, one horizontal row with generous transparent gutters, genuine transparent background. Left to right: broad mature oak with twisting roots, slender white-bark birch with airy green crown, golden-green weeping willow with long hanging branches, short fruit orchard tree with small red fruits. Complete visible roots and trunks, no cutoffs. Strong crisp pixel clusters at approximately 160 native pixels height, avoid smooth digital painting and huge leaf noise. Three-quarter top-down RPG environment view. Sun upper left, deep dark teal inner leaves, golden olive leaf highlights, rich brown trunks. Full isolated tree objects only, no terrain or grass rectangle, no labels or UI, no cast shadow slab. Keep each tree entirely in its own equal-width cell without touching another tree."
+    },
+    {
+      "file": "natural-cliff-r012.png",
+      "source": "exec-8c5c289a-0189-46c9-9ece-9e6322c07e0d.png",
+      "note": "Previously generated natural cliff strip; first integrated in r012. Original prompt not retained in this manifest."
+    }
+  ]
+}

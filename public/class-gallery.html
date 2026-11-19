@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Truyền thừa anh hùng · Xưởng nhân vật</title>
+<link rel="icon" href="/favicon.svg">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#14251f;color:#ecdfbc;font:15px system-ui}main{max-width:1060px;margin:auto;padding:32px 20px}a{color:#cbdcb5}h1{font:32px Georgia,serif;margin:12px 0}p{color:#aebda8;line-height:1.6}small{letter-spacing:.18em;color:#c5aa72}nav{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0}button,select{background:#263c30;color:#ecdfbc;border:1px solid #657251;border-radius:4px;padding:10px 14px;cursor:pointer}button[aria-pressed=true]{background:#526345;border-color:#d8c28e}canvas{display:block;max-width:100%;height:auto;border:1px solid #566449;border-radius:6px}#skills{min-height:44px}label{display:inline-flex;align-items:center;gap:7px;margin-right:15px}footer{margin-top:20px;color:#aebda8}
+</style>
+<main><small>THE WORLD / XƯỞNG NHÂN VẬT</small><h1>Truyền thừa anh hùng</h1><p>Màu trang phục sâu hơn, kim loại sáng rõ và hiệu ứng riêng cho từng class — giữ nét pixel fantasy của chiến trường.</p>
+<nav id="classes" aria-label="Chọn class"></nav>
+<label>Động tác <select id="action"><option value="idle">Đứng</option><option value="walk">Di chuyển</option><option value="attack">Tấn công</option><option value="cast">Thi triển kỹ năng</option><option value="hurt">Bị thương</option><option value="dead">Gục ngã</option></select></label><label><input id="flip" type="checkbox">Quay trái</label><label><input id="accents" type="checkbox" checked>Hiệu ứng nhận diện</label>
+<label><input id="dual-form" type="checkbox">Kiếm Chủ: bắt đầu với song kiếm</label>
+<label><input id="poison-combo" type="checkbox">Cung thủ: dùng E trước Q/R tên độc</label>
+<label><input id="mounted-form" type="checkbox">Thánh/Hắc Kỵ: dạng cưỡi</label>
+<label>Cấp ngoại hình <select id="visual-level"><option value="1">1</option><option value="6">6</option><option value="11">11</option><option value="16">16</option></select></label>
+<nav id="skills" aria-label="Thử kỹ năng"></nav><p id="readout" role="status">Chọn Q/E/R để xem kỹ năng trên mục tiêu tập.</p><div id="stage"></div><footer>Trái/phải: so sánh ngoại hình. Chọn kỹ năng để xem toàn sân ở kích thước trong trận, bậc 1, không trang bị ngọc. Dữ liệu phát lại từ mô phỏng chiến đấu; mục tiêu tập đứng yên.<br><a href="/defense.html">Vào chiến trường</a> · <a href="/effect-lab.html">Xưởng hiệu ứng</a> · <a href="/height-lineup.html">So sánh chiều cao</a> · <a href="/troop-gallery.html">Xưởng lính</a> · <a href="/enemy-attack-gallery.html">Đòn đánh của quái</a></footer></main>
+<script src="/vendor/phaser.js"></script><script type="module" src="/class-gallery.js?v=animation-init-fix-1"></script></html>
+

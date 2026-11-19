@@ -1,0 +1,1656 @@
+{
+  "revision": 15,
+  "removed": [
+    {
+      "id": 339,
+      "kind": "rampart",
+      "at": [
+        1500,
+        320
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 340,
+      "kind": "rampart",
+      "at": [
+        1860,
+        320
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 341,
+      "kind": "rampart",
+      "at": [
+        2220,
+        320
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 342,
+      "kind": "rampart",
+      "at": [
+        3300,
+        320
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 343,
+      "kind": "rampart",
+      "at": [
+        3660,
+        320
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 344,
+      "kind": "fort-gate",
+      "at": [
+        2760,
+        320
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 347,
+      "kind": "mountain",
+      "at": [
+        3300,
+        420
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 348,
+      "kind": "mountain",
+      "at": [
+        3650,
+        520
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 365,
+      "kind": "birch",
+      "at": [
+        2387.1466652140953,
+        143.30367045477033
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 366,
+      "kind": "birch",
+      "at": [
+        1819.6296229027212,
+        139.7362581687048
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 390,
+      "kind": "birch",
+      "at": [
+        2005.5616145487875,
+        175.3084076801315
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 413,
+      "kind": "oak",
+      "at": [
+        2400.343848124612,
+        357.1159355342388
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 449,
+      "kind": "oak",
+      "at": [
+        1922.9424460907467,
+        269.85135339200497
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 453,
+      "kind": "oak",
+      "at": [
+        2605.834008345846,
+        253.43246078118682
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 496,
+      "kind": "oak",
+      "at": [
+        2267.4002047162503,
+        307.1004646131769
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 524,
+      "kind": "birch",
+      "at": [
+        2899.0079242154025,
+        262.4828753527254
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 558,
+      "kind": "oak",
+      "at": [
+        2296.6584567795508,
+        190.97522706724703
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 564,
+      "kind": "birch",
+      "at": [
+        2111.72122877324,
+        345.74052980169654
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 593,
+      "kind": "oak",
+      "at": [
+        2567.9157943697646,
+        132.06327974330634
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 622,
+      "kind": "oak",
+      "at": [
+        1798.2474976102822,
+        373.4045817051083
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 624,
+      "kind": "oak",
+      "at": [
+        1947.7058099582791,
+        371.46484043914825
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 628,
+      "kind": "birch",
+      "at": [
+        2312.6707819174044,
+        422.88127304054797
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 631,
+      "kind": "oak",
+      "at": [
+        2790.008592128288,
+        105.74066885747015
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 650,
+      "kind": "birch",
+      "at": [
+        2465.492353658192,
+        258.74757857527584
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 703,
+      "kind": "oak",
+      "at": [
+        2502.1488785161637,
+        407.2550361510366
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 749,
+      "kind": "oak",
+      "at": [
+        2155.0550557672977,
+        153.43665305990726
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 764,
+      "kind": "oak",
+      "at": [
+        1813.2965594530106,
+        255.55059884209186
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 810,
+      "kind": "oak",
+      "at": [
+        2096.707132353913,
+        243.68544691242278
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 829,
+      "kind": "oak",
+      "at": [
+        2688.621865119785,
+        148.53939332533628
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 861,
+      "kind": "flora",
+      "at": [
+        1740.5512611474842,
+        258.72493045870215
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 877,
+      "kind": "flora",
+      "at": [
+        2763.5063606966287,
+        256.56014420557767
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 899,
+      "kind": "flora",
+      "at": [
+        3694.3259420245886,
+        392.5442847190425
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 902,
+      "kind": "flora",
+      "at": [
+        2028.4351095557213,
+        320.0268534151837
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 936,
+      "kind": "flora",
+      "at": [
+        3961.913894955069,
+        360.9582739835605
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 945,
+      "kind": "flora",
+      "at": [
+        1975.5779327638447,
+        281.36715670581907
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 948,
+      "kind": "flora",
+      "at": [
+        3472.9166006017476,
+        300.68451546598226
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1002,
+      "kind": "flora",
+      "at": [
+        1559.2443758063018,
+        374.76250947918743
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1024,
+      "kind": "flora",
+      "at": [
+        1975.4265566915274,
+        289.32374383788556
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1030,
+      "kind": "flora",
+      "at": [
+        2724.3405675981194,
+        299.6955255093053
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1046,
+      "kind": "flora",
+      "at": [
+        3535.912868892774,
+        318.07200754527
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1067,
+      "kind": "flora",
+      "at": [
+        2533.162155346945,
+        442.8915398614481
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1073,
+      "kind": "flora",
+      "at": [
+        2108.6255100928247,
+        206.30850115325302
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1074,
+      "kind": "flora",
+      "at": [
+        2176.311235772446,
+        371.12249799538404
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1086,
+      "kind": "flora",
+      "at": [
+        2354.829733148217,
+        91.05504434090108
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1092,
+      "kind": "flora",
+      "at": [
+        2223.7467538565397,
+        345.74825580697507
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1097,
+      "kind": "flora",
+      "at": [
+        3003.683401653543,
+        85.55141155142337
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1098,
+      "kind": "flora",
+      "at": [
+        2829.9984464515,
+        196.60084255505353
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1146,
+      "kind": "flora",
+      "at": [
+        2340.385174769908,
+        277.29388361331075
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1163,
+      "kind": "flora",
+      "at": [
+        3991.577855600044,
+        393.61386893782765
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1171,
+      "kind": "flora",
+      "at": [
+        2641.372475894168,
+        416.08786762226373
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1177,
+      "kind": "flora",
+      "at": [
+        2471.4506325963885,
+        122.64518391806632
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1185,
+      "kind": "flora",
+      "at": [
+        2108.601022064686,
+        398.1757256714627
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1194,
+      "kind": "flora",
+      "at": [
+        3707.5947748869658,
+        365.89716489892453
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1203,
+      "kind": "flora",
+      "at": [
+        3060.033137751743,
+        370.30196397099644
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1218,
+      "kind": "flora",
+      "at": [
+        3881.6668941639364,
+        139.52061676885933
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1244,
+      "kind": "flora",
+      "at": [
+        3361.080250898376,
+        463.6270718695596
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1250,
+      "kind": "flora",
+      "at": [
+        2311.594454916194,
+        430.6273400830105
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1257,
+      "kind": "flora",
+      "at": [
+        2402.170379906893,
+        291.05497139971703
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1258,
+      "kind": "flora",
+      "at": [
+        3828.971902122721,
+        397.53035517875105
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1316,
+      "kind": "flora",
+      "at": [
+        2190.6185940653086,
+        308.5868213651702
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1328,
+      "kind": "flora",
+      "at": [
+        2838.2507864106447,
+        482.60424681473523
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1347,
+      "kind": "flora",
+      "at": [
+        3837.8259506449103,
+        312.4459120584652
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1355,
+      "kind": "flora",
+      "at": [
+        2439.153635883704,
+        479.28566050250083
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1396,
+      "kind": "flora",
+      "at": [
+        2133.966163126752,
+        110.39249962661415
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1408,
+      "kind": "flora",
+      "at": [
+        2022.774175470695,
+        404.2288682842627
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1445,
+      "kind": "flora",
+      "at": [
+        3237.0448546111584,
+        94.79744422715157
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1446,
+      "kind": "flora",
+      "at": [
+        3677.423764159903,
+        216.5667528146878
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1469,
+      "kind": "flora",
+      "at": [
+        3368.67376903072,
+        153.13876134809107
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1472,
+      "kind": "flora",
+      "at": [
+        1527.0948038995266,
+        192.43946123402566
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1481,
+      "kind": "flora",
+      "at": [
+        2560.058701392263,
+        126.87590876128525
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1495,
+      "kind": "flora",
+      "at": [
+        2540.153713868931,
+        194.00721051264554
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1517,
+      "kind": "flora",
+      "at": [
+        3799.036687584594,
+        150.92127830255777
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1559,
+      "kind": "flora",
+      "at": [
+        3563.633551420644,
+        413.67398873437196
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1568,
+      "kind": "flora",
+      "at": [
+        2428.3525544498116,
+        338.5143170179799
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1570,
+      "kind": "flora",
+      "at": [
+        2011.100014243275,
+        275.94182235654444
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1580,
+      "kind": "flora",
+      "at": [
+        3393.113252259791,
+        161.15359283518046
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1584,
+      "kind": "flora",
+      "at": [
+        2710.649126600474,
+        147.25739107932895
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1585,
+      "kind": "flora",
+      "at": [
+        2079.7290529310703,
+        209.74704820197076
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1602,
+      "kind": "flora",
+      "at": [
+        3967.0537694264203,
+        249.53612559009343
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1612,
+      "kind": "flora",
+      "at": [
+        3048.4366156347096,
+        473.2644977187738
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1625,
+      "kind": "flora",
+      "at": [
+        2528.852764489129,
+        110.4907874809578
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1630,
+      "kind": "flora",
+      "at": [
+        3242.8467408474535,
+        172.33048448804766
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1633,
+      "kind": "flora",
+      "at": [
+        3851.207462819293,
+        313.59539330471307
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1647,
+      "kind": "flora",
+      "at": [
+        2889.8155880067497,
+        98.5044387402013
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1657,
+      "kind": "flora",
+      "at": [
+        3936.802000598982,
+        363.95549171138555
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1659,
+      "kind": "flora",
+      "at": [
+        3999.0096255857497,
+        324.6889340924099
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1667,
+      "kind": "flora",
+      "at": [
+        2886.7001317813993,
+        354.1841321391985
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1672,
+      "kind": "flora",
+      "at": [
+        3982.42428034544,
+        130.80637607257813
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1676,
+      "kind": "flora",
+      "at": [
+        3347.6915565878153,
+        288.5478530405089
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1711,
+      "kind": "flora",
+      "at": [
+        3947.226224541664,
+        305.71224215906113
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1722,
+      "kind": "flora",
+      "at": [
+        1855.0563993304968,
+        381.0255965171382
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1746,
+      "kind": "flora",
+      "at": [
+        1549.1931126639247,
+        168.29251572024077
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1763,
+      "kind": "flora",
+      "at": [
+        3068.6160633619875,
+        232.73388216737658
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1764,
+      "kind": "flora",
+      "at": [
+        2584.216591399163,
+        194.91150768008083
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1778,
+      "kind": "flora",
+      "at": [
+        2507.346062362194,
+        330.1882258383557
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1780,
+      "kind": "flora",
+      "at": [
+        2184.415444172919,
+        324.82506460975856
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1800,
+      "kind": "flora",
+      "at": [
+        1961.858420856297,
+        243.92324320506305
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1836,
+      "kind": "flora",
+      "at": [
+        3652.5161213520914,
+        294.964725789614
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1841,
+      "kind": "flora",
+      "at": [
+        3098.3046048134565,
+        187.8967248974368
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1859,
+      "kind": "flora",
+      "at": [
+        2446.166555257514,
+        523.441599314101
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1873,
+      "kind": "flora",
+      "at": [
+        2134.747752547264,
+        151.22269991319627
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1885,
+      "kind": "flora",
+      "at": [
+        2495.8341049868613,
+        522.1183005021885
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1922,
+      "kind": "flora",
+      "at": [
+        3857.283716481179,
+        103.35464747156948
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1937,
+      "kind": "flora",
+      "at": [
+        2717.4015652853996,
+        238.35445434320718
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1950,
+      "kind": "flora",
+      "at": [
+        2275.540540618822,
+        147.9379345336929
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1960,
+      "kind": "flora",
+      "at": [
+        3401.002959832549,
+        424.4401707826182
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 1994,
+      "kind": "flora",
+      "at": [
+        3603.4752593934536,
+        338.84486484806985
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2014,
+      "kind": "flora",
+      "at": [
+        3492.6774078328162,
+        432.25931376684457
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2054,
+      "kind": "flora",
+      "at": [
+        3478.8979283627123,
+        248.5388375306502
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2055,
+      "kind": "flora",
+      "at": [
+        2267.249664897099,
+        96.16106745321304
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2093,
+      "kind": "flora",
+      "at": [
+        2936.885373815894,
+        568.9604135928676
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2098,
+      "kind": "flora",
+      "at": [
+        2112.2376934438944,
+        361.4616046426818
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2159,
+      "kind": "flora",
+      "at": [
+        1843.1920506618917,
+        155.1622130861506
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2164,
+      "kind": "flora",
+      "at": [
+        2139.6696770191193,
+        437.3453575698659
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2171,
+      "kind": "flora",
+      "at": [
+        2068.477472551167,
+        226.90570584964007
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2185,
+      "kind": "flora",
+      "at": [
+        3952.9647322464734,
+        372.0248853461817
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2186,
+      "kind": "flora",
+      "at": [
+        1795.3166649397463,
+        424.4353992724791
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2191,
+      "kind": "flora",
+      "at": [
+        2739.1231639124453,
+        196.84648943599313
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2202,
+      "kind": "flora",
+      "at": [
+        3236.911070952192,
+        90.17235134262592
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2228,
+      "kind": "flora",
+      "at": [
+        2476.263245064765,
+        192.09179376717657
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2232,
+      "kind": "flora",
+      "at": [
+        2007.6429835893214,
+        428.5459451144561
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2250,
+      "kind": "flora",
+      "at": [
+        2452.876594234258,
+        425.40482421871275
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2294,
+      "kind": "flora",
+      "at": [
+        2083.333977740258,
+        96.77967221941799
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2301,
+      "kind": "flora",
+      "at": [
+        3806.267960816622,
+        295.3977610496804
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2337,
+      "kind": "flora",
+      "at": [
+        1631.9185316655785,
+        352.0120683731511
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2338,
+      "kind": "flora",
+      "at": [
+        2457.42141562514,
+        209.75693276617676
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2345,
+      "kind": "flora",
+      "at": [
+        1600.9131679218262,
+        216.41627138946205
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2358,
+      "kind": "flora",
+      "at": [
+        2543.2166575454175,
+        302.37619870807976
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2369,
+      "kind": "flora",
+      "at": [
+        3516.1978368647397,
+        196.8434660648927
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2383,
+      "kind": "flora",
+      "at": [
+        2397.044656863436,
+        487.9480996960774
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2389,
+      "kind": "flora",
+      "at": [
+        3012.4073258042336,
+        166.90562102477998
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2392,
+      "kind": "flora",
+      "at": [
+        1776.3374362140894,
+        320.23498098831624
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2437,
+      "kind": "flora",
+      "at": [
+        2074.937574826181,
+        154.1324359131977
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2447,
+      "kind": "flora",
+      "at": [
+        3819.8571546096355,
+        260.43951735366136
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2500,
+      "kind": "flora",
+      "at": [
+        3258.7632851302624,
+        487.73764598648995
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2508,
+      "kind": "flora",
+      "at": [
+        1601.5538297500461,
+        125.78701215330511
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2523,
+      "kind": "flora",
+      "at": [
+        3658.01873463206,
+        337.453651339747
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2524,
+      "kind": "flora",
+      "at": [
+        3419.9609423149377,
+        376.88643374014646
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2539,
+      "kind": "flora",
+      "at": [
+        3635.4240016359836,
+        324.1668124543503
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2563,
+      "kind": "flora",
+      "at": [
+        3619.79987016879,
+        266.82072604540735
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2579,
+      "kind": "flora",
+      "at": [
+        1978.007047465071,
+        223.70889308396727
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2610,
+      "kind": "flora",
+      "at": [
+        2916.9132147636265,
+        288.9737744862214
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2619,
+      "kind": "flora",
+      "at": [
+        2356.8646298907697,
+        132.90004843380302
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2621,
+      "kind": "flora",
+      "at": [
+        2314.1958972252905,
+        153.45949736889452
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2635,
+      "kind": "flora",
+      "at": [
+        3939.1992786806077,
+        119.03345590922982
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2642,
+      "kind": "flora",
+      "at": [
+        3055.921050980687,
+        228.67236505728215
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2658,
+      "kind": "flora",
+      "at": [
+        2321.2229789420962,
+        296.5422363532707
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2667,
+      "kind": "flora",
+      "at": [
+        3709.0909049939364,
+        251.81760265026242
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2691,
+      "kind": "flora",
+      "at": [
+        3694.6780004072934,
+        399.93522458244115
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2716,
+      "kind": "flora",
+      "at": [
+        3659.6873042266816,
+        141.78666776511818
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2744,
+      "kind": "flora",
+      "at": [
+        2813.666874570772,
+        367.1756042400375
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2746,
+      "kind": "flora",
+      "at": [
+        1870.2263507340103,
+        398.32629804033786
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2758,
+      "kind": "flora",
+      "at": [
+        2837.1099919453263,
+        304.1847849590704
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2764,
+      "kind": "flora",
+      "at": [
+        2760.777975767851,
+        282.53824818413705
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2779,
+      "kind": "flora",
+      "at": [
+        3490.8781735692173,
+        128.30184657592326
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2797,
+      "kind": "flora",
+      "at": [
+        1646.7821562290192,
+        318.4448057739064
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2818,
+      "kind": "flora",
+      "at": [
+        2230.523776076734,
+        362.71652191411704
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2822,
+      "kind": "flora",
+      "at": [
+        3174.3058088514954,
+        353.9064771356061
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2831,
+      "kind": "flora",
+      "at": [
+        2915.864183548838,
+        393.63532153423876
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2836,
+      "kind": "flora",
+      "at": [
+        2059.7078687045723,
+        252.9436669172719
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2898,
+      "kind": "flora",
+      "at": [
+        3387.68459697254,
+        151.9388609426096
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2919,
+      "kind": "flora",
+      "at": [
+        1726.5324517246336,
+        155.961306639947
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2924,
+      "kind": "flora",
+      "at": [
+        2096.5185214672238,
+        320.92447329778224
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2953,
+      "kind": "flora",
+      "at": [
+        3078.6883899196982,
+        365.573041732423
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2987,
+      "kind": "flora",
+      "at": [
+        2946.355342362076,
+        272.26611447986215
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 2991,
+      "kind": "flora",
+      "at": [
+        2701.425522789359,
+        355.27100171428174
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 3029,
+      "kind": "flora",
+      "at": [
+        2338.952243095264,
+        180.5728084826842
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 3040,
+      "kind": "flora",
+      "at": [
+        1618.4735645540059,
+        245.45144816394895
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 3046,
+      "kind": "flora",
+      "at": [
+        3646.8410385679454,
+        297.0597158232704
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 3051,
+      "kind": "flora",
+      "at": [
+        2540.731240026653,
+        391.5495552076027
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 3063,
+      "kind": "flora",
+      "at": [
+        1894.352357732132,
+        221.91088863182813
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 3072,
+      "kind": "flora",
+      "at": [
+        2653.824458103627,
+        279.5831656595692
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 3077,
+      "kind": "flora",
+      "at": [
+        2793.6739522684366,
+        530.8548567490652
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 3093,
+      "kind": "flora",
+      "at": [
+        3345.815269900486,
+        476.591145680286
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    },
+    {
+      "id": 3106,
+      "kind": "flora",
+      "at": [
+        1565.5072422139347,
+        195.31696276273578
+      ],
+      "reason": "clear rampart footprint or forecourt"
+    }
+  ],
+  "fortress": {
+    "x": 2760,
+    "y": 500,
+    "width": 2500,
+    "arrival": [
+      2760,
+      560
+    ]
+  },
+  "camp": {
+    "yard": [
+      2160,
+      2420,
+      630,
+      350
+    ],
+    "zones": [
+      {
+        "id": 270,
+        "zone": "Nhà chỉ huy / phía Bắc",
+        "at": [
+          2100,
+          1980
+        ]
+      },
+      {
+        "id": 271,
+        "zone": "Lều tiếp tế / phía Tây",
+        "at": [
+          1538.5273014683569,
+          2367.6674112371634
+        ]
+      },
+      {
+        "id": 272,
+        "zone": "Xưởng rèn / phía Đông",
+        "at": [
+          2690,
+          2240
+        ]
+      },
+      {
+        "id": 273,
+        "zone": "Kho và nhà dân / Tây Nam",
+        "at": [
+          1740,
+          2660
+        ]
+      },
+      {
+        "id": 274,
+        "zone": "Lều y tế / Đông Nam",
+        "at": [
+          2574.009070964819,
+          2699.6247236239014
+        ]
+      },
+      {
+        "id": 275,
+        "zone": "Lửa trại / sân chung",
+        "at": [
+          2166.2948462328586,
+          2458.983543159923
+        ]
+      },
+      {
+        "id": 276,
+        "zone": "Giếng / mép sân",
+        "at": [
+          1970,
+          2190
+        ]
+      }
+    ]
+  },
+  "plazaCells": 15874
+}

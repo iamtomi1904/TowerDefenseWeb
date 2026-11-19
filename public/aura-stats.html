@@ -1,0 +1,337 @@
+﻿<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thống kê & Hiệu ứng Hào quang · Giữ Cổng Thành</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#14251f;color:#ecdfbc;font:14px system-ui}
+main{max-width:1180px;margin:auto;padding:28px 18px}
+a{color:#cbdcb5}
+h1{font:30px Georgia,serif;margin:8px 0}
+h2{font:20px Georgia,serif;margin:0 0 4px;color:#f0d9a0}
+h2.group{font:22px Georgia,serif;margin:30px 0 4px;padding-bottom:6px;border-bottom:2px solid #526345;color:#f2e3ae}
+small{letter-spacing:.18em;color:#c5aa72}
+p{color:#aebda8;line-height:1.6;margin:6px 0}
+.card{background:#1b2c23;border:1px solid #526347;border-radius:8px;padding:18px;margin:18px 0}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;background:#2c4535;border:1px solid #657251;font-size:12px;margin:2px 4px 2px 0;color:#d8e6b8}
+.tag.warn{background:#4a3a28;border-color:#a07d4e;color:#f0d3a0}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+th,td{padding:6px 9px;border-bottom:1px solid #2f4538;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:#c5aa72;font-weight:600;background:#182a21;position:sticky;top:0}
+tr.sub td{color:#f0d9a0;background:#223629;text-align:left;font-weight:600}
+.scroll{overflow-x:auto}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;align-items:center}
+button{background:#263c30;color:#ecdfbc;border:1px solid #657251;border-radius:4px;padding:7px 12px;cursor:pointer;font:13px system-ui}
+button[aria-pressed=true]{background:#526345;border-color:#d8c28e;color:#fff6d6;font-weight:600}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.summary div{background:#223629;border:1px solid #3d5646;border-radius:6px;padding:12px}
+.summary b{display:block;font-size:22px;color:#f0d9a0}
+nav a{margin-right:14px}
+#vfx-stage{display:flex;justify-content:center;background:#182a21;border:1px solid #3d5646;border-radius:6px;padding:8px;overflow:hidden}
+#vfx-stage canvas{max-width:100%;height:auto;border-radius:4px}
+.layer-badges span{display:inline-block;margin-right:12px;font-size:13px;color:#d8e6b8}
+</style>
+</head>
+<body>
+<main>
+<small>THE WORLD / THỐNG KÊ & HIỆU ỨNG HÀO QUANG</small>
+<h1>Bảng thống kê & Xem trước hiệu ứng hào quang</h1>
+<p>Số liệu đọc trực tiếp từ file cấu hình (<code>paladin-config</code>, <code>fallen-config</code>, <code>wind-config</code>, <code>skills</code>, <code>world-biomes</code>) nên luôn khớp với trận thật. Phân tách rõ <b>Hào quang cho đồng đội</b> và <b>Hào quang bản thân</b>, kèm bản xem trước 3 lớp hiệu ứng: <b>Phát động</b> · <b>Hào quang duy trì</b> · <b>Buff dưới chân</b>.</p>
+<nav>
+  <a href="/map-viewer.html">Xem 10 bản đồ</a>
+  <a href="/effect-lab.html">Xưởng hiệu ứng</a>
+  <a href="/class-gallery.html">Xem trước kỹ năng</a>
+  <a href="/skill-gallery.html">Thư viện 42 kỹ năng</a>
+  <a href="/defense.html">Vào chiến trường</a>
+</nav>
+
+<section class="card">
+  <h2>Xem trước 3 lớp hiệu ứng hào quang (Pixel-Art Stepped VFX)</h2>
+  <p>Mỗi hào quang được thiết kế đồng bộ gồm: <b>(1) Sóng phát động</b> khi kích hoạt, <b>(2) Kết giới hào quang duy trì</b> theo đúng bán kính kỹ năng вокруг chủ thể, và <b>(3) Vòng buff dưới chân</b> cho từng đồng đội nhận hiệu ứng.</p>
+  <div class="filters" id="vfx-buttons"></div>
+  <div class="filters">
+    <button id="replay-burst">⚡ Phát động lại (Cast Burst)</button>
+    <label><input type="checkbox" id="toggle-sustained" checked> Hiện hào quang duy trì</label>
+    <label><input type="checkbox" id="toggle-underfoot" checked> Hiện buff dưới chân (Chủ thể + Đồng đội)</label>
+  </div>
+  <div id="vfx-stage"></div>
+  <p id="vfx-caption" style="text-align:center;color:#f0d9a0;font-weight:600"></p>
+</section>
+
+<div class="filters" id="filters"></div>
+<section class="summary" id="summary"></section>
+<div id="sections"></div>
+
+<div class="card">
+  <h2>Quy tắc cộng dồn chung</h2>
+  <p><span class="tag">Aura Thánh / Hắc ám</span> nhiều nguồn cùng loại chỉ lấy <b>mức mạnh nhất</b> cho từng chỉ số, không cộng dồn.</p>
+  <p><span class="tag">Hiệu Triệu (400) · Thủy Dưỡng (520)</span> tác dụng lên cả hero và lính đồng minh trong vùng; không hồi máu công trình, không hồi sinh đơn vị đã hạ gục.</p>
+  <p><span class="tag">Giảm sát thương</span> Thủy Dưỡng không cộng dồn nhiều vùng; giảm sát thương từ các nguồn khác nhân với nhau.</p>
+  <p><span class="tag">Bùa thủ lĩnh rừng</span> khác loại thì cộng dồn; cùng loại chỉ làm mới thời gian (120 giây).</p>
+</div>
+</main>
+<script src="/vendor/phaser.js"></script>
+<script type="module">
+import {PALADIN} from './paladin-config.js';
+import {FALLEN} from './fallen-config.js';
+import {WIND} from './wind-config.js';
+import {skillById,skillAtRank} from './skills.js';
+import {LEADER_BLESSINGS,BLESSING_DURATION} from './world-biomes.js';
+import {FOREST_LEADERS} from './forest-leaders.js';
+import {
+  drawHolyAuraBurst,drawHolySustainedField,drawHolyUnderfootBuff,
+  drawFallenAuraBurst,drawFallenSustainedField,drawFallenUnderfootBuff,
+  drawRallyBurst,drawRallySustainedField,
+  drawTideFieldVFX,drawUnitAuraBuffs,drawWindUnderfootBuff,
+  drawBulwarkBurst,drawBloodFuryBurst,syncAuraSprite,syncOuterRimSprite,syncSustainedFieldRims,clearUnitAuraSprites
+} from './aura-vfx.js';
+
+const pct=(n,d=0)=>(n*100).toFixed(d)+'%',num=(n,d=1)=>+n.toFixed(d),hex=c=>'#'+c.toString(16).padStart(6,'0');
+const maxRank=r=>skillById(r).maxRank;
+let rank=1;
+
+function table(head,rows){
+  return `<div class="scroll"><table><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>r.sub?`<tr class="sub"><td colspan="${head.length}">${r.sub}</td></tr>`:`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+
+const holy=d=>{
+  const A=PALADIN.aura,e=Math.min(d,5);
+  return {
+    foot:{radius:A.radius+e*8,armor:A.armor+e,red:Math.min(.45,A.reduction+e*.015),heal:0,time:A.duration+d},
+    mounted:{radius:A.mountedRadius+e*8,armor:A.mountedArmor+e,red:Math.min(.45,A.mountedReduction+e*.015),heal:A.healPerSecond+e*.0025},
+    drain:Math.max(4,PALADIN.manaDrain-Math.min(d,5)*.8)
+  };
+};
+
+const dark=d=>{
+  const A=FALLEN.aura,e=Math.min(d,5);
+  return {
+    foot:{radius:A.radius+e*8,power:A.power+e*.02,haste:A.haste+e*.02,chance:A.bleedChance+e*.02,bleed:A.bleed+e*.02,wound:0,time:A.duration+d},
+    mounted:{radius:A.mountedRadius+e*8,power:A.mountedPower+e*.02,haste:A.mountedHaste+e*.02,chance:A.mountedBleedChance+e*.02,bleed:A.mountedBleed+e*.02,wound:A.woundedBonus+e*.015},
+    drain:Math.max(3,FALLEN.manaDrain-Math.min(d,5)*.4)
+  };
+};
+
+function build(){
+  const d=rank-1;
+  const h=holy(d),f=dark(d),rally=skillAtRank(skillById('rally'),rank),tide=skillAtRank(skillById('healing-tide'),rank),guard=skillAtRank(skillById('wind-guard'),rank),storm=skillAtRank(skillById('wind-storm'),rank),bulwark=skillAtRank(skillById('bulwark'),rank),fury=skillAtRank(skillById('fury'),rank),bloodRage=skillAtRank(skillById('blood-rage'),rank);
+  const guardRed=Math.min(.4,WIND.e.reduction+d*.02);
+  const all=[
+    {id:'holy',team:true,name:'Hào Quang Hộ Thể',owner:'Thánh Kỵ Sĩ',skill:'holy-aura',color:'#f2e3ae',kind:'Phòng thủ & Hồi phục · Đồng đội',cd:skillAtRank(skillById('holy-aura'),rank),
+     tags:['Cả hero và lính','Lấy mức mạnh nhất','Thiên mã tự bật (350)'],
+     head:['Dạng','Bán kính','Giáp','Giảm ST','Hồi máu/s','Hiệu lực'],
+     rows:[['Dạng bộ',h.foot.radius,'+'+h.foot.armor,pct(h.foot.red,1),'—',h.foot.time+'s'],['Thiên mã (tự bật)',h.mounted.radius,'+'+h.mounted.armor,pct(h.mounted.red,1),pct(h.mounted.heal,2),'Suốt dạng, hao '+num(h.drain)+' NL/s']]},
+    {id:'dark',team:true,name:'Sát Khí Hắc Ám',owner:'Hắc Kỵ Sĩ',skill:'fallen-aura',color:'#b69be0',kind:'Tấn công & Chảy máu · Đồng đội',cd:skillAtRank(skillById('fallen-aura'),rank),
+     tags:['Cả hero và lính','Lấy mức mạnh nhất','Chủ nhân +1 dấu ấn/đòn','Diệt Vong tự bật (350)'],
+     head:['Dạng','Bán kính','+Công','+Tốc đánh','Tỷ lệ chảy máu','Chảy máu/s','+ST mục tiêu chảy máu','Hiệu lực'],
+     rows:[['Dạng bộ',f.foot.radius,'+'+pct(f.foot.power),'+'+pct(f.foot.haste),pct(f.foot.chance),pct(f.foot.bleed)+' Công','—',f.foot.time+'s'],['Diệt Vong (tự bật)',f.mounted.radius,'+'+pct(f.mounted.power),'+'+pct(f.mounted.haste),pct(f.mounted.chance),pct(f.mounted.bleed)+' Công','+'+pct(f.mounted.wound,1),'Suốt dạng, hao '+num(f.drain)+' NL/s']]},
+    {id:'rally',team:true,name:'Hiệu Triệu',owner:'Thiết Vệ (Hộ vệ)',skill:'rally',color:'#ffdc94',kind:'Hồi phục & Tốc đánh · Đồng đội',cd:rally,
+     tags:['Bán kính cơ bản 400','Cả hero và lính','Hồi tức thì','Hero nhận tốc đánh'],
+     head:['Bán kính','Hồi máu (tức thì)','+Tốc đánh (hero)','Hiệu lực buff'],
+     rows:[[rally.radius,pct(rally.heal)+' HP tối đa','+'+pct(.2+d*.04),rally.duration+'s']]},
+    {id:'tide',team:true,name:'Thủy Dưỡng',owner:'Du Pháp (Thủy pháp sư)',skill:'healing-tide',color:'#9bdfde',kind:'Vùng hồi phục & Giảm ST · Đồng đội',cd:tide,
+     tags:['Bán kính 520','Vùng giữ tại chỗ','Cả hero và lính','Không cộng dồn giảm ST'],
+     head:['Bán kính','Hồi máu/giây','Tổng hồi (10s)','Giảm ST nhận','Hiệu lực'],
+     rows:[[tide.radius,pct(tide.heal,1)+' HP tối đa',pct(tide.heal*tide.duration,0)+' HP tối đa',pct(tide.reduction),tide.duration+'s']]},
+    {id:'windguard',team:false,name:'Thanh Phong Hộ Thể',owner:'Phong Kiếm Khách',skill:'wind-guard',color:'#a2dddb',kind:'Hào quang hộ thể · Bản thân',cd:guard,
+     tags:['Chỉ bản thân','Giảm sát thương + Tốc chạy'],
+     head:['Bán kính','Giảm ST nhận','+Tốc chạy','Hiệu lực'],
+     rows:[['Bản thân',pct(guardRed,0),'+'+pct(WIND.e.speed),guard.duration+'s']]},
+    {id:'windfield',team:false,name:'Phong Bạo Kiếm Vực',owner:'Phong Kiếm Khách',skill:'wind-storm',color:'#8ec9b4',kind:'Lĩnh vực gió · Bản thân',cd:storm,
+     tags:['Buff khi chủ đứng trong vùng','Gây sát thương + hất tung quái'],
+     head:['Bán kính','Hiệu lực','+Công','+Tốc đánh','+Tốc chạy','ST mỗi 0,5s'],
+     rows:[[storm.radius,storm.duration+'s','+'+pct(WIND.r.power),'+'+pct(WIND.r.haste),'+'+pct(WIND.r.speed),pct(storm.mult)+' Công']]},
+    {id:'bulwark',team:false,name:'Thành Đồng',owner:'Thiết Vệ (Hộ vệ)',skill:'bulwark',color:'#e0c790',kind:'Khiên & Giáp · Bản thân',cd:bulwark,
+     tags:['Chỉ bản thân','Khiên máu + Giáp'],
+     head:['Bán kính','Khiên hấp thụ','+Giáp','Hiệu lực'],
+     rows:[['Bản thân',pct(bulwark.shield)+' HP tối đa','+'+(6+d*1.5),bulwark.duration+'s']]},
+    {id:'fury',team:false,name:'Cuồng Huyết / Huyết Nộ',owner:'Chiến Binh & Cuồng Chiến',skill:'fury',color:'#f58b54',kind:'Cường hóa chiến đấu · Bản thân',cd:fury,
+     tags:['Chỉ bản thân','Tốc đánh + Hút máu'],
+     head:['Kỹ năng','Bán kính','+Công','+Tốc đánh','Hút máu','Hiệu lực'],
+     rows:[['Cuồng Huyết (Chiến Binh)','Bản thân','—','+'+pct(fury.haste),pct(fury.lifesteal),fury.duration+'s'],['Huyết Nộ (Cuồng Chiến)','Bản thân','+'+pct(.25+d*.04),'+'+pct(bloodRage.haste),pct(bloodRage.lifesteal),bloodRage.duration+'s']]}
+  ];
+  const blessRows=FOREST_LEADERS.map(l=>{
+    const b=LEADER_BLESSINGS[l.id],stats=[];
+    if(b.powerMultiplier)stats.push('+'+pct(b.powerMultiplier)+' Công');
+    if(b.armor)stats.push('+'+b.armor+' giáp');
+    if(b.speed)stats.push('+'+pct(b.speed)+' tốc chạy');
+    if(b.haste)stats.push('+'+pct(b.haste)+' tốc đánh');
+    if(b.lifesteal)stats.push('hút máu '+pct(b.lifesteal));
+    if(b.leaderRegen)stats.push('hồi '+pct(b.leaderRegen,1)+' HP/s');
+    return [`<span class="dot" style="background:${hex(b.color)}"></span>${b.name}`,l.name,'Toàn bản đồ (Cả đội)',stats.join(' · '),BLESSING_DURATION+'s'];
+  });
+  return {all,blessRows,rally,tide,h,f,guardRed,storm};
+}
+
+function render(){
+  const {all,blessRows,h,f,rally,tide,storm}=build();
+  const team=all.filter(a=>a.team),self=all.filter(a=>!a.team);
+  document.querySelector('#summary').innerHTML=`
+    <div><b>${team.length}</b>Hào quang cho đồng đội</div>
+    <div><b>${self.length}</b>Hào quang chỉ cho bản thân</div>
+    <div><b>${Math.max(h.mounted.radius,f.mounted.radius,rally.radius,tide.radius,storm.radius)}</b>Bán kính lớn nhất (Thủy Dưỡng: 520, Hiệu Triệu: ${rally.radius})</div>
+    <div><b>${blessRows.length}</b>Bùa thủ lĩnh rừng (Cả đội · ${BLESSING_DURATION}s)</div>`;
+  const card=a=>`<section class="card" id="${a.id}"><h2><span class="dot" style="background:${a.color}"></span>${a.name}</h2><p>${a.owner} · ${a.kind} · Mở ở cấp ${skillById(a.skill).requiredLevel} · Hồi ${a.cd.cooldown}s · ${a.cd.cost} NL</p><div><span class="tag ${a.team?'':'warn'}">${a.team?'Hào quang đồng đội':'Chỉ bản thân'}</span>${a.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>${table(a.head,a.rows)}<p>${skillById(a.skill).text}</p></section>`;
+  document.querySelector('#sections').innerHTML=
+    `<h2 class="group">🤝 Hào quang cho đồng đội (${team.length})</h2><p>Tác dụng lên mọi hero và lính đồng minh đứng trong bán kính, kể cả người chơi khác trong phòng co-op.</p>`+team.map(card).join('')+
+    `<h2 class="group">🛡️ Hào quang chỉ cho bản thân (${self.length})</h2><p>Chỉ chủ nhân kỹ năng được hưởng, đồng đội đứng cạnh không nhận buff.</p>`+self.map(card).join('')+
+    `<h2 class="group">🌲 Bùa thủ lĩnh rừng (Hào quang toàn đội)</h2><section class="card" id="blessings"><p>Nhận khi hạ thủ lĩnh rừng; chia cho tất cả người chơi trong phòng. Khác loại cộng dồn, cùng loại làm mới thời gian.</p>${table(['Bùa','Nguồn','Phạm vi','Hiệu quả','Thời gian'],blessRows)}</section>`;
+  document.querySelectorAll('#filters button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.rank===rank)));
+}
+
+const max=Math.max(maxRank('rally'),maxRank('holy-aura'),maxRank('fallen-aura'),maxRank('healing-tide'),maxRank('wind-guard'),maxRank('wind-storm'));
+document.querySelector('#filters').innerHTML='<span style="align-self:center">Bậc kỹ năng:</span>';
+for(let r=1;r<=max;r++){
+  const b=document.createElement('button');
+  b.textContent='Bậc '+r;b.dataset.rank=r;
+  b.onclick=()=>{rank=r;render();};
+  document.querySelector('#filters').append(b);
+}
+render();
+
+// Interactive 3-Layer Aura VFX Preview
+const presets=[
+  {id:'fallen-mount',label:'Sát Khí Hắc Ám (Diệt Vong · 350)',radius:350,desc:'Hắc Kỵ Sĩ: Pháp trận ký tự cổ quỷ tím-đen + Đầu Lâu lơ lửng & Đàn Dơi Đêm vỗ cánh bay ra + Ấn cổ ngữ dưới chân'},
+  {id:'fallen-foot',label:'Sát Khí Hắc Ám (Bộ · 260)',radius:260,desc:'Hắc Kỵ Sĩ (Bộ): Pháp trận ma giới 260 + Đầu lâu & Dơi bóng đêm bay quanh + Ấn ký tự cổ dưới chân đồng đội'},
+  {id:'holy-mount',label:'Hào Quang Hộ Thể (Thiên mã · 350)',radius:350,desc:'Thánh Kỵ Sĩ: Pháp trận Thánh Điện 350 + Khiên Thánh hoàng kim & Ký tự Thần Thánh cổ + Thập tự hồi sinh bay lên'},
+  {id:'holy-foot',label:'Hào Quang Hộ Thể (Bộ · 260)',radius:260,desc:'Thánh Kỵ Sĩ (Bộ): Kết giới Khiên Thánh & Ký tự Thần Thánh 260 + Khiên hộ thể xoay dưới chân đồng đội'},
+  {id:'rally',label:'Hiệu Triệu (Thiết Vệ · 400)',radius:400,desc:'Thiết Vệ: Đại Kết Giới Bát Giác Thần Thánh 400 + Đại Khiên Có Cánh (Winged Aegis) & Ký tự Hộ Vệ cổ'},
+  {id:'tide',label:'Thủy Dưỡng (Thủy Pháp Sư · 520)',radius:520,desc:'Thủy Pháp Sư: Sóng nước cuộn trắng xóa + Hoa văn Hoa Sen Nước + Bong bóng nước phản quang nổi lên'},
+  {id:'wind',label:'Thanh Phong Hộ Thể (Phong Kiếm)',radius:135,desc:'Phong Kiếm Khách: Xoáy lốc 4 lưỡi gió dưới chân + Dải lụa cuồng phong uốn lượn 3D bảo vệ quanh thân'},
+  {id:'bulwark-fury',label:'Thành Đồng (Khiên) & Cuồng Huyết (Cổ ngữ Đỏ)',radius:95,desc:'Thành Đồng: 4 Đại Khiên Pháo Đài xoay quanh · Cuồng Huyết / Huyết Nộ: Vòng Ký Tự Cổ Màu Đỏ Khát Máu & Răng Nanh Máu'}
+];
+let currentPreset=presets[0],burstStart=0;
+const btnWrap=document.querySelector('#vfx-buttons');
+for(const p of presets){
+  const b=document.createElement('button');
+  b.textContent=p.label;
+  b.dataset.id=p.id;
+  b.setAttribute('aria-pressed',String(p===currentPreset));
+  b.onclick=()=>{
+    currentPreset=p;burstStart=performance.now();
+    btnWrap.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.id===p.id)));
+    document.querySelector('#vfx-caption').textContent=p.desc;
+  };
+  btnWrap.append(b);
+}
+document.querySelector('#vfx-caption').textContent=currentPreset.desc;
+document.querySelector('#replay-burst').onclick=()=>{burstStart=performance.now();};
+
+new Phaser.Game({
+  type:Phaser.AUTO,width:920,height:440,parent:'vfx-stage',backgroundColor:'#182a21',pixelArt:true,
+  scene:{
+    preload(){
+      this.load.image('class-auras-1','/assets/auras/class-auras-1.png');
+      this.load.image('class-auras-2','/assets/auras/class-auras-2.png');
+      this.load.image('aura-rims-topdown','/assets/auras/aura-rims-topdown.png');
+      this.load.image('paladin-divine-auras','/assets/auras/paladin-divine-auras.png');
+    },
+    create(){
+      this.add.grid(460,220,920,440,32,32,0x182a21,1,0x5a7358,.1);
+      this.fieldG=this.add.graphics().setDepth(2);
+      this.unitGround=this.add.graphics().setDepth(4);
+      this.unitGlow=this.add.graphics().setDepth(10);
+      this.markers=this.add.graphics().setDepth(6);
+      this.casterObj={sprite:{x:460,y:225},groundY:225,classAuraSprites:new Map()};
+      this.allyObjs=[{sprite:{x:315,y:257},groundY:257,classAuraSprites:new Map()},{sprite:{x:605,y:257},groundY:257,classAuraSprites:new Map()}];
+      this.casterText=this.add.text(460,185,'CHỦ THỂ',{fontSize:'11px',color:'#fff3c4',stroke:'#14251f',strokeThickness:3}).setOrigin(.5).setDepth(12);
+      this.ally1Text=this.add.text(315,245,'ĐỒNG ĐỘI 1',{fontSize:'11px',color:'#c8e8b8',stroke:'#14251f',strokeThickness:3}).setOrigin(.5).setDepth(12);
+      this.ally2Text=this.add.text(605,245,'ĐỒNG ĐỘI 2',{fontSize:'11px',color:'#c8e8b8',stroke:'#14251f',strokeThickness:3}).setOrigin(.5).setDepth(12);
+      burstStart=performance.now();
+    },
+    update(time){
+      this.fieldG.clear();this.unitGround.clear();this.unitGlow.clear();this.markers.clear();
+      for(const o of [this.casterObj,...this.allyObjs])for(const s of o.classAuraSprites.values())s.setVisible(false);
+      const showSustained=document.querySelector('#toggle-sustained').checked;
+      const showUnderfoot=document.querySelector('#toggle-underfoot').checked;
+      const elapsed=(performance.now()-burstStart)/950;
+      const burstT=Math.max(0,Math.min(1,elapsed));
+      const cx=460,cy=225;
+      const scale=currentPreset.radius>360?200/currentPreset.radius:currentPreset.radius>280?195/currentPreset.radius:0.68;
+      const r=currentPreset.radius*scale;
+      const allies=[{x:cx-145,y:cy+32,obj:this.allyObjs[0]},{x:cx+145,y:cy+32,obj:this.allyObjs[1]}];
+      const isTeam=!['wind','bulwark-fury'].includes(currentPreset.id);
+      this.ally1Text.setVisible(isTeam);this.ally2Text.setVisible(isTeam);
+
+      const drawActor=(x,y,color)=>{
+        this.markers.fillStyle(0x0e1914,.45).fillEllipse(x,y+4,32,12);
+        this.markers.fillStyle(color,.9).fillRect(x-7,y-26,14,26).fillCircle(x,y-32,8);
+      };
+      drawActor(cx,cy,0xf5dfa0);
+      if(isTeam){drawActor(allies[0].x,allies[0].y,0x9adbb3);drawActor(allies[1].x,allies[1].y,0x9adbb3);}
+
+      const id=currentPreset.id;
+      if(id==='holy-foot'||id==='holy-mount'){
+        const enh=id==='holy-mount';
+        if(showSustained)drawHolySustainedField(this.fieldG,cx,cy,r,time,burstT,enh,this,this.casterObj);
+        else if(burstT<1)drawHolyAuraBurst(this.fieldG,cx,cy,r,burstT,enh);
+        if(showUnderfoot){
+          drawHolyUnderfootBuff(this.unitGround,cx,cy,time,enh,this,this.casterObj);
+          for(const a of allies)drawHolyUnderfootBuff(this.unitGround,a.x,a.y,time,enh,this,a.obj);
+        }
+      }else if(id==='fallen-foot'||id==='fallen-mount'){
+        const enh=id==='fallen-mount';
+        if(showSustained)drawFallenSustainedField(this.fieldG,cx,cy,r,time,burstT,enh,this,this.casterObj);
+        else if(burstT<1)drawFallenAuraBurst(this.fieldG,cx,cy,r,burstT,enh);
+        if(showUnderfoot){
+          drawFallenUnderfootBuff(this.unitGround,cx,cy,time,enh,this,this.casterObj);
+          for(const a of allies)drawFallenUnderfootBuff(this.unitGround,a.x,a.y,time,enh,this,a.obj);
+        }
+      }else if(id==='rally'){
+        if(burstT<1)drawRallyBurst(this.fieldG,cx,cy,r,burstT);
+        if(showSustained||burstT<1)drawRallySustainedField(this.fieldG,this.unitGlow,cx,cy,time,r,this,this.casterObj,burstT);
+        if(showUnderfoot){
+          for(const u of [{x:cx,y:cy,obj:this.casterObj},...allies]){
+            syncAuraSprite(this,u.obj.classAuraSprites,'rally-foot','class-auras-1',2,u.x,u.y-1,80,52,u.y-1,time,0.92);
+          }
+        }
+      }else if(id==='tide'){
+        const t=((time/10000)%1);
+        const effT=burstT<1?burstT*.11:0.15+t*.8;
+        if(showSustained||burstT<1){
+          drawTideFieldVFX(this.fieldG,{x:cx,y:cy,radius:r},effT);
+          syncSustainedFieldRims(this,this.casterObj.classAuraSprites,'tide',0,3,cx,cy,r,cy-7,time,burstT,0.92,1);
+        }
+        if(showUnderfoot){
+          for(const u of [{x:cx,y:cy,obj:this.casterObj},...allies]){
+            syncAuraSprite(this,u.obj.classAuraSprites,'tide-foot','class-auras-1',3,u.x,u.y-1,78,50,u.y-1,time,0.92);
+          }
+        }
+      }else if(id==='wind'){
+        if(showSustained||burstT<1)syncSustainedFieldRims(this,this.casterObj.classAuraSprites,'wind',4,4,cx,cy,r,cy-7,time,burstT,0.9,-3);
+        if(showUnderfoot)drawWindUnderfootBuff(this.unitGround,this.unitGlow,cx,cy,time,true,this,this.casterObj);
+      }else if(id==='bulwark-fury'){
+        this.ally1Text.setVisible(true);this.ally1Text.setText('THÀNH ĐỒNG (KHIÊN)');
+        this.ally2Text.setVisible(true);this.ally2Text.setText('CUỒNG HUYẾT (CỔ NGỮ ĐỎ)');
+        drawActor(allies[0].x,allies[0].y,0xe6cd92);
+        drawActor(allies[1].x,allies[1].y,0xf58b54);
+        if(burstT<1){
+          drawBulwarkBurst(this.fieldG,allies[0].x,allies[0].y,85,burstT);
+          drawBloodFuryBurst(this.fieldG,allies[1].x,allies[1].y,85,burstT);
+          const s=0.45+0.65*(1-Math.pow(1-burstT,3));
+          syncAuraSprite(this,allies[0].obj.classAuraSprites,'bulwark-burst','class-auras-2',1,allies[0].x,allies[0].y-6,130*s,96*s,allies[0].y+2,time,Math.sin(burstT*Math.PI)*.92,0);
+          syncAuraSprite(this,allies[1].obj.classAuraSprites,'fury-burst','class-auras-2',3,allies[1].x,allies[1].y-6,130*s,96*s,allies[1].y+2,time,Math.sin(burstT*Math.PI)*.92,5);
+        }
+        if(showSustained){
+          syncOuterRimSprite(this,allies[1].obj.classAuraSprites,'fury-rim',5,allies[1].x,allies[1].y,75,allies[1].y-7,time,0.88,-0.0003);
+        }
+        if(showUnderfoot){
+          syncAuraSprite(this,allies[0].obj.classAuraSprites,'bulwark-foot','class-auras-2',1,allies[0].x,allies[0].y-2,86,58,allies[0].y-1,time,0.94);
+          syncAuraSprite(this,allies[1].obj.classAuraSprites,'fury-foot','class-auras-2',2,allies[1].x,allies[1].y-1,88,60,allies[1].y-1,time,0.95);
+        }
+      }
+      if(id!=='bulwark-fury'){
+        this.ally1Text.setText('ĐỒNG ĐỘI 1');
+        this.ally2Text.setText('ĐỒNG ĐỘI 2');
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

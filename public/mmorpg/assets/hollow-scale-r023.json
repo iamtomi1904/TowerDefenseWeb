@@ -1,0 +1,95 @@
+{
+  "revision": 23,
+  "hollow": {
+    "id": 336,
+    "fromWidth": 340,
+    "toWidth": 510,
+    "at": [
+      1980,
+      1130
+    ]
+  },
+  "moved": [
+    {
+      "id": 3634,
+      "from": [
+        1740,
+        900
+      ],
+      "to": [
+        1740,
+        1000
+      ],
+      "reason": "clear enlarged hollow roots / crown"
+    },
+    {
+      "id": 3773,
+      "from": [
+        1910,
+        930
+      ],
+      "to": [
+        1817.6120467488713,
+        891.7316567634911
+      ],
+      "reason": "clear enlarged hollow roots / crown"
+    },
+    {
+      "id": 3775,
+      "from": [
+        2150,
+        930
+      ],
+      "to": [
+        2057.6120467488713,
+        891.7316567634911
+      ],
+      "reason": "clear enlarged hollow roots / crown"
+    }
+  ],
+  "removed": [
+    {
+      "id": 3575,
+      "reason": "replace repeated entry gravel with a few patches"
+    },
+    {
+      "id": 3576,
+      "reason": "replace repeated entry gravel with a few patches"
+    },
+    {
+      "id": 3577,
+      "reason": "replace repeated entry gravel with a few patches"
+    },
+    {
+      "id": 3578,
+      "reason": "replace repeated entry gravel with a few patches"
+    },
+    {
+      "id": 3579,
+      "reason": "replace repeated entry gravel with a few patches"
+    }
+  ],
+  "added": [
+    {
+      "id": 3813,
+      "asset": "fernclump",
+      "x": 2250,
+      "y": 1100,
+      "width": 110
+    },
+    {
+      "id": 3814,
+      "asset": "cobbles",
+      "x": 1965,
+      "y": 1190,
+      "width": 78
+    },
+    {
+      "id": 3815,
+      "asset": "cobbles",
+      "x": 1915,
+      "y": 1240,
+      "width": 62
+    }
+  ]
+}

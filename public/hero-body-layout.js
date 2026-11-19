@@ -1,0 +1,1 @@
+export const HERO_BODY_RATIO={"dark-elf":0.8272,"fire-wizard":0.8868,"goblin-assassin":0.8277,"knight-1":0.7944,"lightning-mage":0.8413,"samurai-archer":0.9222,"samurai":0.9109,"wanderer-magican":0.8974,"warrior-1":0.8403,"warrior-3":0.9639};

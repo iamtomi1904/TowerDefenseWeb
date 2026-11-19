@@ -1,0 +1,48 @@
+{
+  "checks": {
+    "usedRamp": true,
+    "reachedPlateau": true,
+    "closedGateBlocks": true,
+    "savedFloor": true,
+    "savedPosition": true,
+    "reload": true,
+    "noRuntimeErrors": true
+  },
+  "ramp": {
+    "surfaceId": "transition:Thềm Vành Lũy-27-r8-58",
+    "height": 4.448410464236887,
+    "kind": "ramp",
+    "supported": true,
+    "transitionId": "Thềm Vành Lũy-27-r8-58",
+    "from": "ground",
+    "to": "region-1"
+  },
+  "at": {
+    "x": 2760,
+    "y": 507.7146234254577,
+    "ground": {
+      "surfaceId": "region-1",
+      "height": 128,
+      "kind": "flat",
+      "supported": true
+    }
+  },
+  "saved": {
+    "position_x": 2760,
+    "position_y": 507.7146234254577,
+    "position_z": 128,
+    "surface_id": "region-1",
+    "terrain_revision": 2
+  },
+  "restored": {
+    "x": 2760,
+    "y": 507.7146234254577,
+    "ground": {
+      "surfaceId": "region-1",
+      "height": 128,
+      "kind": "flat",
+      "supported": true
+    }
+  },
+  "errors": []
+}

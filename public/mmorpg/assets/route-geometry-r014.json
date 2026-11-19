@@ -1,0 +1,18 @@
+{
+  "revision": 14,
+  "changedRoads": [
+    1,
+    3,
+    4,
+    5,
+    6,
+    8
+  ],
+  "newBypassRoad": 12,
+  "changedCells": 32099,
+  "worldSize": [
+    6000,
+    4500
+  ],
+  "landmarksMoved": false
+}

@@ -1,0 +1,230 @@
+{
+  "revision": 16,
+  "placed": [
+    {
+      "id": 3591,
+      "asset": "supply",
+      "at": [
+        1421.715728752538,
+        2281.7157287525383
+      ],
+      "width": 125,
+      "zone": "Tiếp tế phía Tây"
+    },
+    {
+      "id": 3592,
+      "asset": "notice",
+      "at": [
+        1710.6146745892072,
+        2323.9103626009028
+      ],
+      "width": 88,
+      "zone": "Tiếp tế phía Tây"
+    },
+    {
+      "id": 3593,
+      "asset": "trough",
+      "at": [
+        1450,
+        2460
+      ],
+      "width": 96,
+      "zone": "Tiếp tế phía Tây"
+    },
+    {
+      "id": 3594,
+      "asset": "medicine",
+      "at": [
+        2710,
+        2745
+      ],
+      "width": 125,
+      "zone": "Lều y tế"
+    },
+    {
+      "id": 3595,
+      "asset": "herbs",
+      "at": [
+        2800,
+        2650
+      ],
+      "width": 110,
+      "zone": "Lều y tế"
+    },
+    {
+      "id": 3596,
+      "asset": "armory",
+      "at": [
+        2830,
+        2130
+      ],
+      "width": 135,
+      "zone": "Xưởng rèn"
+    },
+    {
+      "id": 3597,
+      "asset": "logs",
+      "at": [
+        2867.653668647302,
+        2231.522409349774
+      ],
+      "width": 105,
+      "zone": "Xưởng rèn"
+    },
+    {
+      "id": 3598,
+      "asset": "trough",
+      "at": [
+        2780,
+        2450
+      ],
+      "width": 95,
+      "zone": "Xưởng rèn"
+    },
+    {
+      "id": 3599,
+      "asset": "notice",
+      "at": [
+        2235.857864376269,
+        2029.142135623731
+      ],
+      "width": 88,
+      "zone": "Nhà chỉ huy"
+    },
+    {
+      "id": 3600,
+      "asset": "watchpost",
+      "at": [
+        1937.6536686473019,
+        2048.477590650226
+      ],
+      "width": 85,
+      "zone": "Nhà chỉ huy"
+    },
+    {
+      "id": 3601,
+      "asset": "herbs",
+      "at": [
+        1618.4775906502257,
+        2692.346331352698
+      ],
+      "width": 120,
+      "zone": "Kho và nhà dân"
+    },
+    {
+      "id": 3602,
+      "asset": "logs",
+      "at": [
+        1680,
+        2780
+      ],
+      "width": 90,
+      "zone": "Kho và nhà dân"
+    },
+    {
+      "id": 3603,
+      "asset": "watchpost",
+      "at": [
+        2480,
+        590
+      ],
+      "width": 100,
+      "zone": "Tiền đình thành Bắc"
+    },
+    {
+      "id": 3604,
+      "asset": "watchpost",
+      "at": [
+        3035,
+        590
+      ],
+      "width": 100,
+      "zone": "Tiền đình thành Bắc"
+    },
+    {
+      "id": 3605,
+      "asset": "supply",
+      "at": [
+        3170,
+        520
+      ],
+      "width": 125,
+      "zone": "Vật tư phòng thủ"
+    },
+    {
+      "id": 3606,
+      "asset": "armory",
+      "at": [
+        2340,
+        530
+      ],
+      "width": 120,
+      "zone": "Vật tư phòng thủ"
+    },
+    {
+      "id": 3607,
+      "asset": "notice",
+      "at": [
+        2930,
+        690
+      ],
+      "width": 95,
+      "zone": "Chỉ dẫn cổng thành"
+    },
+    {
+      "id": 3608,
+      "asset": "trough",
+      "at": [
+        2440,
+        690
+      ],
+      "width": 110,
+      "zone": "Điểm nghỉ lính gác"
+    },
+    {
+      "id": 3609,
+      "asset": "herbs",
+      "at": [
+        1900,
+        2140
+      ],
+      "width": 95,
+      "zone": "Vườn cạnh giếng"
+    },
+    {
+      "id": 3610,
+      "asset": "watchpost",
+      "at": [
+        1555.8578643762692,
+        2614.142135623731
+      ],
+      "width": 85,
+      "zone": "Cổng Tây Nam trại"
+    }
+  ],
+  "skipped": [
+    {
+      "asset": "supply",
+      "at": [
+        2700,
+        2840
+      ],
+      "zone": "Lều y tế",
+      "reason": "No safe same-floor footprint outside road"
+    },
+    {
+      "asset": "supply",
+      "at": [
+        1840,
+        2725
+      ],
+      "zone": "Kho và nhà dân",
+      "reason": "No safe same-floor footprint outside road"
+    }
+  ],
+  "rules": {
+    "roadMargin": 18,
+    "maximumRelocation": 100,
+    "solidFootprint": "64% width by 16% width; independent of sprite height"
+  }
+}

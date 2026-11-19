@@ -1,0 +1,284 @@
+{
+  "revision": 21,
+  "added": [
+    {
+      "id": 3758,
+      "type": "detail",
+      "x": 1894.654696132597,
+      "y": 246.3328729281768,
+      "width": 120,
+      "asset": "wallflowers",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3759,
+      "type": "detail",
+      "x": 2019.654696132597,
+      "y": 318.4995395948435,
+      "width": 133,
+      "asset": "wallflowers",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3760,
+      "type": "detail",
+      "x": 2144.654696132597,
+      "y": 354.6662062615101,
+      "width": 146,
+      "asset": "fernrocks",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3761,
+      "type": "detail",
+      "x": 2272.154696132597,
+      "y": 401.8328729281768,
+      "width": 120,
+      "asset": "wallflowers",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3762,
+      "type": "detail",
+      "x": 2405.4880294659306,
+      "y": 450.6662062615101,
+      "width": 133,
+      "asset": "fernrocks",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3763,
+      "type": "detail",
+      "x": 2538.8213627992636,
+      "y": 463.49953959484344,
+      "width": 146,
+      "asset": "wallflowers",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3764,
+      "type": "detail",
+      "x": 2665.904696132597,
+      "y": 488.4578729281768,
+      "width": 120,
+      "asset": "fernrocks",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3765,
+      "type": "detail",
+      "x": 2890.904696132597,
+      "y": 510.9578729281768,
+      "width": 146,
+      "asset": "wallflowers",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3766,
+      "type": "detail",
+      "x": 3228.404696132597,
+      "y": 533.4578729281768,
+      "width": 133,
+      "asset": "wallflowers",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3767,
+      "type": "detail",
+      "x": 3453.404696132597,
+      "y": 510.9578729281768,
+      "width": 120,
+      "asset": "wallflowers",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3768,
+      "type": "detail",
+      "x": 3572.154696132597,
+      "y": 475.8328729281768,
+      "width": 120,
+      "asset": "wallflowers",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3769,
+      "type": "detail",
+      "x": 3705.4880294659306,
+      "y": 462.9995395948435,
+      "width": 133,
+      "asset": "fernrocks",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3770,
+      "type": "detail",
+      "x": 3838.8213627992636,
+      "y": 414.1662062615102,
+      "width": 146,
+      "asset": "wallflowers",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3771,
+      "type": "detail",
+      "x": 3969.654696132597,
+      "y": 376.3328729281768,
+      "width": 120,
+      "asset": "fernrocks",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3772,
+      "type": "detail",
+      "x": 4094.654696132597,
+      "y": 340.1662062615101,
+      "width": 133,
+      "asset": "wallflowers",
+      "ecologyZone": "Dải thực vật trước tường"
+    },
+    {
+      "id": 3773,
+      "type": "oak",
+      "x": 1910,
+      "y": 930,
+      "width": 160
+    },
+    {
+      "id": 3774,
+      "type": "detail",
+      "x": 1965,
+      "y": 954,
+      "width": 105,
+      "asset": "fernrocks",
+      "ecologyZone": "Cụm cây chân vách trái"
+    },
+    {
+      "id": 3775,
+      "type": "oak",
+      "x": 2150,
+      "y": 930,
+      "width": 175
+    },
+    {
+      "id": 3776,
+      "type": "oak",
+      "x": 2260,
+      "y": 970,
+      "width": 155
+    },
+    {
+      "id": 3777,
+      "type": "detail",
+      "x": 2315,
+      "y": 994,
+      "width": 105,
+      "asset": "fernrocks",
+      "ecologyZone": "Cụm cây chân vách trái"
+    },
+    {
+      "id": 3778,
+      "type": "oak",
+      "x": 2350,
+      "y": 1010,
+      "width": 170
+    },
+    {
+      "id": 3779,
+      "type": "detail",
+      "x": 2405,
+      "y": 1034,
+      "width": 105,
+      "asset": "fernrocks",
+      "ecologyZone": "Cụm cây chân vách trái"
+    },
+    {
+      "id": 3780,
+      "type": "oak",
+      "x": 2470,
+      "y": 1050,
+      "width": 155
+    },
+    {
+      "id": 3781,
+      "type": "detail",
+      "x": 2525,
+      "y": 1074,
+      "width": 105,
+      "asset": "fernrocks",
+      "ecologyZone": "Cụm cây chân vách trái"
+    }
+  ],
+  "skipped": [
+    {
+      "type": "detail",
+      "x": 2778.404696132597,
+      "y": 517.7078729281768
+    },
+    {
+      "type": "detail",
+      "x": 3003.404696132597,
+      "y": 540.2078729281768
+    },
+    {
+      "type": "detail",
+      "x": 3115.904696132597,
+      "y": 526.7078729281768
+    },
+    {
+      "type": "detail",
+      "x": 3340.904696132597,
+      "y": 504.2078729281768
+    },
+    {
+      "type": "detail",
+      "x": 4219.654696132597,
+      "y": 267.9995395948435
+    },
+    {
+      "type": "oak",
+      "x": 2040,
+      "y": 950
+    },
+    {
+      "type": "detail",
+      "x": 2095,
+      "y": 974
+    },
+    {
+      "type": "detail",
+      "x": 2205,
+      "y": 954
+    },
+    {
+      "type": "oak",
+      "x": 2580,
+      "y": 1090
+    },
+    {
+      "type": "detail",
+      "x": 2635,
+      "y": 1114
+    },
+    {
+      "type": "oak",
+      "x": 2070,
+      "y": 1260
+    },
+    {
+      "type": "detail",
+      "x": 2125,
+      "y": 1284
+    },
+    {
+      "type": "oak",
+      "x": 2210,
+      "y": 1350
+    },
+    {
+      "type": "detail",
+      "x": 2265,
+      "y": 1374
+    }
+  ],
+  "reference": "user red-marked wall beds, left cliff woodland, right river escarpment"
+}

@@ -1,0 +1,85 @@
+{
+  "checks": {
+    "serverRejectsForgedHeight": true,
+    "descended": true,
+    "ascended": true,
+    "usedRamp": true,
+    "dbHeightAndSurface": true,
+    "dbXY": true,
+    "reloadRestoresFloor": true,
+    "progressPreserved": true,
+    "migration3": true,
+    "serverReportsTransition": true,
+    "noRuntimeErrors": true
+  },
+  "down": {
+    "at": {
+      "x": 2490,
+      "y": 3026.730252930348
+    },
+    "ground": {
+      "surfaceId": "region-5",
+      "height": -64,
+      "kind": "flat",
+      "supported": true
+    }
+  },
+  "up": {
+    "at": {
+      "x": 2490,
+      "y": 2902.1551099758694
+    },
+    "ground": {
+      "surfaceId": "region-0",
+      "height": 64,
+      "kind": "flat",
+      "supported": true
+    }
+  },
+  "trace": {
+    "kinds": [
+      "flat",
+      "ramp"
+    ],
+    "surfaces": [
+      "region-0",
+      "transition:Gò Trại Bình Minh-35-r2-19",
+      "transition:Gò Trại Bình Minh-35-r2-20",
+      "transition:Gò Trại Bình Minh-35-r2-21",
+      "transition:Gò Trại Bình Minh-35-r2-22",
+      "transition:Gò Trại Bình Minh-35-r2-23",
+      "transition:Gò Trại Bình Minh-35-r2-24",
+      "region-5"
+    ],
+    "min": -64,
+    "max": 64,
+    "allSupported": true
+  },
+  "saved": {
+    "position_x": 2490,
+    "position_y": 2902.1551099758694,
+    "position_z": 64,
+    "surface_id": "region-0",
+    "terrain_revision": 1,
+    "level": 7,
+    "experience": "12345"
+  },
+  "restored": {
+    "at": {
+      "x": 2490,
+      "y": 2902.1551099758694
+    },
+    "ground": {
+      "surfaceId": "region-0",
+      "height": 64,
+      "kind": "flat",
+      "supported": true
+    }
+  },
+  "versions": [
+    1,
+    2,
+    3
+  ],
+  "errors": []
+}

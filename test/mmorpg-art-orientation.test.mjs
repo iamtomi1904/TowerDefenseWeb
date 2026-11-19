@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {stairCrossings} from '../src/mmorpg/terrain-art-layout.ts';
+import {fenceHeading,objectOrientationPolicy,stableVariant} from '../src/mmorpg/object-orientation.ts';
+const world=JSON.parse(readFileSync(new URL('../public/mmorpg/maps/runtime-map.json',import.meta.url))).scenes.world;
+const link=(id,x,width=60)=>({id,kind:'ramp',from:'ground',to:'high',fromHeight:0,toHeight:64,base:[x,100],top:[x,0],polygon:[[x,0],[x+width,0],[x+width,100],[x,100]]});
+test('nearby but separate stair entrances are not merged into one oversized sprite',()=>{const groups=stairCrossings([link('a',0),link('b',100)]);assert.equal(groups.length,2);assert.equal(groups[0].walkWidth,60);});
+test('touching pieces form one stair and keep upper and lower floor anchors',()=>{const groups=stairCrossings([link('a',0),link('b',60)]);assert.equal(groups.length,1);assert.deepEqual(groups[0].upper,[60,0]);assert.deepEqual(groups[0].lower,[60,100]);});
+test('every placed world object has an explicit orientation policy',()=>{for(const o of world.objects)assert.ok(objectOrientationPolicy[o.kind],o.kind);});
+test('fences follow more than one contour direction; tree views are deterministic and varied',()=>{const angles=new Set(world.objects.filter(o=>o.kind==='fence').map(o=>Math.round(fenceHeading(o,world.objects,world.geology,world.scale)*6)));assert.ok(angles.size>4);for(const kind of ['oak','birch','willow','orchard']){const views=new Set(world.objects.filter(o=>o.kind===kind).map(o=>stableVariant(o.id,3)));assert.equal(views.size,3,kind);}});

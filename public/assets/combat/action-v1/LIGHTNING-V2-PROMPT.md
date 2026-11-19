@@ -1,0 +1,1 @@
+Built-in imagegen. Redraw reference as refined pixel-art lightning strike game VFX. Single vertical bolt, transparent background. Thin sharp white core, cyan rim, irregular branching violet filaments. Natural electric fractures, crisp discharge, minimal glow, no cloud or text. Contact at center bottom 88 percent. Source: exec-4b1493b1-2283-4e57-9f46-4a42f7d8a387.png

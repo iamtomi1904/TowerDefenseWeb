@@ -1,0 +1,17 @@
+import {readFileSync,writeFileSync,copyFileSync,existsSync} from 'node:fs';
+import {polygon} from './binh-minh-geography.mjs';
+const root=new URL('../public/mmorpg/maps/',import.meta.url),source=new URL('binh-minh.tmj',root),file=new URL('binh-minh-geology.json',root),map=JSON.parse(readFileSync(source)),geo=JSON.parse(readFileSync(file));if(map.properties.some(p=>p.name==='northCampRevision'&&p.value===15)){console.log('North/camp15 already authored');process.exit(0);}
+for(const [current,name]of [[source,'binh-minh-v14.tmj'],[file,'binh-minh-geology-v14.json']]){const out=new URL('history/'+name,root);if(!existsSync(out))copyFileSync(current,out);}
+const layer=map.layers.find(l=>l.name==='WorldObjects'),report={revision:15,removed:[],fortress:{x:2760,y:500,width:2500,arrival:[2760,560]},camp:{yard:[2160,2420,630,350],zones:[]},plazaCells:0};
+layer.objects=layer.objects.filter(o=>{const insideCastle=o.x>1510&&o.x<4010&&o.y<490,forecourt=o.x>2400&&o.x<3100&&o.y>=490&&o.y<740;
+ const remove=['rampart','fort-gate'].includes(o.type)||[347,348].includes(o.id)||(insideCastle||forecourt)&&['oak','birch','willow','orchard','flora','grass','flowers','detail','boulders','pebbles'].includes(o.type);
+ if(remove)report.removed.push({id:o.id,kind:o.type,at:[o.x,o.y],reason:'clear rampart footprint or forecourt'});return!remove;});
+const next=map.nextobjectid++;layer.objects.push({id:next,name:'Vành lũy phía Bắc — khối thành cong',type:'fortress',x:2760,y:500,width:2500,height:0,point:true,properties:[{name:'asset',type:'string',value:'north-rampart-r015'}]});
+const marker=map.layers.find(l=>l.name==='Markers').objects.find(o=>o.name==='Vành lũy phía Bắc');marker.properties??=[];marker.properties.push({name:'arrivalX',type:'float',value:2760},{name:'arrivalY',type:'float',value:560});
+// Keep the reference's five buildings around the open shared yard; furniture belongs to its zone.
+for(const [id,zone]of [[270,'Nhà chỉ huy / phía Bắc'],[271,'Lều tiếp tế / phía Tây'],[272,'Xưởng rèn / phía Đông'],[273,'Kho và nhà dân / Tây Nam'],[274,'Lều y tế / Đông Nam'],[275,'Lửa trại / sân chung'],[276,'Giếng / mép sân']]){const o=layer.objects.find(o=>o.id===id);if(!o)continue;o.properties.push({name:'campZone',type:'string',value:zone});report.camp.zones.push({id,zone,at:[o.x,o.y]});}
+const camp=geo.regions.find(r=>r.name==='Gò Trại Bình Minh'),g=geo.navigation;
+for(let y=1800;y<2810;y+=g.cell)for(let x=1450;x<2850;x+=g.cell){const i=Math.floor(y/g.cell)*g.width+Math.floor(x/g.cell),px=x+g.cell/2,py=y+g.cell/2;if(![1,2].includes(g.data[i])||!polygon(px,py,camp.polygon))continue;if(((px-2160)/630)**2+((py-2420)/350)**2<=1){if(g.data[i]!==2)report.plazaCells++;g.data[i]=2;}}
+for(let y=510;y<640;y+=g.cell)for(let x=2520;x<3000;x+=g.cell){const i=Math.floor(y/g.cell)*g.width+Math.floor(x/g.cell);if([1,2].includes(g.data[i]))g.data[i]=2;}
+geo.northCampRevision=15;const ground=map.layers.find(l=>l.name==='Ground');for(let y=0;y<map.height;y++)for(let x=0;x<map.width;x++)ground.data[y*map.width+x]=g.data[Math.floor((y+.5)*map.tileheight/g.cell)*g.width+Math.floor((x+.5)*map.tilewidth/g.cell)];
+map.properties.push({name:'northCampRevision',type:'int',value:15});writeFileSync(source,JSON.stringify(map,null,2)+'\n');writeFileSync(file,JSON.stringify(geo)+'\n');writeFileSync(new URL('../assets/north-camp-layout-r015.json',root),JSON.stringify(report,null,2));console.log({removed:report.removed.length,plazaCells:report.plazaCells,zones:report.camp.zones.length});

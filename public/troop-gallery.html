@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Doanh trại · Xưởng lính</title><link rel="icon" href="/favicon.svg">
+<style>*{box-sizing:border-box}body{margin:0;background:#14251f;color:#ecdfbc;font:15px system-ui}main{max-width:1060px;margin:auto;padding:28px 20px}h1{font:32px Georgia,serif;margin:12px 0}p{color:#b6c6b0;line-height:1.6}small{letter-spacing:.15em;color:#c5aa72}a{color:#d7c28c}label{display:inline-flex;align-items:center;gap:8px;margin:8px 18px 16px 0}select,button{background:#263c30;color:#ecdfbc;border:1px solid #657251;border-radius:4px;padding:9px 12px;cursor:pointer}canvas{display:block;max-width:100%;height:auto;border:1px solid #566449;border-radius:5px}footer{margin-top:18px}</style>
+<main><small>THE WORLD / DOANH TRẠI</small><h1>Quân đoàn giữ thành</h1>
+<p>Lính châu Âu trung cổ, giáp bạc và tỷ lệ người trưởng thành. Giữ template giáp, vũ khí và kích thước trong trận; nâng nét vẽ và chuyển động.</p>
+<label>Động tác <select id="troop-action"><option value="idle">Đứng</option><option value="walk">Di chuyển</option><option value="attack">Tấn công</option><option value="cast">Hỗ trợ / Phòng thủ</option><option value="hurt">Trúng đòn</option><option value="dead">Gục ngã</option></select></label>
+<label><input id="troop-flip" type="checkbox">Quay trái</label><label><input id="troop-size" type="checkbox">Kích thước trong trận</label><label><input id="troop-compare" type="checkbox" checked>Đối chiếu template gốc</label><button id="troop-replay">Phát lại động tác</button>
+<p id="troop-status" role="status">Đang tải hình lính…</p><div id="troop-stage"></div>
+<footer><a href="/defense.html">Vào chiến trường</a> · <a href="/class-gallery.html">Xưởng nhân vật</a> · <a href="/enemy-attack-gallery.html">Đòn đánh của quái</a></footer></main>
+<script src="/vendor/phaser.js"></script><script type="module" src="/troop-gallery.js"></script></html>

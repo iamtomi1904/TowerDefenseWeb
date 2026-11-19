@@ -1,0 +1,3 @@
+Built-in image_gen, transparent PNG. Saved as samurai.png.
+
+Production pixel-art sprite sheet, transparent PNG, EXACT 6 columns x 6 rows, no text/grid/background. Same full-body hero faces RIGHT in all 36 cells, consistent scale, feet baseline96%, body76% cell, all weapons inside cells. Crisp 32-bit woodland fantasy pixel art matching dark steel muted jade/crimson game sprites. Rows each six chronological frames: idle breathing, running, basic attack, skill cast, hurt, death ending collapsed. Agile wind katana swordsman, tied silver-black hair, flowing pale jade scarf, dark teal samurai robes, light lamellar armor, single Japanese KATANA. Attack draws and slashes katana; casting gathers wind and leaps ready to strike. No bow or spear.

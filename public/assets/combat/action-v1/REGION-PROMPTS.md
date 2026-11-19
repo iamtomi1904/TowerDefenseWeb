@@ -1,0 +1,17 @@
+# Lava and regional storms — built-in image_gen
+
+## lava-pool.png
+
+ONE complete circular top-down LAVA POOL AREA for a pixel action RPG skill. Contiguous irregular circular footprint occupying80% canvas, shallow molten orange-red lava between dark charcoal basalt crust islands, glowing gold narrow flowing fissures linking across the whole area. Distinct darker cooled perimeter with jagged natural edges. Mostly deep red lava, orange moving-looking eddies and a few tiny bright hot yellow cores. Low flat ground hazard, no tall flames, no volcano, no pillars, no scenery, no decorative border or magic runes. Clear pixel clusters and limited palette, clean crisp dark outlines, readable against dark green battlefield. Center visibly filled by connected lava and basalt, not scattered separate fire tufts. Transparent outside the pool, all edges inside image with10% empty margin. ONE isolated image, NOT atlas, no frames/text/grid. Clean transparent alpha, no matte rectangle. Match crisp woodland fantasy action-game pixel effects.
+
+## blizzard-sweep.png
+
+ONE isolated horizontal stream of DRIVEN SNOW for a fantasy action game. A tapered diagonal swath of many small white and ice-blue snow GRAINS and SHORT SPEED STREAKS, with two faint broad blue mist ribbons behind them, icy sparkling points and three small angular ice flecks. Strong left-to-right wind direction. Sparse open transparent gaps throughout; no C-shaped blade crescent, no scythe shapes, no circular vortex, no big clouds, no giant crystals. This will be one moving component among many in a blizzard. Crisp PIXEL ART square clusters, dark blue edge pixels, white grain cores, action RPG style. Width about3x height, complete inside transparent PNG with15% empty padding. ONE image NOT spritesheet, no text/grid/background. Clean transparent alpha, no matte rectangle. Match crisp woodland fantasy action-game pixel effects.
+
+## storm-ground.png
+
+ONE circular TOP-DOWN GROUND ZONE for a sustained LIGHTNING STORM in a crisp pixel-action fantasy game. Thin electric blue charged mist close to ground, irregular branching violet-blue electrical ARCS distributed across the ENTIRE circular area, tiny bright cyan contact sparks, small localized dark indigo wisps only at edges. Lots of transparent open gaps inside so characters remain visible. No giant cloud overhead, no opaque filled blue disc, no smooth neon outline, no decorative runes. Clear regional footprint but organic broken perimeter. ONE complete isolated ground effect centered with12% empty transparent margin, not atlas, no text/grid, transparent alpha outside. Hard visible pixel clusters, limited saturated dark blue/cyan palette, restrained glow.
+
+## frost-ground.png
+
+ONE circular TOP-DOWN GROUND ZONE for a sustained ICE AND SNOW BLIZZARD in a crisp fantasy pixel action game. Uneven pale blue frost and white powder snow lightly dust the entire circular footprint, with scattered jagged icy-blue ground fissures, tiny icy grains, and only THREE small low crystal shards near perimeter. Translucent-looking open gaps occupy most of the center so characters remain readable. Organic uneven perimeter, no decorative magic ring, no giant ice pillars, no tall iceberg, no opaque filled white disc. ONE complete isolated ground effect centered with12% empty transparent margin, not atlas, no text/grid, transparent alpha outside. Hard visible pixel clusters, white/steelblue/cyan limited palette, restrained glow.

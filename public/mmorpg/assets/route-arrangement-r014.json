@@ -1,0 +1,1283 @@
+{
+  "revision": 14,
+  "removed": [
+    {
+      "id": 318,
+      "kind": "fence",
+      "at": [
+        3190,
+        3090
+      ],
+      "reason": "road or gate opening"
+    },
+    {
+      "id": 319,
+      "kind": "fence",
+      "at": [
+        3190,
+        4070
+      ],
+      "reason": "road or gate opening"
+    },
+    {
+      "id": 907,
+      "kind": "flora",
+      "at": [
+        5395.7282055635005,
+        350.1197533356026
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 923,
+      "kind": "flora",
+      "at": [
+        4474.9153101071715,
+        1887.0356243802235
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 934,
+      "kind": "flora",
+      "at": [
+        825.5001334497015,
+        843.5921847226061
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 960,
+      "kind": "flora",
+      "at": [
+        4699.162225667387,
+        2018.2153594261035
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 983,
+      "kind": "flora",
+      "at": [
+        850.02060399626,
+        870.4294636717029
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 986,
+      "kind": "flora",
+      "at": [
+        4524.532475732267,
+        533.6459597898647
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1019,
+      "kind": "flora",
+      "at": [
+        793.0409383424799,
+        886.7434508504309
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1034,
+      "kind": "flora",
+      "at": [
+        4911.909597050399,
+        283.9567710598931
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1136,
+      "kind": "flora",
+      "at": [
+        5409.162549553439,
+        380.80329588148743
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1161,
+      "kind": "flora",
+      "at": [
+        4927.060155048966,
+        2433.628808069043
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1200,
+      "kind": "flora",
+      "at": [
+        4435.4746747761965,
+        1632.6166100380942
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1222,
+      "kind": "flora",
+      "at": [
+        4429.975641649216,
+        1663.63673300948
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1242,
+      "kind": "flora",
+      "at": [
+        4571.331965448335,
+        1970.89668140281
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1287,
+      "kind": "flora",
+      "at": [
+        4606.638045273721,
+        424.88007127773017
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1380,
+      "kind": "flora",
+      "at": [
+        4539.404281163588,
+        1905.215989467688
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1453,
+      "kind": "flora",
+      "at": [
+        1243.754679914564,
+        2903.179709701799
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1486,
+      "kind": "flora",
+      "at": [
+        2174.0800636913627,
+        1406.7174008721486
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1540,
+      "kind": "flora",
+      "at": [
+        4935.924780303612,
+        2367.234206465073
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1637,
+      "kind": "flora",
+      "at": [
+        5407.817749129608,
+        429.73903485108167
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1786,
+      "kind": "flora",
+      "at": [
+        2792.241113372147,
+        548.5082539124414
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1939,
+      "kind": "flora",
+      "at": [
+        4641.555918632075,
+        2049.1597425052896
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 1980,
+      "kind": "flora",
+      "at": [
+        5078.486693333834,
+        270.0266938051209
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2022,
+      "kind": "flora",
+      "at": [
+        1607.9162009432912,
+        1092.9630007548258
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2083,
+      "kind": "flora",
+      "at": [
+        1940.6339941453189,
+        1244.5886809984222
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2100,
+      "kind": "flora",
+      "at": [
+        4455.3754026815295,
+        654.3514479650185
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2125,
+      "kind": "flora",
+      "at": [
+        4896.037209806964,
+        2324.0705113718286
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2160,
+      "kind": "flora",
+      "at": [
+        1334.6863143891096,
+        2931.97016115766
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2193,
+      "kind": "flora",
+      "at": [
+        4858.316698819399,
+        329.1876031784341
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2220,
+      "kind": "flora",
+      "at": [
+        1841.1616454832256,
+        1310.387250049971
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2231,
+      "kind": "flora",
+      "at": [
+        1830.4627130180597,
+        1235.9099022625014
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2268,
+      "kind": "flora",
+      "at": [
+        5383.571864310652,
+        384.24437520559877
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2326,
+      "kind": "flora",
+      "at": [
+        4401.416600262746,
+        983.4833278739825
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2371,
+      "kind": "flora",
+      "at": [
+        1554.8352018278092,
+        2892.6168048987165
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2427,
+      "kind": "flora",
+      "at": [
+        4775.672444505617,
+        382.94757737312466
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2468,
+      "kind": "flora",
+      "at": [
+        1513.296542270109,
+        2894.6162555972114
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2515,
+      "kind": "flora",
+      "at": [
+        1958.53232502006,
+        1229.1833684081212
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2517,
+      "kind": "flora",
+      "at": [
+        4604.6537209209055,
+        1967.2143326187506
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2538,
+      "kind": "flora",
+      "at": [
+        4435.646906876937,
+        1295.3686035843566
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2810,
+      "kind": "flora",
+      "at": [
+        4407.197390338406,
+        1094.2797415191308
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2813,
+      "kind": "flora",
+      "at": [
+        4960.8994145412,
+        2413.933139895089
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2881,
+      "kind": "flora",
+      "at": [
+        4435.611479189247,
+        1021.1399626126513
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2914,
+      "kind": "flora",
+      "at": [
+        1236.4073627907783,
+        2923.1500276969746
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2956,
+      "kind": "flora",
+      "at": [
+        4892.441109856591,
+        296.06857555452734
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 2961,
+      "kind": "flora",
+      "at": [
+        5401.202641511336,
+        376.40865218359977
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 3023,
+      "kind": "flora",
+      "at": [
+        1600.9314889181405,
+        1102.0105943875387
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 3031,
+      "kind": "flora",
+      "at": [
+        4367.848485512659,
+        1082.5742752710357
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 3036,
+      "kind": "flora",
+      "at": [
+        1491.1649615503848,
+        962.0590634411201
+      ],
+      "reason": "keep walking surface readable"
+    },
+    {
+      "id": 3113,
+      "kind": "flora",
+      "at": [
+        4873.275407552719,
+        332.6346665946767
+      ],
+      "reason": "keep walking surface readable"
+    }
+  ],
+  "moved": [
+    {
+      "id": 312,
+      "kind": "fence",
+      "from": [
+        2650,
+        3020
+      ],
+      "to": [
+        2650,
+        3090
+      ],
+      "reason": "field perimeter follows plot edge, not road"
+    },
+    {
+      "id": 313,
+      "kind": "fence",
+      "from": [
+        2650,
+        4160
+      ],
+      "to": [
+        2650,
+        4070
+      ],
+      "reason": "field perimeter follows plot edge, not road"
+    },
+    {
+      "id": 314,
+      "kind": "fence",
+      "from": [
+        2830,
+        3020
+      ],
+      "to": [
+        2830,
+        3090
+      ],
+      "reason": "field perimeter follows plot edge, not road"
+    },
+    {
+      "id": 315,
+      "kind": "fence",
+      "from": [
+        2830,
+        4160
+      ],
+      "to": [
+        2830,
+        4070
+      ],
+      "reason": "field perimeter follows plot edge, not road"
+    },
+    {
+      "id": 316,
+      "kind": "fence",
+      "from": [
+        3010,
+        3020
+      ],
+      "to": [
+        3010,
+        3090
+      ],
+      "reason": "field perimeter follows plot edge, not road"
+    },
+    {
+      "id": 317,
+      "kind": "fence",
+      "from": [
+        3010,
+        4160
+      ],
+      "to": [
+        3010,
+        4070
+      ],
+      "reason": "field perimeter follows plot edge, not road"
+    },
+    {
+      "id": 318,
+      "kind": "fence",
+      "from": [
+        3190,
+        3020
+      ],
+      "to": [
+        3190,
+        3090
+      ],
+      "reason": "field perimeter follows plot edge, not road"
+    },
+    {
+      "id": 319,
+      "kind": "fence",
+      "from": [
+        3190,
+        4160
+      ],
+      "to": [
+        3190,
+        4070
+      ],
+      "reason": "field perimeter follows plot edge, not road"
+    },
+    {
+      "id": 320,
+      "kind": "fence",
+      "from": [
+        3370,
+        3020
+      ],
+      "to": [
+        3370,
+        3090
+      ],
+      "reason": "field perimeter follows plot edge, not road"
+    },
+    {
+      "id": 321,
+      "kind": "fence",
+      "from": [
+        3370,
+        4160
+      ],
+      "to": [
+        3370,
+        4070
+      ],
+      "reason": "field perimeter follows plot edge, not road"
+    },
+    {
+      "id": 322,
+      "kind": "fence",
+      "from": [
+        3550,
+        3020
+      ],
+      "to": [
+        3550,
+        3090
+      ],
+      "reason": "field perimeter follows plot edge, not road"
+    },
+    {
+      "id": 323,
+      "kind": "fence",
+      "from": [
+        3550,
+        4160
+      ],
+      "to": [
+        3550,
+        4070
+      ],
+      "reason": "field perimeter follows plot edge, not road"
+    },
+    {
+      "id": 324,
+      "kind": "fence",
+      "from": [
+        3730,
+        3020
+      ],
+      "to": [
+        3730,
+        3090
+      ],
+      "reason": "field perimeter follows plot edge, not road"
+    },
+    {
+      "id": 325,
+      "kind": "fence",
+      "from": [
+        3730,
+        4160
+      ],
+      "to": [
+        3730,
+        4070
+      ],
+      "reason": "field perimeter follows plot edge, not road"
+    },
+    {
+      "id": 271,
+      "kind": "building",
+      "from": [
+        1560,
+        2270
+      ],
+      "to": [
+        1538.5273014683569,
+        2367.6674112371634
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 1887,
+      "kind": "flora",
+      "from": [
+        1489.1629028879106,
+        2342.049341290258
+      ],
+      "to": [
+        1467.6902043562677,
+        2439.7167525274217
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 3242,
+      "kind": "barrel",
+      "from": [
+        1610,
+        2350
+      ],
+      "to": [
+        1588.527301468357,
+        2447.667411237164
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 3243,
+      "kind": "pot",
+      "from": [
+        1652,
+        2359
+      ],
+      "to": [
+        1630.527301468357,
+        2456.667411237164
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 3494,
+      "kind": "pebbles",
+      "from": [
+        1560,
+        2298
+      ],
+      "to": [
+        1538.527301468357,
+        2395.667411237164
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 274,
+      "kind": "building",
+      "from": [
+        2500,
+        2730
+      ],
+      "to": [
+        2574.009070964819,
+        2699.6247236239014
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 3497,
+      "kind": "pebbles",
+      "from": [
+        2500,
+        2758
+      ],
+      "to": [
+        2574.0090709648193,
+        2727.6247236239014
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 275,
+      "kind": "building",
+      "from": [
+        2160,
+        2440
+      ],
+      "to": [
+        2166.2948462328586,
+        2458.983543159923
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 278,
+      "kind": "building",
+      "from": [
+        1130,
+        3500
+      ],
+      "to": [
+        982.6076738431225,
+        3437.7464684530696
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 866,
+      "kind": "flora",
+      "from": [
+        1216.678861528635,
+        3557.4392731813714
+      ],
+      "to": [
+        1069.2865353717575,
+        3495.185741634441
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 3499,
+      "kind": "pebbles",
+      "from": [
+        1130,
+        3528
+      ],
+      "to": [
+        982.6076738431225,
+        3465.7464684530696
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 280,
+      "kind": "building",
+      "from": [
+        800,
+        4140
+      ],
+      "to": [
+        744.1393233154461,
+        4289.931933891162
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 2189,
+      "kind": "flora",
+      "from": [
+        849.7352123446763,
+        4240.539032272063
+      ],
+      "to": [
+        793.8745356601223,
+        4390.470966163226
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 3501,
+      "kind": "pebbles",
+      "from": [
+        800,
+        4168
+      ],
+      "to": [
+        744.1393233154461,
+        4317.931933891163
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 282,
+      "kind": "building",
+      "from": [
+        720,
+        900
+      ],
+      "to": [
+        770.7300856267343,
+        769.5145279645883
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 934,
+      "kind": "flora",
+      "from": [
+        774.7700478229672,
+        974.0776567580178
+      ],
+      "to": [
+        825.5001334497015,
+        843.5921847226061
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 983,
+      "kind": "flora",
+      "from": [
+        799.2905183695257,
+        1000.9149357071146
+      ],
+      "to": [
+        850.02060399626,
+        870.4294636717029
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 1019,
+      "kind": "flora",
+      "from": [
+        742.3108527157456,
+        1017.2289228858426
+      ],
+      "to": [
+        793.0409383424799,
+        886.7434508504309
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 3502,
+      "kind": "pebbles",
+      "from": [
+        720,
+        928
+      ],
+      "to": [
+        770.7300856267343,
+        797.5145279645883
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 284,
+      "kind": "building",
+      "from": [
+        5100,
+        1490
+      ],
+      "to": [
+        5179.631904395061,
+        1482.3345057291833
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 3503,
+      "kind": "pebbles",
+      "from": [
+        5100,
+        1518
+      ],
+      "to": [
+        5179.631904395061,
+        1510.3345057291835
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 286,
+      "kind": "building",
+      "from": [
+        3800,
+        3070
+      ],
+      "to": [
+        3781.917013917088,
+        3078.5443322925325
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 309,
+      "kind": "lamp",
+      "from": [
+        3720,
+        3100
+      ],
+      "to": [
+        3701.9170139170874,
+        3108.544332292533
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 310,
+      "kind": "barrel",
+      "from": [
+        3762,
+        3112
+      ],
+      "to": [
+        3743.9170139170874,
+        3120.544332292533
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 3505,
+      "kind": "pebbles",
+      "from": [
+        3800,
+        3098
+      ],
+      "to": [
+        3781.9170139170874,
+        3106.544332292533
+      ],
+      "reason": "follow owning building courtyard"
+    },
+    {
+      "id": 408,
+      "kind": "oak",
+      "from": [
+        5190.476067177951,
+        380.57832282502204
+      ],
+      "to": [
+        5231.28746947582,
+        205.26594607288988
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 476,
+      "kind": "birch",
+      "from": [
+        4545.618705055676,
+        527.0822044229135
+      ],
+      "to": [
+        4572.00358600914,
+        557.1461039881983
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 489,
+      "kind": "oak",
+      "from": [
+        4907.764862675685,
+        367.58707892149687
+      ],
+      "to": [
+        4827.422508843833,
+        427.1278731785225
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 506,
+      "kind": "birch",
+      "from": [
+        4425.697183166631,
+        1503.7905522389337
+      ],
+      "to": [
+        4385.757877588549,
+        1501.5878561771567
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 533,
+      "kind": "oak",
+      "from": [
+        5217.46393670328,
+        258.20961894933134
+      ],
+      "to": [
+        5276.859375196779,
+        249.7136265902901
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 537,
+      "kind": "birch",
+      "from": [
+        4703.817481105216,
+        356.3346140785143
+      ],
+      "to": [
+        4679.011614762136,
+        301.70248987517346
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 579,
+      "kind": "oak",
+      "from": [
+        4522.497552889399,
+        1566.5726041188464
+      ],
+      "to": [
+        4547.0015194789175,
+        1642.727417633028
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 657,
+      "kind": "willow",
+      "from": [
+        4457.028966152575,
+        1346.5462991502136
+      ],
+      "to": [
+        4377.631798067436,
+        1356.348834539596
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 660,
+      "kind": "willow",
+      "from": [
+        4388.591031648684,
+        1638.4096529334784
+      ],
+      "to": [
+        4368.611238758732,
+        1637.5108336665521
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 683,
+      "kind": "oak",
+      "from": [
+        4502.7495963382535,
+        1700.807360978797
+      ],
+      "to": [
+        4542.738709152041,
+        1699.8741641259414
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 731,
+      "kind": "birch",
+      "from": [
+        4592.4987364327535,
+        405.232648155652
+      ],
+      "to": [
+        4570.433000951059,
+        371.8694451072054
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 736,
+      "kind": "oak",
+      "from": [
+        4424.087317648809,
+        1238.145335065201
+      ],
+      "to": [
+        4366.155109704592,
+        1253.7613295166607
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 756,
+      "kind": "oak",
+      "from": [
+        4590.201473655179,
+        1911.096439533867
+      ],
+      "to": [
+        4616.765366136478,
+        1881.1905936798876
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 772,
+      "kind": "oak",
+      "from": [
+        4469.903098570649,
+        1909.0474504046142
+      ],
+      "to": [
+        4437.259186279932,
+        1932.1640027071528
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 817,
+      "kind": "birch",
+      "from": [
+        4527.418083243538,
+        1820.741357281804
+      ],
+      "to": [
+        4565.717053866205,
+        1809.2006099384078
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 3125,
+      "kind": "boulders",
+      "from": [
+        4473.789318242086,
+        467.1365911034916
+      ],
+      "to": [
+        4460.596877765353,
+        452.10464132084934
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 3127,
+      "kind": "boulders",
+      "from": [
+        4415.019750857078,
+        799.7450414765489
+      ],
+      "to": [
+        4472.65516640623,
+        855.2261993094257
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 3129,
+      "kind": "boulders",
+      "from": [
+        4350.616908930732,
+        1129.214029259909
+      ],
+      "to": [
+        4331.089163814935,
+        1133.5345813881067
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 3173,
+      "kind": "boulders",
+      "from": [
+        1212.9472188779243,
+        3029.181949396998
+      ],
+      "to": [
+        1172.9472188779243,
+        3029.181949396998
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 3193,
+      "kind": "sign",
+      "from": [
+        2260,
+        2360
+      ],
+      "to": [
+        2312.941469955198,
+        2388.234743827116
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 3194,
+      "kind": "sign",
+      "from": [
+        520,
+        2090
+      ],
+      "to": [
+        518.9184771012168,
+        2109.9707362963763
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 3323,
+      "kind": "boulders",
+      "from": [
+        5395.52105468905,
+        423.6752769283687
+      ],
+      "to": [
+        5436.282796643482,
+        310.8104002268884
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 3324,
+      "kind": "boulders",
+      "from": [
+        5437.782957847491,
+        377.0565075935125
+      ],
+      "to": [
+        5458.600929303889,
+        320.78384936200007
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    },
+    {
+      "id": 3335,
+      "kind": "detail",
+      "from": [
+        2001.4632512916928,
+        2710.1251120742318
+      ],
+      "to": [
+        2018.0861127686212,
+        2721.2462845087753
+      ],
+      "reason": "root/footprint outside road corridor; same floor"
+    }
+  ],
+  "unresolved": [],
+  "rules": {
+    "footClearance": 12,
+    "maximumMove": 180,
+    "fieldNorthFence": 3090,
+    "fieldSouthFence": 4070
+  }
+}

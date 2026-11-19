@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Xem Bản Đồ Chiến Trường · Giữ Cổng Thành</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#13211b;color:#ecdfbc;font:14px system-ui;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+header{background:#192b23;border-bottom:1px solid #495d46;padding:10px 16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.title-wrap small{letter-spacing:.16em;color:#c5aa72;display:block;font-size:11px}
+.title-wrap h1{font:20px Georgia,serif;margin:0;color:#f5e4b8}
+nav a{color:#cbdcb5;text-decoration:none;margin-left:14px;font-size:13px}
+nav a:hover{text-decoration:underline}
+.toolbar{background:#16261f;border-bottom:1px solid #35493b;padding:8px 16px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+button{background:#243a2e;color:#ecdfbc;border:1px solid #607352;border-radius:4px;padding:6px 11px;cursor:pointer;font:13px system-ui}
+button:hover{background:#2f4c3c}
+button[aria-pressed=true]{background:#536646;border-color:#e0c88e;color:#fff6d6;font-weight:600}
+.sep{width:1px;height:22px;background:#3a4f40;margin:0 4px}
+.workspace{display:flex;flex:1;min-height:0}
+#map-stage{flex:1;position:relative;background:#0e1914;cursor:grab;overflow:hidden}
+#map-stage:active{cursor:grabbing}
+aside{width:300px;background:#182921;border-left:1px solid #3b4f41;padding:14px;overflow-y:auto;font-size:13px}
+aside h2{font:18px Georgia,serif;margin:0 0 6px;color:#f2e0ae}
+aside p{color:#b4c3ae;line-height:1.55;margin:6px 0}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.stat-box{background:#203429;border:1px solid #394e40;border-radius:6px;padding:8px}
+.stat-box span{display:block;font-size:11px;color:#9eb09b}
+.stat-box b{font-size:15px;color:#f2dfab}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;background:#2b4334;border:1px solid #596b4d;font-size:11px;margin:2px 4px 2px 0;color:#dce8be}
+#loading-overlay{position:absolute;inset:0;background:#101d17dd;display:flex;align-items:center;justify-content:center;font:16px Georgia,serif;color:#f3e1b3;z-index:20}
+.hint{font-size:12px;color:#9fb19c;margin-top:8px}
+@media(max-width:860px){.workspace{flex-direction:column}aside{width:100%;height:190px;border-left:none;border-top:1px solid #3b4f41}}
+</style>
+</head>
+<body>
+<header>
+  <div class="title-wrap">
+    <small>THE WORLD / XEM BẢN ĐỒ CHIẾN TRƯỜNG</small>
+    <h1>Thư viện 10 Mốc Bản Đồ (Đồ họa nâng cấp)</h1>
+  </div>
+  <nav>
+    <a href="/defense.html">Vào chiến trường</a>
+    <a href="/aura-stats.html">Thống kê hào quang</a>
+    <a href="/class-gallery.html">Xem trước kỹ năng</a>
+    <a href="/effect-lab.html">Xưởng hiệu ứng</a>
+  </nav>
+</header>
+<div class="toolbar">
+  <div id="stage-buttons" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+  <div class="sep"></div>
+  <button id="zoom-fit">Toàn bản đồ</button>
+  <button id="zoom-half">50%</button>
+  <button id="zoom-100">100% (Chi tiết)</button>
+  <button id="center-base">Về Cổng Thành</button>
+</div>
+<div class="workspace">
+  <div id="map-stage">
+    <div id="loading-overlay">Đang tải tài nguyên bản đồ...</div>
+  </div>
+  <aside id="map-info">
+    <h2>Đang tải...</h2>
+  </aside>
+</div>
+<script src="/vendor/phaser.js"></script>
+<script type="module">
+import {MAPS} from './content.js';
+import {BIOMES} from './world-biomes.js';
+import {renderMap,updateScenery,unifiedPropAsset} from './terrain.js';
+
+const catalog=await(await fetch('/catalog-v4.json')).json();
+let currentStage=1,scene=null,dragging=false,lastX=0,lastY=0;
+const entities=new Map();
+
+const btnWrap=document.querySelector('#stage-buttons');
+for(const m of MAPS){
+  const b=document.createElement('button');
+  b.textContent=`Mốc ${String(m.id).padStart(2,'0')}`;
+  b.dataset.stage=m.id;
+  b.setAttribute('aria-pressed',String(m.id===currentStage));
+  b.onclick=()=>selectStage(m.id);
+  btnWrap.append(b);
+}
+
+function fitToMap(m){
+  if(!scene)return;
+  const cam=scene.cameras.main;
+  const zx=cam.width/m.width,zy=cam.height/m.height;
+  cam.setZoom(Math.max(.12,Math.min(zx,zy)*.96));
+  cam.centerOn(m.width/2,m.height/2);
+}
+
+function updateInfo(m){
+  const biomes=[...new Set((m.environment||[]).map(z=>BIOMES[z.type]?.name).filter(Boolean))];
+  const camps=(m.camps||[]).map(c=>({wolf:'Sói',serpent:'Rắn',undead:'Undead',harpy:'Harpy',stone:'Đá',dragon:'Rồng'}[c.family]||c.family));
+  document.querySelector('#map-info').innerHTML=`
+    <h2>Mốc ${String(m.id).padStart(2,'0')} · ${m.name}</h2>
+    <p>${m.description}</p>
+    <div class="stat-grid">
+      <div class="stat-box"><span>Kích thước</span><b>${m.width} × ${m.height}</b></div>
+      <div class="stat-box"><span>Hướng tấn công</span><b>${m.lanes.length} đường</b></div>
+      <div class="stat-box"><span>Sông & Suối</span><b>${(m.rivers||[]).length} dòng (${(m.bridges||[]).length} cầu)</b></div>
+      <div class="stat-box"><span>Lãnh địa thủ lĩnh</span><b>${(m.territories||[]).length} vùng</b></div>
+      <div class="stat-box"><span>Cây & Vật cản</span><b>${(m.props||[]).length} vật thể</b></div>
+      <div class="stat-box"><span>Trại quái rừng</span><b>${(m.camps||[]).length} trại</b></div>
+    </div>
+    <p><b>Địa hình & Biome:</b><br>${biomes.map(n=>`<span class="tag">${n}</span>`).join('')}</p>
+    <p><b>Thủ lĩnh & Trại:</b><br>${(m.territories||[]).map(t=>`<span class="tag">${t.name}</span>`).join('')}${camps.map(c=>`<span class="tag">Trại ${c}</span>`).join('')}</p>
+    <p class="hint">🖱️ Kéo chuột để di chuyển bản đồ · Cuộn chuột để phóng to / thu nhỏ.</p>
+  `;
+}
+
+function selectStage(id){
+  currentStage=id;
+  btnWrap.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.stage===id)));
+  const m=MAPS[id-1];
+  updateInfo(m);
+  if(!scene)return;
+  renderMap(scene,m,catalog,entities);
+  scene.cameras.main.setBounds(-120,-120,m.width+240,m.height+240);
+  fitToMap(m);
+}
+
+document.querySelector('#zoom-fit').onclick=()=>fitToMap(MAPS[currentStage-1]);
+document.querySelector('#zoom-half').onclick=()=>{if(scene)scene.cameras.main.setZoom(.5);};
+document.querySelector('#zoom-100').onclick=()=>{if(scene)scene.cameras.main.setZoom(1);};
+document.querySelector('#center-base').onclick=()=>{
+  if(!scene)return;
+  const m=MAPS[currentStage-1];
+  scene.cameras.main.setZoom(.75).centerOn(m.base.x,m.base.y+40);
+};
+
+const stageEl=document.querySelector('#map-stage');
+new Phaser.Game({
+  type:Phaser.AUTO,
+  parent:'map-stage',
+  width:stageEl.clientWidth||960,
+  height:stageEl.clientHeight||640,
+  pixelArt:true,
+  backgroundColor:'#0e1914',
+  scale:{mode:Phaser.Scale.RESIZE,autoCenter:Phaser.Scale.CENTER_BOTH},
+  scene:{
+    preload(){
+      this.load.on('progress',v=>{
+        document.querySelector('#loading-overlay').textContent=`Đang tải tài nguyên bản đồ... ${Math.round(v*100)}%`;
+      });
+      this.load.image('bridge-atlas','/assets/v4/Bridges.png');
+      for(let n=1;n<=10;n++){this.load.image('stone-wall-'+n,'/assets/v4/stone-tower-'+n+'.png');this.load.image('castle-'+n,'/assets/castles/castle-'+n+'.png');}
+      this.load.image('castle','/assets/v3/castle.png');
+      const needed=new Set([...MAPS.flatMap(m=>m.props.flatMap(p=>[p.asset,unifiedPropAsset(p.asset)])),...MAPS.flatMap(m=>[m.fortress.ornament,unifiedPropAsset(m.fortress.ornament)]),'chanterelles1','bush_simple1_1','rock1_1','cloud-1','cloud-2','cloud-3']);
+      for(const p of catalog.props)if(needed.has(p.id))this.load.image(p.id,p.url);
+      for(const t of catalog.terrain)this.load.image(t.id,t.url);
+    },
+    create(){
+      scene=this;
+      document.querySelector('#loading-overlay').style.display='none';
+      this.input.on('pointerdown',p=>{dragging=true;lastX=p.x;lastY=p.y;});
+      this.input.on('pointerup',()=>{dragging=false;});
+      this.input.on('pointermove',p=>{
+        if(!dragging)return;
+        const cam=this.cameras.main;
+        cam.scrollX-=(p.x-lastX)/cam.zoom;
+        cam.scrollY-=(p.y-lastY)/cam.zoom;
+        lastX=p.x;lastY=p.y;
+      });
+      this.input.on('wheel',(p,objs,dx,dy)=>{
+        const cam=this.cameras.main;
+        const next=Math.max(.12,Math.min(1.6,cam.zoom*(dy>0?.88:1.14)));
+        cam.setZoom(next);
+      });
+      selectStage(currentStage);
+    },
+    update(time){
+      updateScenery(this,time);
+    }
+  }
+});
+</script>
+</body>
+</html>

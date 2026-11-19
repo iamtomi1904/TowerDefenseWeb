@@ -1,0 +1,9 @@
+{
+  "stairsBelowActor": true,
+  "stairs": 5,
+  "trees": 392,
+  "treeTextures": true,
+  "cropTextures": true,
+  "transparentStairs": true,
+  "errors": []
+}

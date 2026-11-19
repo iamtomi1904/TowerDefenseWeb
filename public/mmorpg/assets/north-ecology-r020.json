@@ -1,0 +1,787 @@
+{
+  "revision": 20,
+  "removed": [
+    868,
+    885,
+    900,
+    909,
+    911,
+    1056,
+    1085,
+    1106,
+    1109,
+    1133,
+    1147,
+    1174,
+    1193,
+    1238,
+    1284,
+    1324,
+    1367,
+    1385,
+    1400,
+    1424,
+    1430,
+    1438,
+    1476,
+    1499,
+    1505,
+    1532,
+    1569,
+    1579,
+    1611,
+    1653,
+    1708,
+    1743,
+    1782,
+    1783,
+    1789,
+    1809,
+    1818,
+    2051,
+    2134,
+    2155,
+    2235,
+    2241,
+    2336,
+    2351,
+    2395,
+    2396,
+    2417,
+    2469,
+    2470,
+    2475,
+    2497,
+    2574,
+    2587,
+    2634,
+    2648,
+    2656,
+    2688,
+    2702,
+    2741,
+    2760,
+    2777,
+    2838,
+    2882,
+    2885,
+    2942,
+    2944,
+    3007,
+    3020,
+    3025,
+    3043,
+    3048,
+    3064,
+    3119,
+    3350,
+    3352,
+    3382,
+    3406,
+    3407,
+    3408,
+    3512,
+    3513,
+    3514,
+    3516,
+    3618,
+    3619,
+    3622
+  ],
+  "placed": [
+    {
+      "id": 3681,
+      "asset": "wallflowers",
+      "x": 1884.029696132597,
+      "y": 190.3953729281768,
+      "width": 125,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3682,
+      "asset": "wallflowers",
+      "x": 1977.779696132597,
+      "y": 243.0203729281768,
+      "width": 143,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3683,
+      "asset": "fernrocks",
+      "x": 2071.529696132597,
+      "y": 271.6453729281768,
+      "width": 161,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3684,
+      "asset": "wallflowers",
+      "x": 2165.279696132597,
+      "y": 324.2703729281768,
+      "width": 125,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3685,
+      "asset": "wallflowers",
+      "x": 2262.154696132597,
+      "y": 344.1453729281768,
+      "width": 125,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3686,
+      "asset": "fernrocks",
+      "x": 2362.154696132597,
+      "y": 379.2703729281768,
+      "width": 143,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3687,
+      "asset": "wallflowers",
+      "x": 2462.154696132597,
+      "y": 390.3953729281768,
+      "width": 161,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3688,
+      "asset": "wallflowers",
+      "x": 2562.154696132597,
+      "y": 425.5203729281768,
+      "width": 125,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3689,
+      "asset": "fernrocks",
+      "x": 2668.404696132597,
+      "y": 430.7078729281768,
+      "width": 125,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3690,
+      "asset": "wallflowers",
+      "x": 2780.904696132597,
+      "y": 453.9578729281768,
+      "width": 143,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3691,
+      "asset": "wallflowers",
+      "x": 2893.404696132597,
+      "y": 453.2078729281768,
+      "width": 161,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3692,
+      "asset": "wallflowers",
+      "x": 3230.904696132597,
+      "y": 465.2078729281768,
+      "width": 143,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3693,
+      "asset": "fernrocks",
+      "x": 3343.404696132597,
+      "y": 441.9578729281768,
+      "width": 161,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3694,
+      "asset": "wallflowers",
+      "x": 3562.154696132597,
+      "y": 413.5203729281768,
+      "width": 125,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3695,
+      "asset": "fernrocks",
+      "x": 3662.154696132597,
+      "y": 402.3953729281768,
+      "width": 143,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3696,
+      "asset": "wallflowers",
+      "x": 3762.154696132597,
+      "y": 367.2703729281768,
+      "width": 161,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3697,
+      "asset": "wallflowers",
+      "x": 3862.154696132597,
+      "y": 356.1453729281768,
+      "width": 125,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3698,
+      "asset": "fernrocks",
+      "x": 3959.029696132597,
+      "y": 312.2703729281768,
+      "width": 125,
+      "zone": "Chân tường thành",
+      "bank": false
+    },
+    {
+      "id": 3699,
+      "asset": "fernrocks",
+      "x": 4012.085635359116,
+      "y": 408.11878453038673,
+      "width": 115,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3700,
+      "asset": "mossboulder",
+      "x": 4028.8453120539707,
+      "y": 558.1833649990281,
+      "width": 110,
+      "zone": "Chân gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3701,
+      "asset": "grassroots",
+      "x": 3947.8591160221,
+      "y": 501.35082872928183,
+      "width": 131,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3702,
+      "asset": "fernrocks",
+      "x": 3891.919889502763,
+      "y": 580.0801104972376,
+      "width": 115,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3703,
+      "asset": "grassroots",
+      "x": 3844.267955801105,
+      "y": 644.3066298342542,
+      "width": 131,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3704,
+      "asset": "fernrocks",
+      "x": 3767.265193370166,
+      "y": 674.3480662983426,
+      "width": 115,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3705,
+      "asset": "mossboulder",
+      "x": 3771.491127434171,
+      "y": 975.0234529437581,
+      "width": 110,
+      "zone": "Chân gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3706,
+      "asset": "grassroots",
+      "x": 3660.911602209945,
+      "y": 670.2044198895028,
+      "width": 131,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3707,
+      "asset": "grassroots",
+      "x": 3554.558011049724,
+      "y": 666.060773480663,
+      "width": 147,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3708,
+      "asset": "mossboulder",
+      "x": 3556.274326732312,
+      "y": 972.25152817641,
+      "width": 110,
+      "zone": "Chân gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3709,
+      "asset": "fernrocks",
+      "x": 3444.4060773480664,
+      "y": 675.3839779005525,
+      "width": 115,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3710,
+      "asset": "mossboulder",
+      "x": 3445.479484720915,
+      "y": 982.9654913292086,
+      "width": 110,
+      "zone": "Chân gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3711,
+      "asset": "grassroots",
+      "x": 3330.4558011049726,
+      "y": 698.1740331491714,
+      "width": 131,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3712,
+      "asset": "fernrocks",
+      "x": 3221.6850828729284,
+      "y": 704.389502762431,
+      "width": 115,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3713,
+      "asset": "mossboulder",
+      "x": 3222.455255045198,
+      "y": 1012.1024504546568,
+      "width": 110,
+      "zone": "Chân gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3714,
+      "asset": "grassroots",
+      "x": 3118.093922651934,
+      "y": 694.0303867403316,
+      "width": 131,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3715,
+      "asset": "fernrocks",
+      "x": 2849.7928176795585,
+      "y": 695.0662983425415,
+      "width": 115,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3716,
+      "asset": "grassroots",
+      "x": 2748.2734806629837,
+      "y": 666.0607734806631,
+      "width": 131,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3717,
+      "asset": "fernrocks",
+      "x": 2655.0414364640887,
+      "y": 658.8093922651934,
+      "width": 115,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3718,
+      "asset": "mossboulder",
+      "x": 2653.5468313173837,
+      "y": 965.9871319121664,
+      "width": 110,
+      "zone": "Chân gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3719,
+      "asset": "grassroots",
+      "x": 2570.096685082873,
+      "y": 673.3121546961327,
+      "width": 131,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3720,
+      "asset": "fernrocks",
+      "x": 2476.864640883978,
+      "y": 663.9889502762431,
+      "width": 115,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3721,
+      "asset": "mossboulder",
+      "x": 2474.707404553915,
+      "y": 970.1452413023268,
+      "width": 110,
+      "zone": "Chân gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3722,
+      "asset": "grassroots",
+      "x": 2375.3453038674033,
+      "y": 630.8397790055249,
+      "width": 131,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3723,
+      "asset": "fernrocks",
+      "x": 2285.2209944751385,
+      "y": 614.2651933701658,
+      "width": 115,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3724,
+      "asset": "mossboulder",
+      "x": 2282.1585909705436,
+      "y": 918.7967818054007,
+      "width": 110,
+      "zone": "Chân gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3725,
+      "asset": "grassroots",
+      "x": 2206.491712707182,
+      "y": 614.2651933701658,
+      "width": 131,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3726,
+      "asset": "fernrocks",
+      "x": 2124.6546961325967,
+      "y": 602.8701657458564,
+      "width": 115,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3727,
+      "asset": "mossboulder",
+      "x": 2121.7015004156656,
+      "y": 907.4319266709418,
+      "width": 110,
+      "zone": "Chân gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3728,
+      "asset": "grassroots",
+      "x": 2039.7099447513815,
+      "y": 580.0801104972376,
+      "width": 131,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3729,
+      "asset": "fernrocks",
+      "x": 1956.837016574586,
+      "y": 559.3618784530387,
+      "width": 115,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3730,
+      "asset": "mossboulder",
+      "x": 1951.3873834828416,
+      "y": 854.7784834592886,
+      "width": 110,
+      "zone": "Chân gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3731,
+      "asset": "grassroots",
+      "x": 1876.03591160221,
+      "y": 540.7154696132598,
+      "width": 131,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3732,
+      "asset": "fernrocks",
+      "x": 1806.6298342541438,
+      "y": 502.38674033149175,
+      "width": 115,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3733,
+      "asset": "mossboulder",
+      "x": 1796.4836780915612,
+      "y": 764.5737362880614,
+      "width": 110,
+      "zone": "Chân gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3734,
+      "asset": "grassroots",
+      "x": 1748.6187845303868,
+      "y": 444.3756906077349,
+      "width": 131,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3735,
+      "asset": "fernrocks",
+      "x": 1698.8950276243095,
+      "y": 377.04143646408846,
+      "width": 115,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3736,
+      "asset": "mossboulder",
+      "x": 1683.6531953454978,
+      "y": 568.1081614374557,
+      "width": 110,
+      "zone": "Chân gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3737,
+      "asset": "grassroots",
+      "x": 1657.4585635359117,
+      "y": 300.3839779005525,
+      "width": 131,
+      "zone": "Mép gò trước thành",
+      "bank": false
+    },
+    {
+      "id": 3738,
+      "asset": "bankwest",
+      "x": 4139.240660665757,
+      "y": 146.08811410863183,
+      "width": 130,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3739,
+      "asset": "bankwest",
+      "x": 4124.326019202099,
+      "y": 270.32228787577105,
+      "width": 154,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3740,
+      "asset": "bankwest",
+      "x": 4122.5829978427655,
+      "y": 397.2314332046439,
+      "width": 142,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3741,
+      "asset": "bankwest",
+      "x": 4130.818947058926,
+      "y": 532.9681670550904,
+      "width": 130,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3742,
+      "asset": "bankwest",
+      "x": 4066.838250437064,
+      "y": 669.692066101352,
+      "width": 154,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3743,
+      "asset": "riverrocks",
+      "x": 4192.545960122377,
+      "y": 643.012066101352,
+      "width": 75,
+      "zone": "Đá trong sông",
+      "bank": true
+    },
+    {
+      "id": 3744,
+      "asset": "bankwest",
+      "x": 4041.5780620206706,
+      "y": 789.5987641643687,
+      "width": 142,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3745,
+      "asset": "bankwest",
+      "x": 3993.553017244692,
+      "y": 907.2254286638672,
+      "width": 130,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3746,
+      "asset": "bankwest",
+      "x": 3980.191401212218,
+      "y": 1051.3011863209404,
+      "width": 154,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3747,
+      "asset": "bankwest",
+      "x": 3996.4646325811946,
+      "y": 1189.6460249361041,
+      "width": 142,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3748,
+      "asset": "bankeast",
+      "x": 4519.040589334243,
+      "y": 209.98688589136816,
+      "width": 130,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3749,
+      "asset": "bankeast",
+      "x": 4495.726064131233,
+      "y": 332.9960454575624,
+      "width": 154,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3750,
+      "asset": "bankeast",
+      "x": 4453.8232521572345,
+      "y": 453.64578901757835,
+      "width": 142,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3751,
+      "asset": "bankeast",
+      "x": 4399.024802941074,
+      "y": 579.3568329449096,
+      "width": 130,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3752,
+      "asset": "bankeast",
+      "x": 4416.026332896268,
+      "y": 731.5429338986474,
+      "width": 154,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3753,
+      "asset": "riverrocks",
+      "x": 4290.318623210955,
+      "y": 704.8629338986475,
+      "width": 75,
+      "zone": "Đá trong sông",
+      "bank": true
+    },
+    {
+      "id": 3754,
+      "asset": "bankeast",
+      "x": 4395.268002794143,
+      "y": 855.6939673171128,
+      "width": 142,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3755,
+      "asset": "bankeast",
+      "x": 4393.790732755308,
+      "y": 985.5683213361328,
+      "width": 130,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3756,
+      "asset": "bankeast",
+      "x": 4355.011145084078,
+      "y": 1125.4835821975782,
+      "width": 154,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    },
+    {
+      "id": 3757,
+      "asset": "bankeast",
+      "x": 4285.902265566953,
+      "y": 1245.7508732120439,
+      "width": 142,
+      "zone": "Bờ sông cạnh thành",
+      "bank": true
+    }
+  ],
+  "scope": "castle wall foot, north cliff rim and upper river banks; no river collision changes"
+}

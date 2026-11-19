@@ -1,0 +1,80 @@
+✖ ten distinct navigable maps with increasing health and damage (73.9176ms)
+✔ all heroes, monsters and soldiers have valid copied animation frames (448.0808ms)
+✔ solo start, selected hero stats and no secret in snapshot (67.3803ms)
+✔ kill grants gold and XP exactly once, including troop-owned kills (11.7727ms)
+✔ purchases enforce cost, cap, invalid items, repairs and stat upgrades (1.2316ms)
+✔ hero respawns, input is normalized, house and obstacles block movement (3.769ms)
+✖ all ten stages clear in sequence; gold and army carry, final stage wins (23443.3738ms)
+✔ each monster species appears and stage ten has a boss (2.1707ms)
+✖ undefended maps end in defeat rather than stalling (664.1715ms)
+✔ AI routes around a large obstacle without crossing collision (8.4012ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 7
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 25821.6693
+
+✖ failing tests:
+
+test at simulation.test.mjs:7:1
+✖ ten distinct navigable maps with increasing health and damage (73.9176ms)
+  AssertionError [ERR_ASSERTION]: Map 3 blocked lane
+      at TestContext.<anonymous> (file:///D:/New%20world/TowerDefenseWeb/simulation.test.mjs:10:119)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at simulation.test.mjs:40:1
+✖ all ten stages clear in sequence; gold and army carry, final stage wins (23443.3738ms)
+  AssertionError [ERR_ASSERTION]: stage 1, phase battle
+  + actual - expected
+  
+  + 'battle'
+  - 'victory'
+  
+      at TestContext.<anonymous> (file:///D:/New%20world/TowerDefenseWeb/simulation.test.mjs:48:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'battle',
+    expected: 'victory',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at simulation.test.mjs:55:1
+✖ undefended maps end in defeat rather than stalling (664.1715ms)
+  AssertionError [ERR_ASSERTION]: Map 3: enemy stalled at {"id":"60c9ac95-5fc0-48dd-944b-f3837f8f7f28","family":"undead","name":"Tử binh","hp":154,"power":24,"speed":67.2,"range":46,"cooldown":1.1,"reward":24,"unlock":2,"size":45,"attackFx":"blood","special":"drain","sprite":"mob-undead","x":1007.9939916817947,"y":1291.8615455175589,"maxHp":154,"lane":1,"waypoint":5,"elite":false,"boss":false,"cd":-499.5000000000451,"healCd":4,"anim":0,"face":1,"terrainBurnClock":0,"windAirTime":0,"gemStun":0,"gemSlow":0,"stun":0,"slowTime":0,"slow":0,"environment":{"speed":1,"attackSpeed":1,"power":1,"armor":1,"burn":0,"type":"high"},"direction":1}
+  
+  'battle' !== 'defeat'
+  
+      at TestContext.<anonymous> (file:///D:/New%20world/TowerDefenseWeb/simulation.test.mjs:58:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'battle',
+    expected: 'defeat',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
