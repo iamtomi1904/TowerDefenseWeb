@@ -1,0 +1,75 @@
+# Biome materials v1
+
+Built-in imagegen. Original PNGs copied unchanged. Battle renderer blends materials gently into the established biome palette. Mirrored repeat at runtime avoids seams. No gameplay modifiers or collision changed.
+
+## mountain
+
+Use case: stylized-concept. Asset type: seamless repeating terrain material PNG for an existing medieval fantasy PIXEL ART top-down tower defense game. Draw weathered slate and granite ground, chunky layered gray stone plates, small gravel, sparse olive moss in seams. Full square 1024x1024 texture, perfectly flat top-down orthographic ground material, evenly distributed pattern across the whole image. Crisp intentional 16-bit pixel clusters with restrained palette and 3-5 pixel clusters, readable natural irregular forms, mature grounded game art. Moderate contrast, gameplay-friendly background, upper-left consistent diffuse lighting. Opposite edges must tile seamlessly, no visible square tile boundaries, no central composition, no vignette, no border, no text, no characters, no buildings, no UI, no perspective horizon, no photorealism, no smooth airbrushed effects, no tall objects. Opaque full-bleed material. Match dark green medieval fantasy map and sprites. Beautiful material detail, avoid giant regular grids or evenly scattered dots.
+
+Source: C:\Users\Admin\.codex\generated_images\01a1ecaa-9dd8-7680-8407-63d0de55028a\exec-61bfc08f-3786-42ea-9197-f14cd31adc8c.png
+
+## high
+
+Use case: stylized-concept. Asset type: seamless repeating terrain material PNG for an existing medieval fantasy PIXEL ART top-down tower defense game. Draw sunlit raised meadow turf, olive and sage grass carpets with tiny clover and exposed warm brown soil, compact grassy hummocks. Full square 1024x1024 texture, perfectly flat top-down orthographic ground material, evenly distributed pattern across the whole image. Crisp intentional 16-bit pixel clusters with restrained palette and 3-5 pixel clusters, readable natural irregular forms, mature grounded game art. Moderate contrast, gameplay-friendly background, upper-left consistent diffuse lighting. Opposite edges must tile seamlessly, no visible square tile boundaries, no central composition, no vignette, no border, no text, no characters, no buildings, no UI, no perspective horizon, no photorealism, no smooth airbrushed effects, no tall objects. Opaque full-bleed material. Match dark green medieval fantasy map and sprites. Beautiful material detail, avoid giant regular grids or evenly scattered dots.
+
+Source: C:\Users\Admin\.codex\generated_images\01a1ecaa-9dd8-7680-8407-63d0de55028a\exec-f7514d29-8f56-47ca-8098-5f25c6c35e90.png
+
+## low
+
+Use case: stylized-concept. Asset type: seamless repeating terrain material PNG for an existing medieval fantasy PIXEL ART top-down tower defense game. Draw damp lowland soil, muted olive peat and dark green moss, tiny wet pebbles and shallow subdued muddy depressions. Full square 1024x1024 texture, perfectly flat top-down orthographic ground material, evenly distributed pattern across the whole image. Crisp intentional 16-bit pixel clusters with restrained palette and 3-5 pixel clusters, readable natural irregular forms, mature grounded game art. Moderate contrast, gameplay-friendly background, upper-left consistent diffuse lighting. Opposite edges must tile seamlessly, no visible square tile boundaries, no central composition, no vignette, no border, no text, no characters, no buildings, no UI, no perspective horizon, no photorealism, no smooth airbrushed effects, no tall objects. Opaque full-bleed material. Match dark green medieval fantasy map and sprites. Beautiful material detail, avoid giant regular grids or evenly scattered dots.
+
+Source: C:\Users\Admin\.codex\generated_images\01a1ecaa-9dd8-7680-8407-63d0de55028a\exec-6d64815b-fc15-418c-92d4-ac5fc51f2e28.png
+
+## deep
+
+Use case: stylized-concept. Asset type: seamless repeating terrain material PNG for an existing medieval fantasy PIXEL ART top-down tower defense game. Draw deep river water surface, dark petrol blue and teal currents, layered short ripple streaks and restrained pale blue reflections, absolutely no banks or land. Full square 1024x1024 texture, perfectly flat top-down orthographic ground material, evenly distributed pattern across the whole image. Crisp intentional 16-bit pixel clusters with restrained palette and 3-5 pixel clusters, readable natural irregular forms, mature grounded game art. Moderate contrast, gameplay-friendly background, upper-left consistent diffuse lighting. Opposite edges must tile seamlessly, no visible square tile boundaries, no central composition, no vignette, no border, no text, no characters, no buildings, no UI, no perspective horizon, no photorealism, no smooth airbrushed effects, no tall objects. Opaque full-bleed material. Match dark green medieval fantasy map and sprites. Beautiful material detail, avoid giant regular grids or evenly scattered dots.
+
+Source: C:\Users\Admin\.codex\generated_images\01a1ecaa-9dd8-7680-8407-63d0de55028a\exec-0e931df3-f261-41a9-a11a-fb59b0f8e0bf.png
+
+## abyss
+
+Use case: stylized-concept. Asset type: seamless repeating terrain material PNG for an existing medieval fantasy PIXEL ART top-down tower defense game. Draw bottomless rocky fissure material, nearly black violet depths with jagged charcoal ledges and sparse dim purple mineral veins, no stars or cosmic space. Full square 1024x1024 texture, perfectly flat top-down orthographic ground material, evenly distributed pattern across the whole image. Crisp intentional 16-bit pixel clusters with restrained palette and 3-5 pixel clusters, readable natural irregular forms, mature grounded game art. Moderate contrast, gameplay-friendly background, upper-left consistent diffuse lighting. Opposite edges must tile seamlessly, no visible square tile boundaries, no central composition, no vignette, no border, no text, no characters, no buildings, no UI, no perspective horizon, no photorealism, no smooth airbrushed effects, no tall objects. Opaque full-bleed material. Match dark green medieval fantasy map and sprites. Beautiful material detail, avoid giant regular grids or evenly scattered dots.
+
+Source: C:\Users\Admin\.codex\generated_images\01a1ecaa-9dd8-7680-8407-63d0de55028a\exec-56902b2f-06b8-4df8-842f-f40ceb9cd1a9.png
+
+## shallow
+
+Use case: stylized-concept. Asset type: seamless repeating terrain material PNG for an existing medieval fantasy PIXEL ART top-down tower defense game. Draw clear shallow stream, muted turquoise water with riverbed sand and rounded pebbles visible below, small cream caustic streaks, no banks or land. Full square 1024x1024 texture, perfectly flat top-down orthographic ground material, evenly distributed pattern across the whole image. Crisp intentional 16-bit pixel clusters with restrained palette and 3-5 pixel clusters, readable natural irregular forms, mature grounded game art. Moderate contrast, gameplay-friendly background, upper-left consistent diffuse lighting. Opposite edges must tile seamlessly, no visible square tile boundaries, no central composition, no vignette, no border, no text, no characters, no buildings, no UI, no perspective horizon, no photorealism, no smooth airbrushed effects, no tall objects. Opaque full-bleed material. Match dark green medieval fantasy map and sprites. Beautiful material detail, avoid giant regular grids or evenly scattered dots.
+
+Source: C:\Users\Admin\.codex\generated_images\01a1ecaa-9dd8-7680-8407-63d0de55028a\exec-8151a133-5411-4f3e-9bfe-d4c842a00be0.png
+
+## ice
+
+Use case: stylized-concept. Asset type: seamless repeating terrain material PNG for an existing medieval fantasy PIXEL ART top-down tower defense game. Draw icy ground and compact frost, layered desaturated pale blue ice plates, fine branching cracks, scattered frost grains and tiny snow deposits, avoid shiny glossy 3d look. Full square 1024x1024 texture, perfectly flat top-down orthographic ground material, evenly distributed pattern across the whole image. Crisp intentional 16-bit pixel clusters with restrained palette and 3-5 pixel clusters, readable natural irregular forms, mature grounded game art. Moderate contrast, gameplay-friendly background, upper-left consistent diffuse lighting. Opposite edges must tile seamlessly, no visible square tile boundaries, no central composition, no vignette, no border, no text, no characters, no buildings, no UI, no perspective horizon, no photorealism, no smooth airbrushed effects, no tall objects. Opaque full-bleed material. Match dark green medieval fantasy map and sprites. Beautiful material detail, avoid giant regular grids or evenly scattered dots.
+
+Source: C:\Users\Admin\.codex\generated_images\01a1ecaa-9dd8-7680-8407-63d0de55028a\exec-2c3930d2-db90-413a-b2ee-24c969488140.png
+
+## lava
+
+Use case: stylized-concept. Asset type: seamless repeating terrain material PNG for an existing medieval fantasy PIXEL ART top-down tower defense game. Draw molten lava ground, charcoal basalt crust islands divided by thin glowing orange red fissures and small yellow hot pools, 70 percent dark crust, controlled glow no haze. Full square 1024x1024 texture, perfectly flat top-down orthographic ground material, evenly distributed pattern across the whole image. Crisp intentional 16-bit pixel clusters with restrained palette and 3-5 pixel clusters, readable natural irregular forms, mature grounded game art. Moderate contrast, gameplay-friendly background, upper-left consistent diffuse lighting. Opposite edges must tile seamlessly, no visible square tile boundaries, no central composition, no vignette, no border, no text, no characters, no buildings, no UI, no perspective horizon, no photorealism, no smooth airbrushed effects, no tall objects. Opaque full-bleed material. Match dark green medieval fantasy map and sprites. Beautiful material detail, avoid giant regular grids or evenly scattered dots.
+
+Source: C:\Users\Admin\.codex\generated_images\01a1ecaa-9dd8-7680-8407-63d0de55028a\exec-4729c78d-5115-4954-89be-ce11c9196b53.png
+
+## fire
+
+Use case: stylized-concept. Asset type: seamless repeating terrain material PNG for an existing medieval fantasy PIXEL ART top-down tower defense game. Draw scorched earth and burning embers, dark umber ash soil, small scattered orange ember pockets, singed grass stubble, ground-level isolated low tongues of flame, avoid huge fire wall. Full square 1024x1024 texture, perfectly flat top-down orthographic ground material, evenly distributed pattern across the whole image. Crisp intentional 16-bit pixel clusters with restrained palette and 3-5 pixel clusters, readable natural irregular forms, mature grounded game art. Moderate contrast, gameplay-friendly background, upper-left consistent diffuse lighting. Opposite edges must tile seamlessly, no visible square tile boundaries, no central composition, no vignette, no border, no text, no characters, no buildings, no UI, no perspective horizon, no photorealism, no smooth airbrushed effects, no tall objects. Opaque full-bleed material. Match dark green medieval fantasy map and sprites. Beautiful material detail, avoid giant regular grids or evenly scattered dots.
+
+Source: C:\Users\Admin\.codex\generated_images\01a1ecaa-9dd8-7680-8407-63d0de55028a\exec-63e6dd8b-1a65-4799-90b7-2b38823fd7cd.png
+
+## wind
+
+Use case: stylized-concept. Asset type: seamless repeating terrain material PNG for an existing medieval fantasy PIXEL ART top-down tower defense game. Draw wind-swept pale sage meadow, short grass bending in a consistent diagonal breeze, sparse ivory wildflower flecks and fine sandy streaks, earthy natural landscape not magic spiral. Full square 1024x1024 texture, perfectly flat top-down orthographic ground material, evenly distributed pattern across the whole image. Crisp intentional 16-bit pixel clusters with restrained palette and 3-5 pixel clusters, readable natural irregular forms, mature grounded game art. Moderate contrast, gameplay-friendly background, upper-left consistent diffuse lighting. Opposite edges must tile seamlessly, no visible square tile boundaries, no central composition, no vignette, no border, no text, no characters, no buildings, no UI, no perspective horizon, no photorealism, no smooth airbrushed effects, no tall objects. Opaque full-bleed material. Match dark green medieval fantasy map and sprites. Beautiful material detail, avoid giant regular grids or evenly scattered dots.
+
+Source: C:\Users\Admin\.codex\generated_images\01a1ecaa-9dd8-7680-8407-63d0de55028a\exec-eea4a8c2-e39e-4d21-a528-52a025ef7810.png
+
+## dense
+
+Use case: stylized-concept. Asset type: seamless repeating terrain material PNG for an existing medieval fantasy PIXEL ART top-down tower defense game. Draw dense woodland floor, rich dark green moss carpet, fern leaf litter and tiny root fragments, scattered brown leaves and mushroom flecks, no standing trees or tall props. Full square 1024x1024 texture, perfectly flat top-down orthographic ground material, evenly distributed pattern across the whole image. Crisp intentional 16-bit pixel clusters with restrained palette and 3-5 pixel clusters, readable natural irregular forms, mature grounded game art. Moderate contrast, gameplay-friendly background, upper-left consistent diffuse lighting. Opposite edges must tile seamlessly, no visible square tile boundaries, no central composition, no vignette, no border, no text, no characters, no buildings, no UI, no perspective horizon, no photorealism, no smooth airbrushed effects, no tall objects. Opaque full-bleed material. Match dark green medieval fantasy map and sprites. Beautiful material detail, avoid giant regular grids or evenly scattered dots.
+
+Source: C:\Users\Admin\.codex\generated_images\01a1ecaa-9dd8-7680-8407-63d0de55028a\exec-549aae15-cfe3-424a-922a-291ba2598bee.png
+
+## dead
+
+Use case: stylized-concept. Asset type: seamless repeating terrain material PNG for an existing medieval fantasy PIXEL ART top-down tower defense game. Draw blighted barren soil, dusty desaturated plum-gray cracked earth with charcoal roots, dead weeds, scattered tiny pale bone chips and dim violet discoloration, no large skulls or symbols. Full square 1024x1024 texture, perfectly flat top-down orthographic ground material, evenly distributed pattern across the whole image. Crisp intentional 16-bit pixel clusters with restrained palette and 3-5 pixel clusters, readable natural irregular forms, mature grounded game art. Moderate contrast, gameplay-friendly background, upper-left consistent diffuse lighting. Opposite edges must tile seamlessly, no visible square tile boundaries, no central composition, no vignette, no border, no text, no characters, no buildings, no UI, no perspective horizon, no photorealism, no smooth airbrushed effects, no tall objects. Opaque full-bleed material. Match dark green medieval fantasy map and sprites. Beautiful material detail, avoid giant regular grids or evenly scattered dots.
+
+Source: C:\Users\Admin\.codex\generated_images\01a1ecaa-9dd8-7680-8407-63d0de55028a\exec-a2ee89c9-e06b-440e-83e7-01682ee729cc.png

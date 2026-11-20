@@ -1,10 +1,13 @@
+import {installAmbientLife,updateAmbientLife} from './ambient-life.js';
+import {drawRoadNetwork} from './landscape-structures.js';
+import {weatherForMap,drawWeather} from './weather-art.js';
 import {drawCastleCourt,castleCourt,inCastleCourt} from './castle-court.js';
 import {drawHydrology,drawTerritory,updateHydrologyFX} from './landscape-art.js';
 import {drawEnvironmentPatch,updateEnvironmentFX} from './environment-art.js';
 import {BIOMES} from './world-biomes.js';
 import {clearLeaderAuras} from './leader-auras.js';
 import {WORLD,distanceToSegment} from './content.js';
-import {ensureCustomPropTexture} from './custom-props-art.js';
+import {ensureCustomPropTexture,CUSTOM_PROP_META} from './custom-props-art.js';
 import {drawNonBlockingDecor} from './decor-props-art.js';
 import {buildFortress} from './fortress.js';
 import {waterAt} from './landscape-layout.js';
@@ -69,7 +72,7 @@ function createGroundPattern(c,m){
  return c.createPattern(tile,'repeat');
 }
 
-// Unify all vegetation into the authentic CraftPix Top-Down 16-bit Pixel-Art sprites (zero duplicates)
+// Unify legacy vegetation aliases into CraftPix Top-Down 16-bit Pixel-Art sprites
 export const UNIFIED_PROPS={
  curved_tree1:'tree2',mega_tree1:'moss_tree1',willow1:'moss_tree2',willow2:'moss_tree3',
  luminous_tree1:'christmas_tree1',ent_man:'tree3',ent_woman:'broken_tree1',
@@ -149,6 +152,7 @@ function drawNonBlockingVegetation(c,m,rand){
 }
 
 export function renderMap(s,m,catalog,entities){
+ s.mapBiomeStage=m.id;
  for(const tween of s.sceneryTweens||[])tween.remove();s.sceneryTweens=[];s.fauna=[];
  if(s.mapObjects)for(const obj of s.mapObjects)obj.destroy();s.mapObjects=[];
  if(s.groundKey&&s.textures.exists(s.groundKey))s.textures.remove(s.groundKey);
@@ -156,63 +160,10 @@ export function renderMap(s,m,catalog,entities){
  const resolution=Math.min(1,3840/m.width),canvas=s.textures.createCanvas(key,Math.ceil(m.width*resolution),Math.ceil(m.height*resolution)),c=canvas.context;c.scale(resolution,resolution);c.imageSmoothingEnabled=false;s.mapWidth=m.width;s.mapHeight=m.height;s.environment=m.environment;
  let seed=m.id*531;const rand=()=>{seed=seed*16807%2147483647;return seed/2147483647;};
 
- // 1. Rich seamless 128x128 pixel-art ground texture + macro meadow lighting (no flat color, no 64x64 grid)
- c.fillStyle=hex(m.ground);c.fillRect(0,0,m.width,m.height);
- const groundPat=createGroundPattern(c,m);
- if(groundPat){c.fillStyle=groundPat;c.fillRect(0,0,m.width,m.height);}
- const grass=s.textures.get('Ground_grass').getSourceImage();
- const patchCount=Math.floor((m.width*m.height)/24000);
- for(let i=0;i<patchCount;i++){
-  const px=rand()*m.width,py=rand()*m.height,rx=65+rand()*140,ry=42+rand()*95;
-  c.fillStyle=i%2?'#f2f7c814':'#0d1a0f18';
-  c.beginPath();c.ellipse(px,py,rx,ry,rand()*Math.PI,0,Math.PI*2);c.fill();
- }
- // Scatter organic grass-atlas patches & earth/pebble/leaf accents off-grid
- const islandCount=Math.floor((m.width*m.height)/8500);
- for(let i=0;i<islandCount;i++){
-  const px=rand()*m.width,py=rand()*m.height,sz=34+rand()*42;
-  c.globalAlpha=.16+rand()*.12;
-  c.drawImage(grass,2,2+m.grassRow*96,22,22,px-sz/2,py-sz/2,sz,sz);
- }
- c.globalAlpha=1;
- const accentCount=Math.floor((m.width*m.height)/3600);
- for(let i=0;i<accentCount;i++){
-  const px=rand()*m.width,py=rand()*m.height;
-  if(i%8===0){
-   // Small earthy pebble cluster
-   c.fillStyle='#19241744';c.fillRect(px-1,py+1,7,3);
-   c.fillStyle=m.id===6?'#d9f0f7aa':m.id===9?'#8a4c3b99':'#9c9476aa';
-   c.fillRect(px,py,4,3);c.fillRect(px+5,py+1,3,2);
-  }else if(i%7===0){
-   // Tiny wildflower / clover tuft
-   c.fillStyle='#24402066';c.fillRect(px-2,py,5,3);
-   c.fillStyle=m.id===6?'#e6f9ffaa':m.id===9?'#ff875299':i%2?'#ffe68099':'#f5a8c499';
-   c.fillRect(px-1,py-1,3,2);c.fillRect(px,py-2,1,3);
-  }else if(i%5===0&&m.id===3){
-   // Fallen autumn leaf on stage 3
-   c.fillStyle=i%2?'#d6833c99':'#c95a3899';c.fillRect(px,py,4,2);
-  }else{
-   // Grass blade cluster
-   c.fillStyle=i%3?'#e2edb940':'#14241440';
-   c.fillRect(px,py-3,2,5);c.fillRect(px+3,py-1,2,3);c.fillRect(px-3,py-1,2,3);
-  }
- }
+ drawMapGround(c,s,m,rand);
 
  // 2. Forest trails & organic monster camp clearings
  c.lineCap='round';c.lineJoin='round';
- for(const trail of [...(m.forestPaths||[]),...(m.campCorridors||[])]){
-  c.beginPath();c.moveTo(...trail[0]);c.lineTo(...trail[1]);
-  c.strokeStyle='#384729';c.lineWidth=34;c.stroke();
-  c.strokeStyle='#96845d';c.lineWidth=22;c.stroke();
-  c.strokeStyle='#bfa97c99';c.lineWidth=8;c.stroke();
-  const [tx0,ty0]=trail[0],[tx1,ty1]=trail[1],tlen=Math.hypot(tx1-tx0,ty1-ty0)||1;
-  const tnx=-(ty1-ty0)/tlen,tny=(tx1-tx0)/tlen;
-  for(let d=32;d<tlen-24;d+=48){
-   const s=d%96?1:-1,px=tx0+(tx1-tx0)*d/tlen+tnx*s*12,py=ty0+(ty1-ty0)*d/tlen+tny*s*12;
-   c.fillStyle='#5c523b99';c.fillRect(px-2,py-1,4,3);
-   c.fillStyle='#a8987288';c.fillRect(px-1,py-1,2,2);
-  }
- }
  for(const camp of m.camps||[]){
   const k=camp.small?.68:1;
   c.save();
@@ -240,51 +191,6 @@ export function renderMap(s,m,catalog,entities){
   c.restore();
  }
 
- // 3. Smooth winding roads (replacing jagged 64x64 road blocks)
- const road=s.textures.get(m.roadTile).getSourceImage();
- const roadPattern=c.createPattern?(()=>{
-  const tile=document.createElement('canvas');tile.width=48;tile.height=48;
-  const tc=tile.getContext('2d');tc.imageSmoothingEnabled=false;
-  tc.drawImage(road,24,24,32,32,0,0,48,48);
-  return c.createPattern(tile,'repeat');
- })():null;
-
- for(const lane of m.lanes){
-  // Soft grass/earth roadside blend
-  traceRoadPath(c,lane);c.strokeStyle='#2c3b2355';c.lineWidth=118;c.stroke();
-  // Packed dirt shoulder / curbstone
-  traceRoadPath(c,lane);c.strokeStyle='#57533f';c.lineWidth=100;c.stroke();
-  // Main road bed
-  traceRoadPath(c,lane);c.strokeStyle=hex(m.road);c.lineWidth=86;c.stroke();
-  // Textured cobblestone / surface pattern inside road
-  if(roadPattern){
-   c.save();c.globalAlpha=.55;traceRoadPath(c,lane);c.strokeStyle=roadPattern;c.lineWidth=82;c.stroke();c.restore();
-  }
-  // Subtle sunlit center wear & dual cart-wheel ruts
-  traceRoadPath(c,lane);c.strokeStyle='#dfd2ab22';c.lineWidth=34;c.stroke();
-  traceRoadPath(c,lane);c.strokeStyle='#2a241a24';c.lineWidth=28;c.stroke();
-  traceRoadPath(c,lane);c.strokeStyle='#cfc19a26';c.lineWidth=18;c.stroke();
-  // Roadside pebbles, paving stones & curbstone tufts
-  const slabCol=m.id===6?'#d9f0fa66':m.id===5?'#e0c68d66':m.id===9||m.id===10?'#6e564e66':'#c9bd9966';
-  for(let k=1;k<lane.length;k++){
-   const [ax,ay]=lane[k-1],[bx,by]=lane[k],len=Math.hypot(bx-ax,by-ay)||1;
-   const nx=-(by-ay)/len,ny=(bx-ax)/len,ang=Math.atan2(by-ay,bx-ax);
-   for(let t=24;t<len;t+=40){
-    const side=rand()>.5?1:-1,px=ax+(bx-ax)*t/len+nx*side*(45+rand()*7),py=ay+(by-ay)*t/len+ny*side*(45+rand()*7);
-    c.fillStyle=rand()>.5?'#6a6752':'#9d9678';
-    c.beginPath();c.ellipse(px,py,3+rand()*3,2+rand()*2,0,0,Math.PI*2);c.fill();
-    if(t%80===24){
-     const cx=ax+(bx-ax)*t/len+nx*(rand()-.5)*22,cy=ay+(by-ay)*t/len+ny*(rand()-.5)*22;
-     c.save();c.translate(cx,cy);c.rotate(ang);
-     c.fillStyle='#241e1844';c.fillRect(-7,-4,14,9);
-     c.fillStyle=slabCol;c.fillRect(-7,-5,13,8);
-     c.restore();
-     const gx=ax+(bx-ax)*t/len-nx*side*52,gy=ay+(by-ay)*t/len-ny*side*52;
-     c.fillStyle='#243b2088';c.fillRect(gx-2,gy-2,3,4);c.fillRect(gx+1,gy-3,2,4);
-    }
-   }
-  }
- }
 
  s.hydrology=m.rivers;s.bridges=m.bridges;s.castleRect=castleCourt(m);
  drawNonBlockingVegetation(c,m,rand);
@@ -346,7 +252,7 @@ export function renderMap(s,m,catalog,entities){
    }
   }
  }
- for(const z of m.environment)drawEnvironmentPatch(c,s,z);for(const t of m.territories)drawTerritory(c,s,t);drawHydrology(c,s,m);drawCastleCourt(c,s,m);drawNonBlockingDecor(c,m,inCastleCourt,rand);
+ for(const z of m.environment)drawEnvironmentPatch(c,s,z);for(const t of m.territories)drawTerritory(c,s,t);drawMapTrails(c,m);drawMapRoads(c,s,m,rand);drawHydrology(c,s,m);drawCastleCourt(c,s,m);drawNonBlockingDecor(c,m,inCastleCourt,rand);
  // Subtle macro sunlight & atmospheric edge vignette for 2.5D depth
  const sunCol=m.id===6?'#d9f6ff16':m.id===3||m.id===5?'#ffda9418':m.id===9?'#ff7b3b18':m.id===10?'#b58aff14':'#fff0ba14';
  const sun=c.createRadialGradient(m.width*.45,m.height*.38,m.width*.08,m.width*.5,m.height*.5,m.width*.68);
@@ -355,16 +261,65 @@ export function renderMap(s,m,catalog,entities){
  canvas.refresh();s.mapObjects.push(s.add.image(0,0,key).setOrigin(0).setScale(1/resolution).setDepth(-100));for(const t of m.territories)s.mapObjects.push(s.add.text(t.x,t.y-t.radius*.72,'LÃNH ĐỊA · '+t.name.toUpperCase(),{fontFamily:'Segoe UI',fontSize:'14px',color:hex(t.color),stroke:'#152318',strokeThickness:4}).setOrigin(.5).setDepth(t.y));for(const water of m.rivers||[]){const point=water.points.find(pt=>!inCastleCourt(m,{x:pt[0],y:pt[1]}))||water.points[Math.floor(water.points.length/2)];s.mapObjects.push(s.add.text(point[0],point[1]+water.width/2+24,water.name,{fontFamily:'Segoe UI',fontSize:'12px',color:water.type==='deep'?'#a9dce9':'#d0eee1',stroke:'#193229',strokeThickness:3}).setOrigin(.5).setDepth(point[1]));}for(const z of m.environment)s.mapObjects.push(s.add.text(z.x,z.y-z.ry-18,BIOMES[z.type].name,{fontFamily:'Segoe UI',fontSize:'11px',color:'#e7ead1',stroke:'#152318',strokeThickness:3}).setOrigin(.5).setDepth(z.y));
  const infoById=new Map(catalog.props.map(p=>[p.id,p]));
  const shadows=s.add.graphics().setDepth(-96);s.mapObjects.push(shadows);
+ // 2.5D Y-sorted pixel-art mountain massifs, trees & rocky outcrops synchronized with terrain
+ const ridgeTreeId=m.id===6?'snow_tree1':m.id===3?'autumn_tree1':(m.id===9||m.id===10)?'burned_tree1':'christmas_tree1';
+ const ridgeAltId=m.id===6?'rock2_1':m.id===3?'tree1':(m.id===9||m.id===10)?'rock3_1':'rock1_1';
+ const mtnIds=['prop-mtn-main','prop-mtn-wide','prop-mtn-spur'];
+ for(const z of m.environment||[]){
+  if(z.type!=='mountain')continue;
+  if(z.ridge&&z.spine?.length>1){
+   const nPts=z.spine.length;
+   for(let i=0;i<nPts;i++){
+    const [sx,sy]=z.spine[i],u=i/(nPts-1),t=Math.pow(Math.sin(u*Math.PI),.55);
+    const id=i===0||i===nPts-1?'prop-mtn-spur':mtnIds[i%2],info=ensureCustomPropTexture(s,id);
+    if(info){
+     const mx=sx+(rand()-.5)*14,my=sy+14+(i%2?8:-6);
+     if(!inCastleCourt(m,{x:mx,y:my})){
+      const sc=(info.targetH/info.height)*(.68+.48*t);
+      const obj=s.add.image(mx,my,id).setOrigin(.5,.82).setScale(sc).setFlipX(i%2===1).setDepth(my);
+      if(m.id===6)obj.setTint(0xd0eef7);else if(m.id===3)obj.setTint(0xe8c79e);else if(m.id===9||m.id===10)obj.setTint(0x947972);
+      s.mapObjects.push(obj);
+     }
+    }
+    if(i>0){
+     const [ax,ay]=z.spine[i-1],tx=(ax+sx)*.5+(rand()-.5)*22,ty=(ay+sy)*.5+z.width*.52;
+     if(!inCastleCourt(m,{x:tx,y:ty})){
+      const pid=i%3===0?ridgeAltId:ridgeTreeId,pinfo=infoById.get(pid)||ensureCustomPropTexture(s,pid);
+      if(pinfo){
+       const sc=(pinfo.group==='rocks'?46:108)/pinfo.height*(.82+rand()*.2);
+       shadows.fillStyle(0x09120b,.26).fillEllipse(tx+4,ty+2,36,13);
+       s.mapObjects.push(s.add.image(tx,ty,pid).setOrigin(.5,.84).setScale(sc).setFlipX(i%2===1).setDepth(ty));
+      }
+     }
+    }
+   }
+   continue;
+  }
+  const pts=[[z.x-z.rx*.5,z.y],[z.x,z.y-z.ry*.15],[z.x+z.rx*.5,z.y]];
+  for(const [px,py]of pts){
+   const pw=Math.round((28+rand()*12)/2)*2,ph=Math.round((34+rand()*14)/2)*2,rx=Math.round(px/2)*2,ry=Math.round(py/2)*2;
+   const pk=s.add.graphics().setDepth(ry);
+   pk.fillStyle(0x141812,1).fillRect(rx-pw/2-2,ry-ph-2,pw+4,ph+4);
+   pk.fillStyle(0x465047,1).fillRect(rx-pw/2,ry-ph,pw,ph);
+   pk.fillStyle(0x616b60,1).fillRect(rx-pw/2+2,ry-ph+2,pw/2,ph-4);
+   pk.fillStyle(0x899485,1).fillRect(rx-pw/2+2,ry-ph+2,pw-6,8);
+   pk.fillStyle(0xd2ded6,1).fillRect(rx-pw/2+4,ry-ph,pw-8,4);
+   s.mapObjects.push(pk);
+  }
+ }
  s.swayProps=[];s.swayFlowers=(m.flowers||[]).map(f=>({x:f.x,y:f.y,color:f.color,phase:f.x*.021+f.y*.017}));
  const deadZones=(m.environment||[]).filter(z=>z.type==='dead'),deadTrees=[];
+ const onBridge=(x,y,pad=52)=>(m.bridges||[]).some(b=>{const dx=x-b.x,dy=y-b.y,ca=Math.cos(b.angle),sa=Math.sin(b.angle);return Math.abs(dx*ca+dy*sa)<b.length*.5+pad&&Math.abs(-dx*sa+dy*ca)<(b.width||160)*.5+pad;});
  for(const p of m.props){
-  const asset=unifiedPropAsset(p.asset),info=ensureCustomPropTexture(s,asset)||infoById.get(asset);if(!info)continue;
+  if(onBridge(p.x,p.y,48))continue;
+  const asset=unifiedPropAsset(p.asset),info=infoById.get(asset)||ensureCustomPropTexture(s,asset);if(!info)continue;
   // Keep uniform ~1.05x pixel density across all tree/bush sizes so pixels never look unevenly chunky
   const isTree=info.group==='trees'||info.group==='forest';
   const targetH=info.targetH||(isTree?(info.height>=120?132:86):info.group==='ruins'?98:info.group==='rocks'?(info.height>=64?58:38):info.group==='crystals'?68:(info.height>=64?54:34));
   const scale=(targetH/info.height)*Math.max(.8,Math.min(1.18,p.scale||1));
   const sw=targetH*.54*Math.min(1.1,p.scale||1),sh=targetH*.21*Math.min(1.1,p.scale||1);
   if(isTree||info.group==='bushes'){
+   shadows.fillStyle(0x09120b,.2).fillEllipse(p.x+11,p.y+5,sw*1.15,sh*1.05);
    shadows.fillStyle(0x0b160e,.24).fillEllipse(p.x,p.y+3,sw*1.18,sh*1.18);
    shadows.fillStyle(0x0b160e,.32).fillEllipse(p.x,p.y+2,sw*.85,sh*.85);
    if(isTree){
@@ -373,6 +328,7 @@ export function renderMap(s,m,catalog,entities){
     shadows.fillStyle(0x523b26,.55).fillRect(p.x-5,p.y-1,3,4).fillRect(p.x+3,p.y,3,3);
    }
   }else if(info.group==='rocks'||info.group==='ruins'){
+   shadows.fillStyle(0x09120b,.22).fillEllipse(p.x+9,p.y+5,sw*1.1,sh*1.05);
    shadows.fillStyle(0x0d140f,.3).fillEllipse(p.x+1,p.y+3,sw*1.05,sh*1.05);
    shadows.fillStyle(0x5b6156,.55).fillCircle(p.x-sw*.35,p.y+2,3).fillCircle(p.x+sw*.3,p.y+3,2.5);
    shadows.fillStyle(0x3f6e34,.45).fillRect(p.x-6,p.y,5,3).fillRect(p.x+3,p.y+1,4,2);
@@ -381,20 +337,22 @@ export function renderMap(s,m,catalog,entities){
    shadows.fillStyle(glowCol,.16).fillEllipse(p.x,p.y+1,sw*1.3,sh*1.4);
    shadows.fillStyle(0x0d140f,.3).fillEllipse(p.x,p.y+2,sw*.8,sh*.8);
   }
-  const obj=s.add.image(p.x,p.y,asset).setOrigin(.5,.83).setScale(scale).setFlipX(Math.round(p.x)%2===1).setDepth(p.y);
-  if(p.habitat==='dead')obj.setTint(0x9b8dba);else if(p.habitat==='ice')obj.setTint(0xb4dce5);else if(['lava','fire'].includes(p.habitat))obj.setTint(0x8c7161);
+  const obj=s.add.image(p.x,p.y,asset).setOrigin(.5,CUSTOM_PROP_META[asset]?(info.height-5)/info.height:.83).setScale(scale).setFlipX(Math.round(p.x)%2===1).setDepth(p.y);
   s.mapObjects.push(obj);
   if(isTree||info.group==='bushes')s.swayProps.push({obj,x:p.x,y:p.y,baseScaleX:obj.scaleX,baseScaleY:obj.scaleY,amp:isTree?.028:.05,phase:p.x*.013+p.y*.017});
   if(isTree&&(p.habitat==='dead'||deadZones.some(z=>Math.hypot((p.x-z.x)/z.rx,(p.y-z.y)/z.ry)<=1.15)))deadTrees.push({x:p.x+(rand()-.5)*16,y:p.y-targetH*.66});
  }
  for(const camp of m.camps||[]){const marker=s.add.graphics().setDepth(camp.y-1);marker.lineStyle(2,0xb5bd7d,.45).strokeEllipse(camp.x,camp.y,camp.small?56:80,camp.small?22:30);s.mapObjects.push(marker,s.add.text(camp.x,camp.y-(camp.small?68:85),'TRẠI '+({wolf:'SÓI',serpent:'RẮN',undead:'UNDEAD',harpy:'HARPY',stone:'ĐÁ',dragon:'RỒNG'}[camp.family]),{fontFamily:'Segoe UI',fontSize:'10px',color:'#cfdaa7',stroke:'#14251c',strokeThickness:3}).setOrigin(.5));}
- // Roadside details: rocks, mushrooms, ferns and bushes stay visual and never block a lane.
- for(const lane of m.lanes){for(let k=1;k<lane.length;k++){const a=lane[k-1],b=lane[k],len=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let t=50;t<len;t+=45){const side=rand()>.5?1:-1,x=a[0]+(b[0]-a[0])*t/len-(b[1]-a[1])/len*side*(70+rand()*14),y=a[1]+(b[1]-a[1])*t/len+(b[0]-a[0])/len*side*(70+rand()*14);if(Math.hypot(x-m.base.x,y-m.base.y)<250)continue;const id=['chanterelles1','chanterelles2','bush_simple1_1','bush_blue_flowers1','fern1_1','fern2_1','rock1_1','rock2_1','beige_green_mushroom1'][Math.floor(rand()*9)],info=ensureCustomPropTexture(s,id)||infoById.get(id);if(info){shadows.fillStyle(0x101c13,.22).fillEllipse(x,y+1,16,7);const propObj=s.add.image(x,y,id).setOrigin(.5,.85).setScale((22+rand()*10)/info.height).setFlipX(rand()>.5).setDepth(y);s.mapObjects.push(propObj);if(!id.startsWith('rock'))s.swayProps.push({obj:propObj,x,y,baseScaleX:propObj.scaleX,baseScaleY:propObj.scaleY,amp:.065,phase:x*.019+y*.011});}}}}
+ // Roadside details: lush non-blocking flowers, ferns and bushes along non-ice/lava/swamp/dead lanes.
+ const harshMap=m.id===6||m.id===7||m.id>=9;
+ const lushFlora=['bush_pink_flowers1','bush_blue_flowers1','bush_red_flowers1','bush_orange_flowers1','bush_simple1_1','bush_simple1_2','fern1_1','fern1_2','fern2_1','chanterelles1','chanterelles2'];
+ const harshFlora=['chanterelles1','rock1_1','rock2_1','beige_green_mushroom1'];
+ for(const lane of m.lanes){for(let k=1;k<lane.length;k++){const a=lane[k-1],b=lane[k],len=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let t=45;t<len;t+=34){for(const side of [-1,1]){const x=a[0]+(b[0]-a[0])*t/len-(b[1]-a[1])/len*side*(66+rand()*16),y=a[1]+(b[1]-a[1])*t/len+(b[0]-a[0])/len*side*(66+rand()*16);if(Math.hypot(x-m.base.x,y-m.base.y)<250||onBridge(x,y,52)||waterAt(m,{x,y}))continue;const zHit=(m.environment||[]).some(z=>['ice','lava','fire','swamp','dead'].includes(z.type)&&Math.hypot((x-z.x)/(z.rx||1),(y-z.y)/(z.ry||1))<=1);const pool=(harshMap||zHit)?harshFlora:lushFlora,id=pool[Math.floor(rand()*pool.length)],info=infoById.get(id)||ensureCustomPropTexture(s,id);if(info){shadows.fillStyle(0x101c13,.20).fillEllipse(x,y+1,16,7);const propObj=s.add.image(x,y,id).setOrigin(.5,.85).setScale((24+rand()*12)/info.height).setFlipX(rand()>.5).setDepth(y);s.mapObjects.push(propObj);if(!id.startsWith('rock'))s.swayProps.push({obj:propObj,x,y,baseScaleX:propObj.scaleX,baseScaleY:propObj.scaleY,amp:.065,phase:x*.019+y*.011});}}}}}
  s.mapObjects.push(...buildFortress(s,m,catalog));
  const glow=s.add.graphics().setDepth(m.base.y+56);glow.fillStyle(0xffd58b,.1).fillCircle(m.base.x-25,m.base.y+27,18).fillCircle(m.base.x+25,m.base.y+27,18);s.mapObjects.push(glow);
  for(const lane of m.lanes){const [x,y]=lane[0];const portal=s.add.graphics().setDepth(-20);portal.fillStyle(0x1c0e0c,.65).fillEllipse(x,y,98,58);portal.fillStyle(0x4a1a12,.45).fillEllipse(x,y,74,42);portal.lineStyle(3.5,0xff7a45,.9).strokeEllipse(x,y,68,39);portal.lineStyle(2,0xffcfa3,.7).strokeEllipse(x,y,86,50);portal.lineStyle(1.5,0xffe8b8,.5).strokeEllipse(x,y,44,25);for(let i=0;i<8;i++){const a=i/8*Math.PI*2,sx=x+Math.cos(a)*44,sy=y+Math.sin(a)*25;portal.fillStyle(0x3a2d2b,.95).fillTriangle(sx-5,sy+2,sx+5,sy+2,sx,sy-13);portal.fillStyle(0xff9b5e,.9).fillCircle(sx,sy-5,2);}s.mapObjects.push(portal,s.add.text(x,y-46,'QUÂN VÂY HÃM',{fontFamily:'Segoe UI',fontSize:'10px',color:'#f5c7a3',stroke:'#211512',strokeThickness:3}).setOrigin(.5));}
  for(const obj of entities.values()){clearLeaderAuras(obj);obj.buffArt?.destroy();obj.sprite.destroy();obj.label.destroy();}entities.clear();
- for(let n=1;n<=3;n++){const info=catalog.props.find(p=>p.id===`cloud-${n}`);if(!info||!s.textures.exists(info.id))continue;const cloud=s.add.image((n*531+m.id*37)%m.width,100+n*270,info.id).setAlpha(m.id===9?.09:.065).setDepth(4000).setScale(.6).setScrollFactor(.82);s.mapObjects.push(cloud);s.sceneryTweens.push(s.tweens.add({targets:cloud,x:cloud.x+350,duration:60000+n*5000,yoyo:true,repeat:-1}));}
+
  s.waterFX=s.add.graphics().setDepth(-95);s.mapObjects.push(s.waterFX);
  s.foliageFX=s.add.graphics().setDepth(-94);s.mapObjects.push(s.foliageFX);
  s.crowFX=s.add.graphics().setDepth(2700);s.mapObjects.push(s.crowFX);
@@ -404,12 +362,14 @@ export function renderMap(s,m,catalog,entities){
   const z=denseZones.length?denseZones[i%denseZones.length]:{x:m.width*(.2+(i%4)*.2),y:m.height*(.25+Math.floor(i/4)*.2),rx:180,ry:120};
   return {kind:['rabbit','squirrel','butterfly'][i%3],x:z.x+(rand()-.5)*z.rx*1.1,y:z.y+(rand()-.5)*z.ry*1.1,phase:rand()*6.28,color:[0xffe478,0xf7a8c4,0xa3e8ff][i%3]};
  });
- s.weather=s.add.graphics().setDepth(2800);s.mapObjects.push(s.weather);s.weatherStage=m.id;
+ s.weather=s.add.graphics().setDepth(2800);s.mapObjects.push(s.weather);s.weatherStage=m.id;s.weatherLayers=weatherForMap(m);
  s.atmosphere=s.add.graphics().setDepth(3500).setScrollFactor(0);s.mapObjects.push(s.atmosphere);
  s.weatherPoints=Array.from({length:95},()=>({x:rand()*m.width,y:rand()*m.height,speed:.5+rand(),phase:rand()*6}));
  s.fogBanks=Array.from({length:10},(_,i)=>({x:(i/10)*1.4,y:.1+(i*0.17)%0.8,rx:220+rand()*180,ry:65+rand()*55,speed:.012+rand()*.012,phase:rand()*6}));
+ installAmbientLife(s,m,catalog);
 }
 export function updateScenery(s,time){
+ updateAmbientLife(s,time);
  for(const a of s.fauna||[]){const t=time/6000+a.phase,x=a.x+Math.sin(t)*38,y=a.y+Math.cos(t*.7)*20,dx=x-a.sprite.x,dy=y-a.sprite.y,row=Math.abs(dx)>Math.abs(dy)?dx<0?2:3:dy<0?1:0;a.sprite.setPosition(x,y).setDepth(y).play(`${a.id}:walk${row?':'+row:''}`,true);}
  const cam=s.cameras?.main?.worldView;
  const sector=Math.floor(time/6000)%4,frac=(time%6000)/6000,blend=frac>.8?(frac-.8)/.2:0;
@@ -418,7 +378,7 @@ export function updateScenery(s,time){
   for(const item of s.swayProps){
    if(item.x<cam.x-120||item.x>cam.right+120||item.y<cam.y-120||item.y>cam.bottom+140)continue;
    const wave=Math.sin(time/480-(item.x*wx+item.y*wy)*.012+item.phase);
-   item.obj.rotation=(wx*.85+.15*Math.sin(item.phase))*wave*item.amp;
+   item.obj.rotation=(wx*.85+.15*Math.sin(item.phase))*wave*item.amp+(s.ambientNudges?.get(s.ambientPropCoordinates?.get(item.x+':'+item.y))||0);
    item.obj.scaleY=item.baseScaleY*(1-wy*wave*item.amp*.45);
    item.obj.scaleX=item.baseScaleX*(1+Math.abs(wx)*wave*item.amp*.15);
   }
@@ -480,41 +440,14 @@ export function updateScenery(s,time){
   }
  }
  if(!s.weather)return;s.weather.clear();const stage=s.weatherStage;updateEnvironmentFX(s,time);updateHydrologyFX(s,time);
- for(const p of s.weatherPoints){
-  const rising=stage===9||stage===10;
-  const x=(p.x+time/(stage===5?45:85)*p.speed+wx*26)%s.mapWidth;
-  const rawY=(p.y+(rising?-1:1)*time/(stage===7?12:70)*p.speed+wy*14)%s.mapHeight;
-  const y=rawY<0?rawY+s.mapHeight:rawY,px=x<0?x+s.mapWidth:x;
-  if(stage===6||stage===8){s.weather.fillStyle(0xeaf9ff,.7).fillCircle(px,y,1.8+(p.phase%1.4));if(stage===6)s.weather.lineStyle(1.3,0xdcf5ff,.45).lineBetween(px,y,px+10,y-5);if(p.phase>4.2)s.weather.lineStyle(1,0xffffff,.5).lineBetween(px-2.5,y,px+2.5,y);}
-  else if(stage===7){s.weather.lineStyle(1,0x9ec5ba,.26).lineBetween(px,y,px-4,y+12);if(p.phase>5)s.weather.lineStyle(1,0xbce3d8,.22).strokeEllipse(px-4,y+13,6,2.5);}
-  else if(rising)s.weather.fillStyle(stage===9?0xffb274:0xc29ada,.44).fillCircle(px,y,1.6+Math.sin(time/150+p.phase)*.6);
-  else if(stage===3)s.weather.fillStyle(p.phase>3?0xd59b57:0xc76642,.42).fillEllipse(px,y,4.5,2.2);
-  else if(stage===5)s.weather.fillStyle(0xe8d095,.34).fillRect(px,y,4,1.5);
-  else s.weather.fillStyle(0xf5f2a8,.24+Math.sin(time/450+p.phase)*.1).fillCircle(px,y,1.5);
- }
- if(s.atmosphere){
-  s.atmosphere.clear();
-  const sw=s.scale.width,sh=s.scale.height;
-  // Tối (giảm ánh sáng toàn cảnh)
-  const dimAlpha=stage>=7?.25:stage===6?.16:.19;
-  const dimColor=stage===6?0x0c1722:stage===9?0x1a0d0a:stage===10?0x140d1c:0x080f0b;
-  s.atmosphere.fillStyle(dimColor,dimAlpha).fillRect(0,0,sw,sh);
-  // Sương mù trôi nhẹ qua màn hình
-  const fogCol=stage===6?0xdff4ff:stage===9?0x8a5e4d:stage===10?0x9e88ba:0xbcd1c7;
-  const fogAlpha=stage===7||stage===8?.11:stage===6?.09:.07;
-  for(const f of s.fogBanks||[]){
-   const fx=((f.x+time/1000*f.speed)%1.4-.2)*sw,fy=f.y*sh+Math.sin(time/2400+f.phase)*18;
-   s.atmosphere.fillStyle(fogCol,fogAlpha).fillEllipse(fx,fy,f.rx*2,f.ry*2);
-   s.atmosphere.fillStyle(fogCol,fogAlpha*.6).fillEllipse(fx+45,fy+12,f.rx*1.4,f.ry*1.4);
-  }
- }
+ drawWeather(s,time);
 }
 export function drawMiniMap(s,state,map){
  const g=s.mini;g.clear();const w=174,h=116,x=Math.max(8,s.scale.width-188),y=13;
  g.fillStyle(0x101b17,.9).fillRoundedRect(x-7,y-7,w+14,h+14,5);g.lineStyle(1,0xc3b879,.5).strokeRoundedRect(x-7,y-7,w+14,h+14,5);
  g.fillStyle(map.ground,.8).fillRect(x,y,w,h);const sx=w/map.width,sy=h/map.height;
- for(const water of map.rivers||[]){g.lineStyle(water.type==='deep'?4:water.type==='abyss'?3.5:2,water.type==='abyss'?0x1b1424:water.type==='deep'?0x36778e:0x8ac7ca,.9);g.beginPath();water.points.forEach(([a,b],i)=>i?g.lineTo(x+a*sx,y+b*sy):g.moveTo(x+a*sx,y+b*sy));g.strokePath();}
- for(const z of map.environment||[])g.fillStyle(BIOMES[z.type].color,.6).fillEllipse(x+z.x*sx,y+z.y*sy,z.rx*2*sx,z.ry*2*sy);for(const t of map.territories||[])g.lineStyle(1,t.color,.9).strokeCircle(x+t.x*sx,y+t.y*sy,6);
+ for(const water of map.rivers||[]){g.lineStyle(water.type==='deep'?4:water.type==='abyss'?3.5:2,water.surface==='ice'?0xb5dae4:water.surface==='dry'?0xa89470:water.surface==='lava'?0xd66b32:water.type==='abyss'?0x1b1424:water.type==='deep'?0x36778e:0x8ac7ca,.9);g.beginPath();water.points.forEach(([a,b],i)=>i?g.lineTo(x+a*sx,y+b*sy):g.moveTo(x+a*sx,y+b*sy));g.strokePath();}
+ for(const z of map.environment||[]){if(z.spine?.length>1){g.lineStyle(4,BIOMES[z.type].color,.75);g.beginPath();z.spine.forEach(([a,b],i)=>i?g.lineTo(x+a*sx,y+b*sy):g.moveTo(x+a*sx,y+b*sy));g.strokePath();}else g.fillStyle(BIOMES[z.type].color,.6).fillEllipse(x+z.x*sx,y+z.y*sy,z.rx*2*sx,z.ry*2*sy);}for(const t of map.territories||[])g.lineStyle(1,t.color,.9).strokeCircle(x+t.x*sx,y+t.y*sy,6);
  for(const lane of map.lanes){g.lineStyle(2,map.road,.8);g.beginPath();lane.forEach(([a,b],i)=>i?g.lineTo(x+a*sx,y+b*sy):g.moveTo(x+a*sx,y+b*sy));g.strokePath();}
  g.fillStyle(0xe8c784).fillRect(x+map.base.x*sx-4,y+map.base.y*sy-3,8,6);
  for(const camp of map.camps||[])g.lineStyle(1,0x91b27b,.65).strokeCircle(x+camp.x*sx,y+camp.y*sy,4);
@@ -522,5 +455,56 @@ export function drawMiniMap(s,state,map){
  for(const e of state.enemies)g.fillStyle(e.neutral?0xa4c67f:0xee8e79).fillCircle(x+e.x*sx,y+e.y*sy,e.boss?3:1.6);
  for(const t of state.troops)g.fillStyle(0x9bdcc4).fillCircle(x+t.x*sx,y+t.y*sy,1.5);
  for(const p of state.players)g.fillStyle(p.hp>0?0xfff1b8:0x999999).fillCircle(x+p.x*sx,y+p.y*sy,2.5);
- const cam=s.cameras.main;g.lineStyle(1,0xe6e2c7,.6).strokeRect(x+cam.scrollX*sx,y+cam.scrollY*sy,cam.width/cam.zoom*sx,cam.height/cam.zoom*sy);
+ const cam=s.cameras.main;g.lineStyle(1,0xe6e2c7,.6).strokeRect(x+cam.scrollX*sx,y+cam.scrollY*sy,cam.width/(cam.zoomX||cam.zoom||1)*sx,cam.height/(cam.zoomY||cam.zoom||1)*sy);
+}
+
+export function drawMapRoads(c,s,m,rand=Math.random){drawRoadNetwork(c,m);}
+export function drawMapTrails(c,m){drawRoadNetwork(c,m,true);}
+
+export function drawMapGround(c,s,m,random){
+ let seed=m.id*531;const rand=random||(()=>{seed=seed*16807%2147483647;return seed/2147483647;});
+ c.imageSmoothingEnabled=false;
+ // 1. Rich seamless 128x128 pixel-art ground texture + macro meadow lighting (no flat color, no 64x64 grid)
+ c.fillStyle=hex(m.ground);c.fillRect(0,0,m.width,m.height);
+ const groundPat=createGroundPattern(c,m);
+ if(groundPat){c.fillStyle=groundPat;c.fillRect(0,0,m.width,m.height);}
+ const grass=s.textures.get('Ground_grass').getSourceImage();
+ const patchCount=Math.floor((m.width*m.height)/24000);
+ for(let i=0;i<patchCount;i++){
+  const px=rand()*m.width,py=rand()*m.height,rx=65+rand()*140,ry=42+rand()*95;
+  c.fillStyle=i%2?'#f2f7c814':'#0d1a0f18';
+  c.beginPath();c.ellipse(px,py,rx,ry,rand()*Math.PI,0,Math.PI*2);c.fill();
+ }
+ // Scatter organic grass-atlas patches & earth/pebble/leaf accents off-grid
+ const islandCount=Math.floor((m.width*m.height)/8500);
+ for(let i=0;i<islandCount;i++){
+  const px=rand()*m.width,py=rand()*m.height,sz=34+rand()*42;
+  c.globalAlpha=.16+rand()*.12;
+  c.drawImage(grass,2,2+m.grassRow*96,22,22,px-sz/2,py-sz/2,sz,sz);
+ }
+ c.globalAlpha=1;
+ const accentCount=Math.floor((m.width*m.height)/3600);
+ for(let i=0;i<accentCount;i++){
+  const px=rand()*m.width,py=rand()*m.height;
+  if(i%8===0){
+   // Small earthy pebble cluster
+   c.fillStyle='#19241744';c.fillRect(px-1,py+1,7,3);
+   c.fillStyle=m.id===6?'#d9f0f7aa':m.id===9?'#8a4c3b99':'#9c9476aa';
+   c.fillRect(px,py,4,3);c.fillRect(px+5,py+1,3,2);
+  }else if(i%7===0){
+   // Tiny wildflower / clover tuft
+   c.fillStyle='#24402066';c.fillRect(px-2,py,5,3);
+   c.fillStyle=m.id===6?'#e6f9ffaa':m.id===9?'#ff875299':i%2?'#ffe68099':'#f5a8c499';
+   c.fillRect(px-1,py-1,3,2);c.fillRect(px,py-2,1,3);
+  }else if(i%5===0&&m.id===3){
+   // Fallen autumn leaf on stage 3
+   c.fillStyle=i%2?'#d6833c99':'#c95a3899';c.fillRect(px,py,4,2);
+  }else{
+   // Grass blade cluster
+   c.fillStyle=i%3?'#e2edb940':'#14241440';
+   c.fillRect(px,py-3,2,5);c.fillRect(px+3,py-1,2,3);c.fillRect(px-3,py-1,2,3);
+  }
+ }
+
+
 }

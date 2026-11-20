@@ -1,3 +1,6 @@
+import {drawBiomeTransition} from './biome-transition.js';
+import {drawTerrainRelief} from './terrain-relief.js';
+import {biomePattern} from './biome-art.js';
 import {BIOMES} from './world-biomes.js';
 
 function mulberry32(seed){
@@ -108,20 +111,128 @@ function addBiomeGrain(c,z,cols,rand){
  }
 }
 
+function drawCliffWall25D(c,pts,wallH,pal,rand,taperEnds=false){
+ if(pts.length<2)return;
+ const px=v=>Math.round(v/2)*2;
+ const grassMid=pal.grassMid||pal.grassDark;
+ const crack=pal.crack||'#222822';
+ // Nội suy mịn theo đường sống núi để tính độ cao vách đá tự nhiên (thuôn dần 2 đầu nếu là dãy núi)
+ const samples=[];
+ const totalSegs=pts.length-1;
+ for(let i=0;i<totalSegs;i++){
+  const [ax,ay]=pts[i],[bx,by]=pts[i+1],segLen=Math.hypot(bx-ax,by-ay)||1;
+  const sub=Math.max(3,Math.ceil(segLen/12));
+  for(let k=0;k<sub;k++){
+   const u=(i+k/sub)/totalSegs;
+   const t=taperEnds?Math.pow(Math.sin(u*Math.PI),.55):1;
+   const h=px(wallH*t*(.86+Math.sin(u*17+pts[0][0]*.02)*.14));
+   samples.push([ax+(bx-ax)*(k/sub),ay+(by-ay)*(k/sub),Math.max(4,h)]);
+  }
+ }
+ const last=pts[pts.length-1];
+ samples.push([last[0],last[1],taperEnds?4:px(wallH)]);
+
+ // 1. Bóng đổ mềm dưới chân vách đá
+ c.fillStyle='rgba(10,18,12,0.34)';
+ c.beginPath();
+ samples.forEach(([x,y,h],i)=>i?c.lineTo(x+3,y+h+6):c.moveTo(x+3,y+h+6));
+ for(let i=samples.length-1;i>=0;i--)c.lineTo(samples[i][0]+3,samples[i][1]+samples[i][2]-4);
+ c.closePath();c.fill();
+
+ // 2. Nền thân vách đá tự nhiên (thuôn theo độ cao từng đoạn)
+ c.fillStyle=pal.dark;
+ c.beginPath();
+ samples.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));
+ for(let i=samples.length-1;i>=0;i--)c.lineTo(samples[i][0],samples[i][1]+samples[i][2]);
+ c.closePath();c.fill();
+
+ // 3. Các sống đá & khe núi dọc tự nhiên (không xếp hàng gạch ngang)
+ for(let i=1;i<samples.length;i++){
+  const [x0,y0,h0]=samples[i-1],[x1,y1,h1]=samples[i];
+  const h=Math.round((h0+h1)/2);
+  if(h<6)continue;
+  const xL=Math.min(x0,x1),w=Math.max(4,Math.abs(x1-x0)+1),yTop=Math.round((y0+y1)/2);
+  const facet=i%4;
+  // Mảng đá sáng (sườn đón nắng) / trung tính / sườn khuất bóng
+  c.fillStyle=facet===0?pal.light:facet===1?pal.mid:facet===2?pal.dark2:pal.dark;
+  c.beginPath();
+  c.moveTo(x0,y0+2);c.lineTo(x1,y1+2);
+  c.lineTo(x1+(facet%2?2:-2),y1+h1);c.lineTo(x0+(facet%2?2:-2),y0+h0);
+  c.closePath();c.fill();
+  // Mảng sáng phần trên sườn đá
+  if(facet<=1){
+   c.fillStyle=pal.light;
+   c.fillRect(px(xL),px(yTop+3),px(w*.7),px(Math.min(10,h*.3)));
+  }
+  // Khe nứt dọc gãy khúc theo sườn đá (không thẳng tắp)
+  if(i%2===0&&h>12){
+   const cx=px(x1),cy=px(yTop+3),midY=px(cy+h*.5);
+   c.fillStyle=crack;
+   c.fillRect(cx,cy,2,midY-cy);
+   c.fillRect(cx+(i%4===0?2:-2),midY,2,px(h*.45));
+  }
+  // Bụi rêu xanh bám chân vách & hốc đá
+  if(rand()>.55&&h>10){
+   const mx=px(xL),my=px(yTop+h-6);
+   c.fillStyle=pal.grassDark;c.fillRect(mx,my,8,5);
+   c.fillStyle=grassMid;c.fillRect(mx+2,my-2,5,4);
+  }
+ }
+
+ // 4. Bóng râm liền mạch ngay dưới mép cỏ (ambient occlusion)
+ c.strokeStyle='rgba(14,20,15,0.45)';c.lineWidth=4;c.lineCap='round';c.lineJoin='round';
+ c.beginPath();samples.forEach(([x,y],i)=>i?c.lineTo(x,y+3):c.moveTo(x,y+3));c.stroke();
+
+ // 5. Mép cỏ rủ liền mạch (không đứt đoạn trắng) + cụm cỏ nhấp nhô tự nhiên
+ c.strokeStyle=pal.grassDark;c.lineWidth=6;
+ c.beginPath();samples.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();
+ c.strokeStyle=grassMid;c.lineWidth=3.5;
+ c.beginPath();samples.forEach(([x,y],i)=>i?c.lineTo(x,y-1):c.moveTo(x,y-1));c.stroke();
+ for(let i=1;i<samples.length;i+=2){
+  const [tx,ty,h]=samples[i];
+  if(h<8)continue;
+  const drop=2+(i%3)*2;
+  c.fillStyle=pal.grassDark;c.fillRect(px(tx)-2,px(ty),6,drop+2);
+  c.fillStyle=pal.grassLight;c.fillRect(px(tx)-2,px(ty)-2,4,2);
+ }
+}
+
 export function drawEnvironmentPatch(c,scene,z){
- const type=z.type,def=BIOMES[type];
+ const type=z.type,def=BIOMES[type],painted=biomePattern(c,scene,z.type);
  if(!def)return;
+ if(type==='high'||type==='low'){drawTerrainRelief(c,scene,z,painted);return;}
  const rand=mulberry32((Math.round(z.x)*197+Math.round(z.y)*313+type.length*97)|0);
+ if(z.ridge&&z.spine?.length>1){
+  const pts=z.spine,w=z.width||86;
+  c.save();
+  if(painted){c.strokeStyle=painted;c.lineCap='round';c.lineJoin='round';c.lineWidth=w*1.25;c.globalAlpha=.45;c.beginPath();pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();c.globalAlpha=1;}
+  for(let i=0;i<pts.length;i++){
+   const u=i/(pts.length-1),t=Math.pow(Math.sin(u*Math.PI),.5);
+   const [sx,sy]=pts[i],rx=w*(.72+.68*t),ry=w*(.48+.42*t);
+   c.fillStyle='#243d2038';c.beginPath();c.ellipse(sx,sy+10,rx*1.12,ry*1.05,0,0,Math.PI*2);c.fill();
+   c.fillStyle='#4a3d2f66';c.beginPath();c.ellipse(sx,sy+2,rx*.85,ry*.75,0,0,Math.PI*2);c.fill();
+  }
+  for(let i=1;i<pts.length;i++){
+   const [ax,ay]=pts[i-1],[bx,by]=pts[i];
+   for(let s=0;s<3;s++){
+    const u=(s+.3)/3,mx=ax+(bx-ax)*u,my=ay+(by-ay)*u;
+    if(!painted)drawGrassCarpet(c,mx+(rand()-.5)*60,my+(rand()-.5)*44,18+rand()*12,'#22422044','#274d25','#70a84f',rand);
+    if(!painted)drawGravelCarpet(c,mx+(rand()-.5)*48,my+16+(rand()-.5)*28,16+rand()*10,['#4a3d2f','#635545','#859180'],rand);
+    if(!painted)drawPixelRock(c,mx+(rand()-.5)*52,my+24+(rand()-.5)*24,6+rand()*5,4+rand()*3,'#1b211b','#3a4239','#5c6659','#8c9785');
+   }
+  }
+  c.restore();
+  return;
+ }
+ if(painted&&type!=='mountain'){drawBiomeTransition(c,z,painted,'#'+def.color.toString(16).padStart(6,'0'));return;}
  const color='#'+def.color.toString(16).padStart(6,'0');
  const rMax=Math.max(z.rx,z.ry);
 
  c.save();
- for(const [scale,alpha] of [[1.18,.12],[1.09,.24],[1.03,.34]]){
-  traceOrganicContour(c,z,scale);
-  c.fillStyle=color;
-  c.globalAlpha=type==='dense'?alpha*.65:alpha;
-  c.fill();
- }
+ traceOrganicContour(c,z,1.06);
+ c.fillStyle=color;
+ c.globalAlpha=type==='dense'?.10:.16;
+ c.fill();
 
  traceOrganicContour(c,z,1);
  c.save();
@@ -139,9 +250,13 @@ export function drawEnvironmentPatch(c,scene,z){
  }else if(type==='dense'){
   grad.addColorStop(0,'#1d4021');grad.addColorStop(.65,'#2b542e');grad.addColorStop(1,'#396336');
  }else if(type==='wind'){
-  grad.addColorStop(0,'#b0ebd2');grad.addColorStop(.65,'#84cbb0');grad.addColorStop(1,'#61a886');
+  grad.addColorStop(0,'#8caa73');grad.addColorStop(.65,'#708b59');grad.addColorStop(1,'#526e43');
  }else if(type==='mountain'){
   grad.addColorStop(0,'#a6aba0');grad.addColorStop(.55,'#757b70');grad.addColorStop(1,'#474f45');
+ }else if(type==='desert'){grad.addColorStop(0,'#c6ad78');grad.addColorStop(1,'#9f895b');
+ }else if(type==='snow'){grad.addColorStop(0,'#dae6e8');grad.addColorStop(1,'#a8bfc8');
+ }else if(type==='swamp'){grad.addColorStop(0,'#4c5945');grad.addColorStop(1,'#62704d');
+ }else if(type==='flowers'){grad.addColorStop(0,'#7d9057');grad.addColorStop(1,'#5f7545');
  }else if(type==='high'){
   grad.addColorStop(0,'#a8ba70');grad.addColorStop(.68,'#849654');grad.addColorStop(1,'#5e6e3e');
  }else{
@@ -151,20 +266,25 @@ export function drawEnvironmentPatch(c,scene,z){
  c.fillStyle=grad;
  c.fillRect(z.x-z.rx*1.2,z.y-z.ry*1.2,z.rx*2.4,z.ry*2.4);
 
+ if(painted){c.fillStyle=painted;for(const [scale,alpha]of [[1,.16],[.96,.18],[.9,.2],[.82,.22]]){traceOrganicContour(c,z,scale);c.globalAlpha=alpha;c.fill();}}
  c.globalAlpha=1;
+ // The painted carpet already contains small debris and vegetation. Keep only
+ // structural relief on height biomes; avoid stacking cartoon rocks, ice pools
+ // and a second lava crater over the new material.
+ if(painted&&!['mountain','high','low'].includes(type)){c.restore();c.restore();return;}
  const pt=()=>{const a=rand()*Math.PI*2,d=Math.sqrt(rand())*.85;return [z.x+Math.cos(a)*z.rx*d,z.y+Math.sin(a)*z.ry*d];};
 
  if(type==='dense'){
-  addBiomeGrain(c,z,['#17301977','#3d6e3a66','#538c4955'],rand);
+  if(!painted)addBiomeGrain(c,z,['#17301977','#3d6e3a66','#538c4955'],rand);
   for(let i=0;i<6;i++){const [px,py]=pt();c.fillStyle='#d8f29b14';c.beginPath();c.ellipse(px,py,24+rand()*26,15+rand()*16,rand(),0,Math.PI*2);c.fill();}
-  for(let i=0;i<20;i++){const [px,py]=pt();drawGrassCarpet(c,px,py,16+rand()*18,'#1e422088','#4d823b','#7bb559',rand);}
-  for(let i=0;i<12;i++){const [px,py]=pt();drawFlowerCarpet(c,px,py,13+rand()*9,['#ffe37a','#f5a2b8','#a8ebff','#ffffff'],rand);}
-  for(let i=0;i<8;i++){const [px,py]=pt();drawMushroomCluster(c,px,py,i%2?'#d95843':'#e8b364',rand);}
-  for(let i=0;i<7;i++){const [px,py]=pt();drawPixelRock(c,px,py,6+rand()*6,4+rand()*4,'#253324','#3f523d','#5c7356','#859c78');}
+  for(let i=0;i<20;i++){const [px,py]=pt();if(!painted)drawGrassCarpet(c,px,py,16+rand()*18,'#1e422088','#4d823b','#7bb559',rand);}
+  for(let i=0;i<12;i++){const [px,py]=pt();if(!painted)drawFlowerCarpet(c,px,py,13+rand()*9,['#ffe37a','#f5a2b8','#a8ebff','#ffffff'],rand);}
+  for(let i=0;i<8;i++){const [px,py]=pt();if(!painted)drawMushroomCluster(c,px,py,i%2?'#d95843':'#e8b364',rand);}
+  for(let i=0;i<7;i++){const [px,py]=pt();if(!painted)drawPixelRock(c,px,py,6+rand()*6,4+rand()*4,'#253324','#3f523d','#5c7356','#859c78');}
  }else if(type==='dead'){
-  addBiomeGrain(c,z,['#2b1f2488','#69546166','#87777c55'],rand);
+  if(!painted)addBiomeGrain(c,z,['#2b1f2488','#69546166','#87777c55'],rand);
   c.fillStyle='#5c3b6e22';c.beginPath();c.ellipse(z.x,z.y,z.rx*.72,z.ry*.65,0,0,Math.PI*2);c.fill();
-  for(let i=0;i<15;i++){const [px,py]=pt();drawGravelCarpet(c,px,py,15+rand()*15,['#3b2f35','#6e6064','#8f8182'],rand);}
+  for(let i=0;i<15;i++){const [px,py]=pt();if(!painted)drawGravelCarpet(c,px,py,15+rand()*15,['#3b2f35','#6e6064','#8f8182'],rand);}
   c.lineCap='round';
   for(let i=0;i<24;i++){
    let [px,py]=pt();c.beginPath();c.moveTo(px,py);
@@ -177,11 +297,11 @@ export function drawEnvironmentPatch(c,scene,z){
    const [rx,ry]=pt();c.strokeStyle='#2b2024';c.lineWidth=3.5;c.beginPath();c.moveTo(rx-12,ry+4);c.quadraticCurveTo(rx,ry-6,rx+14,ry+2);c.stroke();
    c.strokeStyle='#57454b';c.lineWidth=1.5;c.beginPath();c.moveTo(rx-12,ry+3);c.quadraticCurveTo(rx,ry-7,rx+14,ry+1);c.stroke();
   }
-  for(let i=0;i<9;i++){const [px,py]=pt();drawPixelRock(c,px,py,5+rand()*6,4+rand()*4,'#261e22','#3f353b','#5d5157','#7a6e74');}
+  for(let i=0;i<9;i++){const [px,py]=pt();if(!painted)drawPixelRock(c,px,py,5+rand()*6,4+rand()*4,'#261e22','#3f353b','#5d5157','#7a6e74');}
   for(let i=0;i<3;i++){const [sx,sy]=pt();drawSmallSkull(c,sx,sy);}
   for(let i=0;i<4;i++){const [bx,by]=pt();drawSmallBone(c,bx,by,rand()*Math.PI);}
  }else if(type==='mountain'){
-  addBiomeGrain(c,z,['#3d433b88','#81877c66','#b2b8ac55'],rand);
+  if(!painted)addBiomeGrain(c,z,['#3d433b88','#81877c66','#b2b8ac55'],rand);
   c.globalAlpha=.76;c.strokeStyle='#1c211d';c.lineWidth=24;
   c.beginPath();
   for(let i=0;i<=22;i++){const a=Math.PI*.06+i/22*Math.PI*.88,x=z.x+Math.cos(a)*z.rx*.96,y=z.y+Math.sin(a)*z.ry*.96;if(i===0)c.moveTo(x,y);else c.lineTo(x,y);}
@@ -194,64 +314,34 @@ export function drawEnvironmentPatch(c,scene,z){
   c.beginPath();
   for(let i=0;i<=18;i++){const a=Math.PI*1.12+i/18*Math.PI*.76,x=z.x+Math.cos(a)*z.rx*.68,y=z.y+Math.sin(a)*z.ry*.68;if(i===0)c.moveTo(x,y);else c.lineTo(x,y);}
   c.stroke();c.globalAlpha=1;
-  // Faceted 2.5D cliff peaks with sunlit & shadowed slopes (extra grand for edge mountain ridges)
-  const peakCount=z.ridge?11:5;
-  for(let i=0;i<peakCount;i++){
-   const frac=(i/(peakCount-1||1)-.5)*1.45,px=z.x+(z.rx>=z.ry?frac*z.rx:(rand()-.5)*z.rx*.6),py=z.y+(z.ry>z.rx?frac*z.ry:(i%2?-1:1)*(z.ry*.2)),pw=(z.ridge?40:26)+rand()*20,ph=(z.ridge?46:28)+rand()*22;
-   c.fillStyle='#141a1577';c.beginPath();c.ellipse(px+5,py+7,pw,ph*.36,0,0,Math.PI*2);c.fill();
-   c.fillStyle='#8d9488';c.beginPath();c.moveTo(px-pw,py+5);c.lineTo(px,py-ph);c.lineTo(px+2,py+7);c.closePath();c.fill();
-   c.fillStyle='#464d44';c.beginPath();c.moveTo(px,py-ph);c.lineTo(px+pw,py+5);c.lineTo(px+2,py+7);c.closePath();c.fill();
-   c.fillStyle=z.ridge?'#eef6f0':'#dfe6d899';c.beginPath();c.moveTo(px-pw*.36,py-ph*.45);c.lineTo(px,py-ph);c.lineTo(px+pw*.28,py-ph*.54);c.lineTo(px+pw*.06,py-ph*.38);c.lineTo(px-pw*.12,py-ph*.42);c.closePath();c.fill();
+  // Faceted 2.5D cliff peaks with layered back-row & front-row ridges, crevices & foothill mist
+  const peakCount=z.ridge?13:6;
+  const peaks=Array.from({length:peakCount},(_,i)=>{
+   const frac=(i/(peakCount-1||1)-.5)*1.5;
+   return {
+    px:z.x+(z.rx>=z.ry?frac*z.rx:(rand()-.5)*z.rx*.65),
+    py:z.y+(z.ry>z.rx?frac*z.ry:(i%2?-1:1)*(z.ry*.22)),
+    pw:(z.ridge?44:28)+rand()*22,
+    ph:(z.ridge?54:32)+rand()*24,
+    back:i%2===0
+   };
+  }).sort((a,b)=>a.py-b.py);
+  for(const pk of peaks){
+   const {px,py,pw,ph,back}=pk;
+   c.fillStyle='#10151188';c.beginPath();c.ellipse(px+6,py+8,pw*1.05,ph*.36,0,0,Math.PI*2);c.fill();
+   c.fillStyle=back?'#7c8478':'#92998d';c.beginPath();c.moveTo(px-pw,py+5);c.lineTo(px,py-ph);c.lineTo(px+2,py+7);c.closePath();c.fill();
+   c.fillStyle=back?'#3b4239':'#495246';c.beginPath();c.moveTo(px,py-ph);c.lineTo(px+pw,py+5);c.lineTo(px+2,py+7);c.closePath();c.fill();
+   // Rock strata & ridge crevices
+   c.strokeStyle='#24292388';c.lineWidth=1.8;c.beginPath();c.moveTo(px,py-ph);c.lineTo(px+2,py+6);c.moveTo(px-pw*.45,py-ph*.25);c.lineTo(px-pw*.15,py+2);c.moveTo(px+pw*.42,py-ph*.2);c.lineTo(px+pw*.18,py+3);c.stroke();
+   c.fillStyle=z.ridge?'#f2f9f5':'#e4ebe0aa';c.beginPath();c.moveTo(px-pw*.38,py-ph*.44);c.lineTo(px,py-ph);c.lineTo(px+pw*.3,py-ph*.52);c.lineTo(px+pw*.08,py-ph*.36);c.lineTo(px-pw*.14,py-ph*.42);c.closePath();c.fill();
   }
-  for(let i=0;i<15;i++){const [px,py]=pt();drawGravelCarpet(c,px,py,15+rand()*14,['#545950','#7d8379','#9ca196'],rand);}
-  for(let i=0;i<14;i++){const [px,py]=pt();drawPixelRock(c,px,py,12+rand()*12,8+rand()*7,'#232823','#434942','#70766c','#b0b6aa');}
-  for(let i=0;i<22;i++){const [px,py]=pt();drawPixelRock(c,px,py,4+rand()*5,3+rand()*4,'#2b302b','#4a5049','#797f75','#b5bbb0');}
-  for(let i=0;i<6;i++){const [px,py]=pt();drawGrassCarpet(c,px,py,8+rand()*6,'#4d663a55','#587542','#82a35d',rand);}
- }else if(type==='high'){
-  addBiomeGrain(c,z,['#60724066','#9eb06b66','#c5d98955'],rand);
-  c.globalAlpha=.76;c.strokeStyle='#3d3324';c.lineWidth=18;
-  c.beginPath();
-  for(let i=0;i<=20;i++){const a=Math.PI*.08+i/20*Math.PI*.84,x=z.x+Math.cos(a)*z.rx*.96,y=z.y+Math.sin(a)*z.ry*.96;if(i===0)c.moveTo(x,y);else c.lineTo(x,y);}
-  c.stroke();
-  // Stepped stone/earth terrace teeth along lower plateau rim
-  for(let i=0;i<11;i++){
-   const a=Math.PI*.14+i/10*Math.PI*.72,tx=z.x+Math.cos(a)*z.rx*.92,ty=z.y+Math.sin(a)*z.ry*.92;
-   c.fillStyle='#5c4f3a';c.fillRect(tx-7,ty-4,14,10);
-   c.fillStyle='#7d6d52';c.fillRect(tx-5,ty-4,10,5);
-  }
-  c.strokeStyle='#e8f5ab88';c.lineWidth=5;
-  c.beginPath();
-  for(let i=0;i<=18;i++){const a=Math.PI*1.12+i/18*Math.PI*.76,x=z.x+Math.cos(a)*z.rx*.9,y=z.y+Math.sin(a)*z.ry*.9;if(i===0)c.moveTo(x,y);else c.lineTo(x,y);}
-  c.stroke();c.globalAlpha=1;
-  for(let i=0;i<15;i++){const [px,py]=pt();drawGrassCarpet(c,px,py,14+rand()*12,'#7c915077','#6e8544','#b2c77b',rand);}
-  for(let i=0;i<7;i++){const [px,py]=pt();drawFlowerCarpet(c,px,py,10+rand()*7,['#fff6a6','#ffffff','#ffd185'],rand);}
-  for(let i=0;i<10;i++){const [px,py]=pt();drawPixelRock(c,px,py,6+rand()*6,4+rand()*4,'#3c4032','#575c48','#7d826b','#a6ab92');}
- }else if(type==='low'){
-  addBiomeGrain(c,z,['#222e1e77','#4f614566','#3a4a3366'],rand);
-  for(const [inset,width,col] of [[.97,22,'#141e16'],[.87,13,'#213023bb'],[.76,8,'#2c3f2f88']]){
-   c.strokeStyle=col;c.lineWidth=width;
-   c.beginPath();
-   for(let i=0;i<=22;i++){const a=Math.PI*1.04+i/22*Math.PI*.92,x=z.x+Math.cos(a)*z.rx*inset,y=z.y+Math.sin(a)*z.ry*inset;if(i===0)c.moveTo(x,y);else c.lineTo(x,y);}
-   c.stroke();
-  }
-  c.fillStyle='#244b48aa';c.beginPath();c.ellipse(z.x,z.y+10,z.rx*.46,z.ry*.4,0,0,Math.PI*2);c.fill();
-  c.strokeStyle='#88c9bd77';c.lineWidth=2.5;c.stroke();
-  c.fillStyle='#bef5ea55';c.fillRect(z.x-16,z.y+5,18,2);c.fillRect(z.x+6,z.y+14,14,2);
-  for(let i=0;i<5;i++){
-   const lx=z.x+(i-2)*20,ly=z.y+8+(i%2)*8;
-   c.fillStyle='#3d7d47cc';c.beginPath();c.arc(lx,ly,5,0.3,Math.PI*1.9);c.lineTo(lx,ly);c.closePath();c.fill();
-   if(i%2===0){c.fillStyle='#ffd4e2';c.fillRect(lx-1,ly-2,2,2);}
-  }
-  // Cattail reeds around the sunken pool
-  for(let i=0;i<6;i++){
-   const a=i/6*Math.PI*2,rx=z.x+Math.cos(a)*z.rx*.5,ry=z.y+10+Math.sin(a)*z.ry*.43;
-   c.fillStyle='#345e31';c.fillRect(rx-2,ry-9,2,10);c.fillRect(rx+1,ry-7,2,8);
-   c.fillStyle='#6e4729';c.fillRect(rx-2,ry-12,2,4);
-  }
-  for(let i=0;i<11;i++){const [px,py]=pt();drawGrassCarpet(c,px,py,12+rand()*10,'#32453077','#3f5c3a','#648758',rand);}
-  for(let i=0;i<8;i++){const [px,py]=pt();drawGravelCarpet(c,px,py,11+rand()*10,['#3b4638','#64705e','#828f7c'],rand);}
+  c.fillStyle='#dce6de1c';c.beginPath();c.ellipse(z.x,z.y+z.ry*.22,z.rx*.82,z.ry*.28,0,0,Math.PI*2);c.fill();
+  for(let i=0;i<15;i++){const [px,py]=pt();if(!painted)drawGravelCarpet(c,px,py,15+rand()*14,['#545950','#7d8379','#9ca196'],rand);}
+  for(let i=0;i<14;i++){const [px,py]=pt();if(!painted)drawPixelRock(c,px,py,12+rand()*12,8+rand()*7,'#232823','#434942','#70766c','#b0b6aa');}
+  for(let i=0;i<22;i++){const [px,py]=pt();if(!painted)drawPixelRock(c,px,py,4+rand()*5,3+rand()*4,'#2b302b','#4a5049','#797f75','#b5bbb0');}
+  for(let i=0;i<6;i++){const [px,py]=pt();if(!painted)drawGrassCarpet(c,px,py,8+rand()*6,'#4d663a55','#587542','#82a35d',rand);}
  }else if(type==='ice'){
-  addBiomeGrain(c,z,['#6baac966','#d9f5ff88','#ffffffaa'],rand);
+  if(!painted)addBiomeGrain(c,z,['#6baac966','#d9f5ff88','#ffffffaa'],rand);
   for(let i=0;i<18;i++){
    const [px,py]=pt(),rw=20+rand()*28,rh=13+rand()*18;
    c.fillStyle='#ffffffcc';c.beginPath();c.ellipse(px,py,rw,rh,rand(),0,Math.PI*2);c.fill();
@@ -272,7 +362,7 @@ export function drawEnvironmentPatch(c,scene,z){
    c.strokeStyle='#ffffffdd';c.lineWidth=1;c.stroke();
   }
  }else if(type==='lava'||type==='fire'){
-  addBiomeGrain(c,z,['#210f0c88','#5c231877','#8c351e66'],rand);
+  if(!painted)addBiomeGrain(c,z,['#210f0c88','#5c231877','#8c351e66'],rand);
   for(let i=0;i<4;i++){
    const [px,py]=pt(),rw=20+rand()*22,rh=12+rand()*14;
    c.fillStyle='#1f100e';c.beginPath();c.ellipse(px,py,rw+4,rh+3,0,0,Math.PI*2);c.fill();
@@ -285,7 +375,7 @@ export function drawEnvironmentPatch(c,scene,z){
   c.fillStyle='#4a231b';c.beginPath();c.ellipse(z.x,z.y-2,28,16,0,0,Math.PI*2);c.fill();
   c.fillStyle='#e84412';c.beginPath();c.ellipse(z.x,z.y-2,17,10,0,0,Math.PI*2);c.fill();
   c.fillStyle='#ffcf54';c.beginPath();c.ellipse(z.x,z.y-2,9,5,0,0,Math.PI*2);c.fill();
-  for(let i=0;i<12;i++){const [px,py]=pt();drawGravelCarpet(c,px,py,14+rand()*14,['#2a1816','#612a21','#8c3a2b'],rand);}
+  for(let i=0;i<12;i++){const [px,py]=pt();if(!painted)drawGravelCarpet(c,px,py,14+rand()*14,['#2a1816','#612a21','#8c3a2b'],rand);}
   c.lineCap='round';
   for(let i=0;i<18;i++){
    let [px,py]=pt();c.beginPath();c.moveTo(px,py);
@@ -294,12 +384,12 @@ export function drawEnvironmentPatch(c,scene,z){
    c.strokeStyle='#ff8c24cc';c.lineWidth=4;c.stroke();
    c.strokeStyle=type==='lava'?'#ffe885':'#ffb452';c.lineWidth=1.8;c.stroke();
   }
-  for(let i=0;i<11;i++){const [px,py]=pt();drawPixelRock(c,px,py,8+rand()*9,5+rand()*6,'#260c0a','#4a1411','#8f251b','#e0592b');}
-  for(let i=0;i<14;i++){const [px,py]=pt();drawPixelRock(c,px,py,3+rand()*5,2.5+rand()*3,'#2e100d','#571a14','#a33122','#f0733c');}
+  for(let i=0;i<11;i++){const [px,py]=pt();if(!painted)drawPixelRock(c,px,py,8+rand()*9,5+rand()*6,'#260c0a','#4a1411','#8f251b','#e0592b');}
+  for(let i=0;i<14;i++){const [px,py]=pt();if(!painted)drawPixelRock(c,px,py,3+rand()*5,2.5+rand()*3,'#2e100d','#571a14','#a33122','#f0733c');}
  }else if(type==='wind'){
-  addBiomeGrain(c,z,['#50967a66','#a8e8cc66','#d6fff055'],rand);
-  for(let i=0;i<16;i++){const [px,py]=pt();drawGrassCarpet(c,px,py,14+rand()*12,'#6ab39777','#55997d','#bdf5db',rand);}
-  for(let i=0;i<10;i++){const [px,py]=pt();drawFlowerCarpet(c,px,py,11+rand()*8,['#ffffff','#fff3a1','#b8ffe8'],rand);}
+  if(!painted)addBiomeGrain(c,z,['#50967a66','#a8e8cc66','#d6fff055'],rand);
+  for(let i=0;i<16;i++){const [px,py]=pt();if(!painted)drawGrassCarpet(c,px,py,14+rand()*12,'#6ab39777','#55997d','#bdf5db',rand);}
+  for(let i=0;i<10;i++){const [px,py]=pt();if(!painted)drawFlowerCarpet(c,px,py,11+rand()*8,['#ffffff','#fff3a1','#b8ffe8'],rand);}
   for(let i=0;i<22;i++){
    const [px,py]=pt();
    c.strokeStyle='#e6fff488';c.lineWidth=2.2;
@@ -308,11 +398,13 @@ export function drawEnvironmentPatch(c,scene,z){
  }
 
  c.restore();
- traceOrganicContour(c,z,1);
- c.globalAlpha=.34;
- c.strokeStyle=type==='ice'?'#e8fbff':type==='lava'?'#ff8d47':type==='mountain'?'#2c332d':'#1a291d';
- c.lineWidth=3.2;
- c.stroke();
+ if(type==='high'||type==='mountain'){
+  traceOrganicContour(c,z,1);
+  c.globalAlpha=.34;
+  c.strokeStyle=type==='mountain'?'#2c332d':'#1a291d';
+  c.lineWidth=3.2;
+  c.stroke();
+ }
  c.restore();
 }
 

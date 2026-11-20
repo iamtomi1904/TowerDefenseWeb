@@ -108,19 +108,24 @@ export const FORTRESS_PROP_IDS=Object.keys(FORTRESS_PROP_META);
 function px(c,x,y,w,h,col){c.fillStyle=col;c.fillRect(Math.round(x/2)*2,Math.round(y/2)*2,Math.max(2,Math.round(w/2)*2),Math.max(2,Math.round(h/2)*2));}
 
 function box(c,x,y,w,h,out,dark,mid,light){
- const rx=Math.round(x/2)*2,ry=Math.round(y/2)*2,rw=Math.round(w/2)*2,rh=Math.round(h/2)*2;
- // Stepped 2px pixel-art outline (rounded corners)
+ const rx=Math.round(x),ry=Math.round(y),rw=Math.round(w),rh=Math.round(h);
  c.fillStyle=out;
- c.fillRect(rx-2,ry,rw+4,rh);
- c.fillRect(rx,ry-2,rw,rh+4);
+ c.fillRect(rx-1,ry,rw+2,rh);
+ c.fillRect(rx,ry-1,rw,rh+2);
  c.fillStyle=dark;c.fillRect(rx,ry,rw,rh);
- c.fillStyle=mid;c.fillRect(rx+2,ry+2,Math.max(2,rw-4),Math.max(2,rh-6));
- c.fillStyle=light;c.fillRect(rx+2,ry+2,Math.max(2,rw-4),Math.min(4,Math.floor(rh/4)*2));
- // Ashlar stone/wood grain texture inside
- c.fillStyle=dark;
- for(let yy=ry+8;yy<ry+rh-4;yy+=8){
-  c.fillRect(rx+2,yy,Math.max(2,rw-4),2);
-  for(let xx=rx+6+((yy/8)%2)*6;xx<rx+rw-6;xx+=12)c.fillRect(xx,yy-6,2,6);
+ c.fillStyle=mid;c.fillRect(rx+1,ry+1,Math.max(1,rw-3),Math.max(1,rh-3));
+ c.fillStyle=light;
+ c.fillRect(rx+1,ry+1,Math.max(1,rw-3),Math.min(3,Math.floor(rh/4)));
+ c.fillRect(rx+1,ry+1,1,Math.max(1,rh-3));
+ // 1px staggered masonry blocks with bevels & weathering
+ for(let row=0,yy=ry+6;yy<ry+rh-3;row++,yy+=7){
+  c.fillStyle=dark;c.fillRect(rx+1,yy,Math.max(1,rw-2),1);
+  c.fillStyle=light;c.fillRect(rx+1,yy+1,Math.max(1,rw-3),1);
+  const off=(row%2)*5;
+  for(let xx=rx+5+off;xx<rx+rw-5;xx+=11){
+   c.fillStyle=dark;c.fillRect(xx,yy-6,1,6);
+   c.fillStyle=light;c.fillRect(xx+1,yy-5,1,4);
+  }
  }
 }
 

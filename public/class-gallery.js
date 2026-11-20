@@ -1,3 +1,4 @@
+import {passiveCasesFor} from './passive-preview-cases.js';
 import {PASSIVES} from './passives.js';
 import {heroDisplayHeight} from './hero-stature.js';
 import {warriorLeapHeight} from './pixel-skill-art.js';
@@ -21,12 +22,38 @@ const reportError=error=>{readout.textContent='Không mở được hoạt ảnh
 window.addEventListener('error',e=>reportError(e.error||e.message));window.addEventListener('unhandledrejection',e=>reportError(e.reason));
 readout.textContent='Đang tải nhân vật và bản xem kỹ năng…';
 const [catalog,previews]=await Promise.all(['/catalog-v4.json','/skill-previews.json'].map(async url=>{const r=await fetch(url);if(!r.ok)throw Error('Không tải được '+url);return r.json();}));
-let selected='fire-wizard',scene,replay=null,elapsed=0,cursor=0,current=null;const seen=new Set();
+let selected='fire-wizard',scene,replay=null,elapsed=0,cursor=0,current=null,activePassive=null,paused=false,passiveRequest=0;const seen=new Set(),passiveCache=new Map();
 const names={'dark-elf':'Dạ Tiễn','goblin-assassin':'Quỷ Ảnh','knight-1':'Thiết Vệ','knight-2':'Thánh Kỵ Sĩ','knight-3':'Hắc Kỵ Sĩ',samurai:'Phong Kiếm Khách','samurai-commander':'Kiếm Chủ','samurai-archer':'Cung Thủ','warrior-1':'Chiến Binh','warrior-2':'Cuồng Chiến','warrior-3':'Chiến Tướng','fire-wizard':'Hỏa Sư','lightning-mage':'Lôi Sư','wanderer-magican':'Du Pháp'};
 const actorIdOf=u=>u.hero==='samurai'?'wind-swordsman':u.hero==='warrior-3'?(u.vanguardTime>0?'vanguard-giant':'vanguard-champion'):u.hero==='knight-3'?(u.fallenMounted?'fallen-mounted':'fallen-knight'):u.hero==='knight-2'?(u.holyMounted?'holy-mounted':'holy-paladin'):u.hero||u.sprite;
-function reset(){replay=null;current=null;seen.clear();if(!scene)return;clearVFX(scene);scene.cameras.main.setZoom(1).setScroll(0,0);for(const obj of scene.actorObjects.values()){clearActorVFX(scene,obj);obj.sprite.destroy();obj.label?.destroy();}scene.actorObjects.clear();for(const obj of scene.units){clearActorVFX(scene,obj);obj.sprite.setVisible(true);}scene.titles.forEach(t=>t.setVisible(true));}
+function reset(){if(paused)scene?.scene?.resume();passiveRequest++;activePassive=null;paused=false;document.querySelector('#passive-panel').hidden=true;replay=null;current=null;seen.clear();if(!scene)return;clearVFX(scene);scene.cameras.main.setZoom(1).setScroll(0,0);for(const obj of scene.actorObjects.values()){clearActorVFX(scene,obj);obj.sprite.destroy();obj.label?.destroy();}scene.actorObjects.clear();for(const obj of scene.units){clearActorVFX(scene,obj);obj.sprite.setVisible(true);}scene.titles.forEach(t=>t.setVisible(true));}
+function renderPassiveOptions(){
+ const level=Number(document.querySelector('#visual-level').value)||1,levels=document.querySelector('#passive-levels');levels.replaceChildren();
+ for(const n of [1,6,11,16]){const b=document.createElement('button');b.textContent=n===16?'Cấp 16 · Toàn bộ tiến hóa':'Cấp '+n;b.setAttribute('aria-pressed',String(level===n));b.onclick=()=>{document.querySelector('#visual-level').value=String(n);renderPassiveOptions();};levels.append(b);}
+ const nav=document.querySelector('#passive-cases');nav.replaceChildren();
+ for(const c of passiveCasesFor(selected)){const b=document.createElement('button');b.textContent=c.label;b.setAttribute('aria-pressed',String(activePassive?.id===c.id));b.onclick=()=>selectPassiveCase(c);nav.append(b);}
+}
+function startPassive(data,c,refreshMenu=true){
+ reset();activePassive=c;replay=data;elapsed=0;cursor=0;
+ document.querySelector('#passive-panel').hidden=false;document.querySelector('#passive-pause').textContent='Tạm dừng';if(refreshMenu)renderPassiveOptions();
+ if(selected==='samurai-commander')document.querySelector('#dual-form').checked=!!c.options.dual;
+ if(['knight-2','knight-3'].includes(selected))document.querySelector('#mounted-form').checked=!!c.options.mounted;
+ scene.units.forEach(o=>o.sprite.setVisible(false));scene.titles.forEach(t=>t.setVisible(false));scene.cameras.main.setZoom(1).centerOn(data.origin.x+70,data.origin.y-30);
+ readout.textContent=PASSIVES[selected].name+' · '+c.label+' · '+(c.options.mastery>=2?'Tinh thông bậc 2':'Nội tại gốc')+' · '+PASSIVES[selected].text+(c.options.mastery>=2?' · '+CLASSES[CLASS_ART[selected].classId].passive:'');
+}
+async function selectPassiveCase(c){
+ const hero=selected;reset();activePassive=c;document.querySelector('#passive-panel').hidden=false;renderPassiveOptions();document.querySelector('#passive-state').textContent='Đang tải tình huống nội tại…';const token=passiveRequest;
+ try{
+  if(!passiveCache.has(hero))passiveCache.set(hero,fetch('/passive-previews/'+hero+'.json').then(r=>{if(!r.ok)throw Error('Không tải được nội tại');return r.json();}).catch(e=>{passiveCache.delete(hero);throw e;}));
+  const cases=await passiveCache.get(hero);if(token!==passiveRequest||hero!==selected)return;
+  if(!cases[c.id])throw Error('Thiếu tình huống '+c.label);startPassive(cases[c.id],c);
+ }catch(e){if(token===passiveRequest)reportError(e);}
+}
+document.querySelector('#passive-restart').onclick=()=>{if(activePassive&&replay)startPassive(replay,activePassive);};
+document.querySelector('#passive-pause').onclick=()=>{if(!activePassive)return;paused=!paused;document.querySelector('#passive-pause').textContent=paused?'Tiếp tục':'Tạm dừng';if(paused){document.querySelector('#passive-state').textContent='Tạm dừng · '+(Math.min(elapsed,replay.frames.length*replay.step)/1000).toFixed(1)+' giây';scene.scene?.pause();}else scene.scene?.resume();};
+document.querySelector('#visual-level').onchange=renderPassiveOptions;
 function select(id){selected=id;reset();for(const b of document.querySelectorAll('#classes button'))b.setAttribute('aria-pressed',String(b.dataset.hero===id));const nav=document.querySelector('#skills');nav.replaceChildren();
  for(const skillId of [...CLASSES[CLASS_ART[id].classId].skills,'passive']){const skill=skillId==='passive'?{id:'passive',slot:'P',name:PASSIVES[id].name}:SKILLS.find(s=>s.id===skillId),b=document.createElement('button');b.textContent=skill.slot+' · '+(skill.slot==='P'?skill:displaySkill(skill,{classId:CLASS_ART[id].classId,dualSwords:document.querySelector('#dual-form').checked})).name;b.disabled=!scene;b.onclick=()=>{
+  if(skill.slot==='P'){selectPassiveCase(passiveCasesFor(selected)[0]);return;}
   reset();const suffix=selected==='samurai-commander'&&document.querySelector('#dual-form').checked?':dual':selected==='samurai-archer'&&['Q','R'].includes(skill.slot)&&document.querySelector('#poison-combo').checked?':poison':['knight-2','knight-3'].includes(selected)&&document.querySelector('#mounted-form').checked&&previews[selected+':'+skill.slot+':mounted']?':mounted':'';replay=previews[selected+':'+skill.slot+suffix];elapsed=0;cursor=0;
   scene.units.forEach(o=>o.sprite.setVisible(false));scene.titles.forEach(t=>t.setVisible(false));scene.cameras.main.setZoom(skill.id==='healing-tide'?.47:skill.id==='rally'?.64:['holy-ascend','fallen-doom'].includes(skill.id)?.72:['holy-aura','fallen-aura'].includes(skill.id)?.82:1);scene.cameras.main.centerOn(replay.origin.x+(skill.id==='blizzard'?160:70),replay.origin.y-30);
   document.querySelector('#readout').textContent=(skill.slot==='P'?PASSIVES[selected].name+' · '+PASSIVES[selected].text+' · '+CLASSES[CLASS_ART[selected].classId].passive:skill.name)+(skill.slot==='P'?' · Tinh thông bậc 2':' · Bậc 1')+' · Mục tiêu tập đứng yên'+(['healing-tide','rally','holy-ascend','fallen-doom','holy-aura','fallen-aura'].includes(skill.id)?' · Thu nhỏ camera để thấy toàn vùng hào quang':' · Kích thước trong trận');
@@ -51,7 +78,7 @@ new Phaser.Game({type:Phaser.AUTO,width:1000,height:560,parent:'stage',pixelArt:
  },
  update(time,delta){if(!this.actorObjects)return;this.unitGlow.clear();this.unitGround.clear();
   if(replay){
-   elapsed+=Math.min(delta,100);while(cursor<replay.frames.length&&cursor*replay.step<=elapsed){current=replay.frames[cursor++];for(const e of current.events)renderEvent(this,e.type==='passive-action-fx'?{...e,level:Number(document.querySelector('#visual-level').value)||1}:e,seen);}
+   elapsed+=paused?0:Math.min(delta,100);if(activePassive){const duration=replay.frames.length*replay.step;document.querySelector('#passive-state').textContent=(paused?'Tạm dừng · ':elapsed>=duration?'Đã xem hết · ':'Đang phát · ')+(Math.min(elapsed,duration)/1000).toFixed(1)+' / '+(duration/1000).toFixed(1)+' giây';if(elapsed>duration+600&&document.querySelector('#passive-loop').checked&&!paused)startPassive(replay,activePassive,false);}while(cursor<replay.frames.length&&cursor*replay.step<=elapsed){current=replay.frames[cursor++];for(const e of current.events)renderEvent(this,e.type==='passive-action-fx'?{...e,level:Number(document.querySelector('#visual-level').value)||1}:e,seen);}
    if(current){
     drawWindFields(this,current,time);drawShadowState(this,current,time);
     for(const u of [...current.players,...(current.troops||[]),...current.enemies]){

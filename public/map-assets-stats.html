@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thống Kê Vật Thể & Mảng Dựng Bản Đồ · Giữ Cổng Thành</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#13211b;color:#ecdfbc;font:14px/1.5 system-ui,Segoe UI,sans-serif}
+header{background:#192b23;border-bottom:1px solid #495d46;padding:12px 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:20}
+.title-wrap small{letter-spacing:.16em;color:#c5aa72;display:block;font-size:11px}
+.title-wrap h1{font:20px Georgia,serif;margin:0;color:#f5e4b8}
+nav a{color:#cbdcb5;text-decoration:none;margin-left:14px;font-size:13px}
+nav a:hover{text-decoration:underline}
+main{max-width:1440px;margin:0 auto;padding:18px 20px 48px}
+section{margin-bottom:28px;scroll-margin-top:100px}
+h2{font:18px Georgia,serif;color:#f5e4b8;margin:0 0 12px;padding-bottom:6px;border-bottom:1px solid #35493b;display:flex;align-items:center;justify-content:space-between;gap:10px}
+h2 small{font:12px system-ui;color:#9eb09b}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.kpi{background:#192b23;border:1px solid #394e40;border-radius:8px;padding:12px 14px}
+.kpi span{display:block;font-size:12px;color:#9eb09b}
+.kpi b{display:block;font-size:22px;color:#f5e4b8;margin:2px 0}
+.kpi em{font-style:normal;font-size:11px;color:#c5aa72}
+.table-wrap{overflow-x:auto;border:1px solid #35493b;border-radius:8px;background:#16261f}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 10px;border-bottom:1px solid #293b30;text-align:left;white-space:nowrap}
+th{background:#1d3027;color:#f2e0ae;font-weight:600;position:sticky;top:0}
+tr:hover td{background:#1c2e25}
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;background:#263d30;border:1px solid #4c6349;font-size:11px;color:#dce8be;margin:1px 3px 1px 0}
+.biome-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.biome-card{background:#192b23;border:1px solid #394e40;border-radius:8px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start}
+.swatch{width:28px;height:28px;border-radius:6px;border:1px solid #ffffff33;flex-shrink:0;margin-top:2px}
+.biome-card{flex-direction:column;padding:0;overflow:hidden}.biome-card>a{display:block;width:100%;height:120px}.biome-material{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}.biome-card>div{padding:2px 12px 12px}.biome-card b{color:#f5e4b8;display:block}
+.biome-card small{color:#a8baa4;display:block;font-size:12px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center}
+input[type=search],select{background:#192b23;color:#ecdfbc;border:1px solid #495d46;border-radius:6px;padding:7px 11px;font:13px system-ui}
+input[type=search]{min-width:240px;flex:1;max-width:360px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+button.tab{background:#243a2e;color:#ecdfbc;border:1px solid #536646;border-radius:6px;padding:6px 11px;cursor:pointer;font:12px system-ui}
+button.tab[aria-pressed=true]{background:#536646;border-color:#e0c88e;color:#fff6d6;font-weight:600}
+.style-reference{display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:#c9d4bc;margin-bottom:14px}.style-reference img{width:64px;height:64px;object-fit:contain;image-rendering:pixelated}.asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px}
+.asset-card{background:#182921;border:1px solid #35493b;border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.asset-thumb{height:96px;background:#0f1b16;border:1px solid #293b30;border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.asset-thumb img{max-width:92%;max-height:90px;image-rendering:pixelated}
+.asset-id{font-weight:600;font-size:12px;color:#f5e4b8;word-break:break-all}
+.asset-meta{font-size:11px;color:#9eb09b;display:flex;justify-content:space-between;gap:4px}
+.layer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:10px}
+.layer-card{background:#192b23;border:1px solid #394e40;border-radius:8px;padding:12px}
+.layer-card h3{margin:0 0 6px;font:15px Georgia,serif;color:#f5e4b8}
+.layer-card p{margin:0;color:#b4c3ae;font-size:12.5px}
+.review-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}.review-card{background:#192b23;border:1px solid #394e40;border-radius:8px;overflow:hidden}.review-card canvas{display:block;width:100%;image-rendering:pixelated}.review-card p{margin:8px 12px;color:#b4c3ae}.review-card b{color:#f5e4b8}#weather-preview{max-width:960px}#weather-preview canvas{max-width:100%;height:auto!important;image-rendering:pixelated}</style>
+</head>
+<body>
+<header>
+  <div class="title-wrap">
+    <small>THE WORLD / THỐNG KÊ TÀI NGUYÊN & MẢNG DỰNG BẢN ĐỒ</small>
+    <h1>Tổng Hợp Toàn Bộ Vật Thể & Thành Phần Dựng Bản Đồ</h1>
+  </div>
+  <nav>
+    <a href="#ambient-review">Sinh cảnh</a>
+    <a href="#weather-review">Thời tiết</a>
+    <a href="#bridge-review">Cầu & Sông</a>
+    <a href="#road-review">Đường</a>
+    <a href="#relief-review">Dốc địa hình</a>
+    <a href="/map-viewer.html">Xem bản đồ</a>
+    <a href="/defense.html">Vào chiến trường</a>
+    <a href="/aura-stats.html">Thống kê hào quang</a>
+    <a href="/class-gallery.html">Kỹ năng</a>
+  </nav>
+</header>
+
+<main>
+  <section>
+    <h2>1. Tổng Quan Hệ Thống Tài Nguyên Bản Đồ <small id="summary-note">Đang tính...</small></h2>
+    <div class="kpi-grid" id="kpi-grid"></div>
+  </section>
+
+  <section>
+    <h2>2. Các Lớp & Hệ Thống Dựng Lên Bản Đồ <small>Kiến trúc render từ terrain.js · environment-art.js · landscape-art.js · fortress.js</small></h2>
+    <div class="layer-grid" id="layer-grid"></div>
+  </section>
+
+  <section>
+    <h2>3. Thống Kê Chi Tiết 10 Mốc Bản Đồ (MAPS) <small>Số lượng đường, trại, sông/vực, cầu, vùng địa hình & prop trên từng mốc</small></h2>
+    <div class="table-wrap">
+      <table id="maps-table">
+        <thead>
+          <tr>
+            <th>Mốc</th>
+            <th>Tên bản đồ</th>
+            <th>Kích thước</th>
+            <th>Đường chính</th>
+            <th>Lối mòn / Nối trại</th>
+            <th>Trại / Lãnh địa</th>
+            <th>Sông / Suối / Vực</th>
+            <th>Cầu (Đá / Gỗ / Dây)</th>
+            <th>Dãy núi & Địa hình</th>
+            <th>Props (Cây / Bụi / Đá / Khác)</th>
+            <th>Hoa</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>4. Bảng Quần Xã & Địa Hình (BIOMES) <small id="biome-count"></small></h2>
+    <div class="biome-grid" id="biome-grid"></div><h3>Chuyển tiếp giữa các quần xã</h3><div class="review-grid" id="transition-grid"></div><h3>Cảnh vật mới · Nấm, Tre, Băng, Đại thụ & Đá tảng</h3><div class="asset-grid" id="ecology-grid"></div>
+  </section>
+
+  <section id="ambient-review"><h2>Sinh Cảnh Không Cản <small id="ambient-count">Đang chuẩn bị...</small></h2><p>Bướm ghé hoa; chim và quạ đậu, cất cánh làm cành rung; thỏ, nai nghỉ dưới tán; ếch nhảy bờ, đá; cá bơi và tạo gợn nước. Hoa sáng, đàn đom đóm, tàn lửa, khói và thủy sinh dùng chung hình ảnh, hành vi với map.</p><div class="controls"><label>Xem riêng <select id="ambient-kind"><option value="all">Toàn bộ sinh cảnh</option></select></label><button class="tab" id="ambient-pause" aria-pressed="false">Tạm dừng</button></div><div class="review-card" id="ambient-preview" style="max-width:960px"></div></section>
+  <section id="weather-review">
+    <h2>5. Thời Tiết Chuyển Động <small>10 mốc bản đồ · cùng hiệu ứng trong game</small></h2>
+    <div class="controls"><label>Mốc thời tiết <select id="weather-stage"></select></label><button class="tab" id="weather-pause" aria-pressed="false">Tạm dừng</button></div>
+    <div class="controls" id="weather-layers" aria-label="Các lớp thời tiết"></div><p>Chọn nhiều lớp để phối thời tiết. Đổi mốc sẽ trở về tổ hợp mặc định của map; lựa chọn tại đây chỉ dùng để xem trước.</p>
+    <div id="weather-preview" class="review-card"></div><p id="weather-description" aria-live="polite"></p>
+  </section>
+  <section id="bridge-review"><h2>6. Cầu Qua Sông & Vực <small>Cầu đá · cầu gỗ · cầu dây · biến thể quần xã</small></h2><div class="review-grid" id="bridge-grid"></div><h3>Dòng chảy · nhanh và chậm theo nhịp</h3><p>Từ trên xuống: sông sâu, suối cạn, sông băng, lòng sông khô và sông dung nham. Giữa dòng chảy nhanh hơn sát bờ; vệt nước dài và rõ hơn khi dòng tăng tốc.</p><div class="review-card" id="water-preview" style="max-width:960px"></div><h3>Sông băng · Sông khô · Sông dung nham</h3><div class="review-grid" id="river-surface-grid"></div><h3>Bờ sông · Bờ suối</h3><div class="review-grid" id="riverbank-grid"></div><h3>Vực sâu · Vách đá phân tầng</h3><div class="review-grid" id="abyss-grid"></div></section>
+  <section id="road-review"><h2>7. Đường Chính & Lối Mòn <small>Mặt đường thực tế của 10 mốc</small></h2><div class="review-grid" id="road-biome-grid"></div><h3>Mặt đường theo từng mốc</h3><div class="review-grid" id="road-grid"></div></section>
+  <section id="relief-review"><h2>8. Dốc Địa Hình & Chênh Lệch Độ Cao <small>Gò cao · đường dốc · vách vùng trũng</small></h2><p>Mẫu lấy từ vùng địa hình thật của từng mốc, dùng chung texture và hàm vẽ với map. Thu nhỏ đồng đều để xem trọn mặt dốc.</p><div class="review-grid" id="relief-grid"></div></section>
+  <section>
+    <h2>9. Thư Viện Toàn Bộ Vật Thể / Sprite Dựng Bản Đồ <small id="asset-count"></small></h2>
+    <div class="style-reference"><span>Mẫu chuẩn <b>Catalog-v4</b></span><img src="/assets/v2/props/tree1.png" alt="Cây chuẩn Catalog-v4"><img src="/assets/v2/props/rock1_1.png" alt="Đá chuẩn Catalog-v4"><img src="/assets/v2/props/brown_ruins1.png" alt="Phế tích chuẩn Catalog-v4"><small>Đồng bộ góc nhìn, màu và nét pixel.</small></div>
+    <div class="controls">
+      <div class="tabs" id="source-tabs"></div>
+      <select id="group-filter"><option value="all">Tất cả nhóm</option></select>
+      <input type="search" id="search-input" placeholder="Tìm theo ID vật thể (vd: tree, rock, prop-mtn, castle...)">
+    </div>
+    <div class="asset-grid" id="asset-grid"></div>
+  </section>
+</main>
+
+<script type="module">
+import {MAPS} from './content.js';
+import {loadCatalogPropImages,CATALOG_PROP_LAYOUT} from './catalog-prop-art.js';
+import {BIOMES} from './world-biomes.js';
+import {biomeArtwork,BIOME_ATLAS_CELLS} from './biome-art.js';
+import {drawEnvironmentPatch} from './environment-art.js';
+import {drawHydrology} from './landscape-art.js';
+import {SCENE_CLUSTERS} from './scene-clusters.js';
+import {UNIFIED_PROPS} from './terrain.js';
+import {CUSTOM_PROP_META,EXTRA_PROP_IDS,LANDMARK_PROP_IDS,FORTRESS_PROP_IDS,ensureCustomPropTexture} from './custom-props-art.js';
+import {FORTRESS_PROP_META} from './fortress-props-art.js';
+
+const catalog=await(await fetch('/catalog-v4.json')).json();
+
+// Tạo mock scene nhẹ để render toàn bộ custom canvas texture thành dataURL xem trước
+const customDataUrls=new Map(),customCanvases=new Map();
+const paintedPropImages=await loadCatalogPropImages();
+const mockScene={
+  textures:{
+    exists:id=>customDataUrls.has(id)||paintedPropImages.has(id),
+    get:id=>({getSourceImage:()=>paintedPropImages.get(id)}),
+    addCanvas:(id,canvas)=>{customCanvases.set(id,canvas);try{customDataUrls.set(id,canvas.toDataURL());}catch{}}
+  }
+};
+
+const allCustomIds=[...new Set([
+  ...Object.keys(CUSTOM_PROP_META),
+  ...Object.keys(FORTRESS_PROP_META)
+])];
+for(const id of allCustomIds)ensureCustomPropTexture(mockScene,id);
+paintedPropImages.clear();
+
+const customSet=new Set(Object.keys(CUSTOM_PROP_META));
+const extraSet=new Set(EXTRA_PROP_IDS);
+const landmarkSet=new Set(LANDMARK_PROP_IDS);
+const fortressSet=new Set(FORTRESS_PROP_IDS);
+
+const catalogById=new Map(catalog.props.map(p=>[p.id,p]));
+const assets=[];
+for(const p of catalog.props){
+  assets.push({
+    id:p.id,
+    group:p.group||'other',
+    source:'catalog',
+    sourceLabel:'Catalog-v4',
+    width:p.width,
+    height:p.height,
+    img:p.url,
+    mappedTo:UNIFIED_PROPS[p.id]||null
+  });
+}
+for(const id of Object.keys(CUSTOM_PROP_META)){
+  if(FORTRESS_PROP_META[id])continue;
+  const m=CUSTOM_PROP_META[id];
+  const src=extraSet.has(id)?'extra':landmarkSet.has(id)?'landmark':'custom';
+  const lbl=src==='extra'?'Extra Biome':src==='landmark'?'Landmark':'Custom & Núi 2.5D';
+  assets.push({
+    id,
+    group:m.group||'custom',
+    source:src,
+    sourceLabel:lbl,
+    width:m.width,
+    height:m.height,
+    targetH:m.targetH,
+    img:customDataUrls.get(id)||''
+  });
+}
+for(const id of Object.keys(FORTRESS_PROP_META)){
+  const m=FORTRESS_PROP_META[id];
+  assets.push({
+    id,
+    group:m.group||'fortress',
+    source:'fortress',
+    sourceLabel:'Pháo đài / Thành trì',
+    width:m.width,
+    height:m.height,
+    targetH:m.targetH,
+    img:customDataUrls.get(id)||''
+  });
+}
+
+// 1. KPI Tổng quan
+const groupCounts={};
+for(const a of assets)groupCounts[a.group]=(groupCounts[a.group]||0)+1;
+const totalPlacedProps=MAPS.reduce((s,m)=>s+(m.props?.length||0),0);
+const totalRivers=MAPS.reduce((s,m)=>s+(m.rivers?.length||0),0);
+const totalBridges=MAPS.reduce((s,m)=>s+(m.bridges?.length||0),0);
+const totalEnv=MAPS.reduce((s,m)=>s+(m.environment?.length||0),0);
+
+const kpis=[
+  ['Tổng Sprite & Vật thể',assets.length,`${catalog.props.length} Catalog + ${allCustomIds.length} Custom`],
+  ['Catalog-v4 Props',catalog.props.length,`Từ file catalog-v4.json`],
+  ['Custom & Núi 2.5D',Object.keys(CUSTOM_PROP_META).filter(id=>!extraSet.has(id)&&!landmarkSet.has(id)&&!fortressSet.has(id)).length,`Gồm 3 mẫu núi prop-mtn-*`],
+  ['Extra Biome & Landmark',EXTRA_PROP_IDS.length+LANDMARK_PROP_IDS.length,`${EXTRA_PROP_IDS.length} Extra · ${LANDMARK_PROP_IDS.length} Landmark`],
+  ['Kiến trúc Thành trì',FORTRESS_PROP_IDS.length,`FORTRESS_PROP_META`],
+  ['Quần xã (BIOMES)',Object.keys(BIOMES).length,`Đủ địa hình & thủy văn`],
+  ['Ánh xạ Unified Props',Object.keys(UNIFIED_PROPS).length,`Quy chuẩn về CraftPix`],
+  ['Tổng vật thể trên 10 Map',totalPlacedProps.toLocaleString('vi-VN'),`${totalEnv} vùng địa hình · ${totalBridges} cầu · ${totalRivers} dòng nước`]
+];
+document.querySelector('#summary-note').textContent=`${Object.keys(groupCounts).length} nhóm tài nguyên · ${MAPS.length} mốc bản đồ`;
+document.querySelector('#kpi-grid').innerHTML=kpis.map(([t,v,sub])=>`<div class="kpi"><span>${t}</span><b>${v}</b><em>${sub}</em></div>`).join('');
+
+// 2. Các lớp dựng bản đồ
+const layers=[
+  ['1. Nền đất & Lối đi (terrain.js)','Tile 128×128 seamless tự tạo hạt pixel-art, thảm cỏ Ground_grass, sỏi đá, lá rụng, đá lát đường chính & lối mòn rừng, đèn lồng ven đường.'],
+  ['2. Sân Thành & Pháo đài (castle-court.js, fortress.js)','Sân đá 10 chủ đề theo từng mốc bản đồ (castleCourt), cổng thành, tường thành, chòi canh, kho vũ khí & hàng rào phòng thủ.'],
+  ['3. Địa hình 2.5D (environment-art.js)','Gò cao có vách đá & bậc thang đá, vùng trũng hồ sen, đầm lầy/đất chết (xương, rễ khô), băng giá (tinh thể băng), dung nham & núi đá.'],
+  ['4. Dãy núi Pixel-Art 2.5D (custom-props-art.js, terrain.js)','Chuỗi sprite prop-mtn-main, prop-mtn-wide, prop-mtn-spur Y-sorted dọc sống núi, chân núi đất-đá-cỏ kèm cây thông & đá tảng CraftPix.'],
+  ['5. Thủy văn & Cầu 2.5D (landscape-layout.js, landscape-art.js)','Sông Đại Ngàn (deep), Suối Rừng (shallow), Vực Thẳm (abyss) cùng cầu đá, cầu gỗ và cầu dây treo chống chồng chéo.'],
+  ['6. Cây cối, Sinh vật & Thời tiết (terrain.js)','Cây/bụi/đá Y-sorted đung đưa theo gió, hoa dại, quạ bay vùng đất chết, thỏ/sóc/bướm rừng rậm, mây trôi & hiệu ứng tuyết/tro/sương mù.']
+];
+document.querySelector('#layer-grid').innerHTML=layers.map(([h,d])=>`<div class="layer-card"><h3>${h}</h3><p>${d}</p></div>`).join('');
+
+// 3. Bảng thống kê 10 mốc bản đồ
+const tbody=document.querySelector('#maps-table tbody');
+const infoById=new Map(catalog.props.map(p=>[p.id,p]));
+tbody.innerHTML=MAPS.map(m=>{
+  const rivers={deep:0,shallow:0,abyss:0};
+  for(const r of m.rivers||[])rivers[r.type]=(rivers[r.type]||0)+1;
+  let stoneBr=0,woodBr=0,ropeBr=0;
+  for(const b of m.bridges||[]){
+    if(b.abyss)ropeBr++;
+    else{
+      const onMain=(m.lanes||[]).some(l=>l.some((p,k)=>k&&Math.hypot((p[0]+l[k-1][0])/2-b.x,(p[1]+l[k-1][1])/2-b.y)<900));
+      if(onMain)stoneBr++;else woodBr++;
+    }
+  }
+  const ridges=(m.environment||[]).filter(z=>z.ridge).length;
+  const envTypes={};
+  for(const z of m.environment||[])envTypes[z.type]=(envTypes[z.type]||0)+1;
+  const propGroups={trees:0,bushes:0,rocks:0,other:0};
+  for(const p of m.props||[]){
+    const id=UNIFIED_PROPS[p.asset]||p.asset;
+    const inf=CUSTOM_PROP_META[id]||infoById.get(id);
+    const g=inf?.group||'other';
+    if(g==='trees'||g==='forest')propGroups.trees++;
+    else if(g==='bushes')propGroups.bushes++;
+    else if(g==='rocks')propGroups.rocks++;
+    else propGroups.other++;
+  }
+  const envTags=Object.entries(envTypes).map(([k,v])=>`<span class="pill">${BIOMES[k]?.name||k}: ${v}</span>`).join('');
+  return `<tr>
+    <td><b>Mốc ${String(m.id).padStart(2,'0')}</b></td>
+    <td>${m.name}</td>
+    <td>${m.width}×${m.height}</td>
+    <td>${m.lanes?.length||0}</td>
+    <td>${m.forestPaths?.length||0} / ${m.campCorridors?.length||0}</td>
+    <td>${m.camps?.length||0} / ${m.territories?.length||0}</td>
+    <td>Sông ${rivers.deep} · Suối ${rivers.shallow} · Vực ${rivers.abyss}</td>
+    <td>Đá ${stoneBr} · Gỗ ${woodBr} · Dây ${ropeBr} · Lối sỏi ${m.fords?.length||0}</td>
+    <td><span class="pill">Dãy núi: ${ridges}</span>${envTags}</td>
+    <td><b>${m.props?.length||0}</b> (${propGroups.trees} cây · ${propGroups.bushes} bụi · ${propGroups.rocks} đá · ${propGroups.other} khác)</td>
+    <td>${m.flowers?.length||0}</td>
+  </tr>`;
+}).join('');
+
+// 4. Quần xã (BIOMES)
+const biomeEntries=Object.entries(BIOMES);
+document.querySelector('#biome-count').textContent=`${biomeEntries.length} loại địa hình / thủy văn`;
+document.querySelector('#biome-grid').innerHTML=biomeEntries.map(([key,b])=>{
+  const col='#'+b.color.toString(16).padStart(6,'0');
+  const attrs=[];
+  if(b.blocked)attrs.push('Chặn đi qua');
+  if(b.speed)attrs.push(`Tốc độ ×${b.speed}`);
+  if(b.attackSpeed)attrs.push(`Tốc đánh ×${b.attackSpeed}`);
+  if(b.burn)attrs.push(`Thiêu đốt ${Math.round(b.burn*100)}%/s`);
+  if(b.armor)attrs.push(`Giáp ×${b.armor}`);
+  if(b.forestPower)attrs.push(`Sức mạnh thú rừng ×${b.forestPower}`);
+  if(b.flyingPower)attrs.push(`Đơn vị bay ×${b.flyingPower}`);
+  return `<div class="biome-card">
+    <a href="/biome-gallery.html#${key}" aria-label="Xem thảm ${b.name}">${key in BIOME_ATLAS_CELLS?`<span class="biome-material" role="img" aria-label="Thảm ${b.name}" style="display:block;background-image:url(${biomeArtwork(key)});background-size:200% 200%;background-position:${BIOME_ATLAS_CELLS[key][0]*100}% ${BIOME_ATLAS_CELLS[key][1]*100}%"></span>`:`<img class="biome-material" src="${biomeArtwork(key)}" alt="Thảm ${b.name}" loading="lazy">`}</a>
+    <div><b>${b.name} <code>(${key})</code></b><small>${attrs.length?attrs.join(' · '):'Địa hình trang trí / chiến thuật'}</small></div>
+  </div>`;
+}).join('');
+
+// 5. Bộ lọc & Thư viện toàn bộ vật thể (bao gồm Địa hình, Sông mới & Vực sâu)
+function renderTerrainPreview(kind){
+  const cv=document.createElement('canvas');cv.width=240;cv.height=140;
+  const ctx=cv.getContext('2d');ctx.fillStyle='#3d5932';ctx.fillRect(0,0,240,140);
+  if(kind==='river-ice'||kind==='river-dry'||kind==='river-lava'){
+    const surf=kind.replace('river-','');
+    const pts=[[0,72],[60,56],[120,76],[180,62],[240,70]];
+    const fakeMap={id:surf==='ice'?6:surf==='dry'?5:9,lanes:[],rivers:[{type:'deep',surface:surf,width:56,points:pts}],bridges:[]};
+    drawHydrology(ctx,mockScene,fakeMap);
+  }else if(kind==='abyss'||kind==='deep'||kind==='shallow'){
+    const w=kind==='abyss'?56:kind==='deep'?64:38;
+    const pts=[[0,72],[60,56],[120,76],[180,62],[240,70]];
+    const fakeMap={id:1,lanes:[[[120,0],[120,140]]],rivers:[{type:kind,width:w,points:pts}],bridges:kind==='shallow'?[]:[{x:120,y:76,abyss:kind==='abyss',angle:Math.PI/2,length:w+34}]};
+    drawHydrology(ctx,mockScene,fakeMap);
+  }else{
+    drawEnvironmentPatch(ctx,mockScene,{type:kind,x:120,y:76,rx:92,ry:48});
+  }
+  return cv.toDataURL();
+}
+const terrainItems=[
+  ['terrain-abyss','Vực sâu & Cầu dây','abyss'],
+  ['terrain-deep','Sông sâu & Cầu đá','deep'],
+  ['terrain-shallow','Suối cạn (không cầu)','shallow'],
+  ['terrain-river-ice','Sông Băng (mới)','river-ice'],
+  ['terrain-river-dry','Lòng Sông Khô (mới)','river-dry'],
+  ['terrain-river-lava','Sông Dung Nham (mới)','river-lava'],
+  ...Object.entries(BIOMES).filter(([k])=>!['abyss','deep','shallow'].includes(k)).map(([k,b])=>[`terrain-${k}`,`${b.name} (${k})`,k])
+];
+for(const [id,label,kind] of terrainItems){
+  assets.push({id,group:'terrain',source:'terrain',sourceLabel:label,width:240,height:140,img:renderTerrainPreview(kind)});
+}
+const catById=new Map(catalog.props.map(p=>[p.id,p]));
+const loadedImgs=new Map();
+await Promise.all([...new Set(Object.values(SCENE_CLUSTERS).flatMap(c=>c.items.map(i=>i.asset)))].map(id=>{
+  const c=catById.get(id);if(!c)return Promise.resolve();
+  return new Promise(res=>{const im=new Image();im.onload=()=>{loadedImgs.set(id,im);res();};im.onerror=res;im.src=c.url;});
+}));
+for(const [cid,cl] of Object.entries(SCENE_CLUSTERS)){
+  const cv=document.createElement('canvas');cv.width=240;cv.height=150;
+  const ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;
+  ctx.fillStyle='#344f2c';ctx.fillRect(0,0,240,150);
+  const sorted=[...cl.items].sort((a,b)=>a.dy-b.dy);
+  for(const it of sorted){
+    const im=customCanvases.get(it.asset)||loadedImgs.get(it.asset);
+    if(!im)continue;
+    const h=Math.min(72,(im.height||64)*(it.sc||1)*.65),w=h*((im.width||64)/(im.height||64));
+    const px=120+it.dx*1.15,py=96+it.dy*1.15;
+    ctx.fillStyle='rgba(10,18,10,0.28)';ctx.beginPath();ctx.ellipse(px,py,w*.32,h*.12,0,0,Math.PI*2);ctx.fill();
+    ctx.drawImage(im,px-w/2,py-h*.86,w,h);
+  }
+  assets.push({id:cid,group:cl.group,source:'clusters',sourceLabel:cl.label,width:240,height:150,img:cv.toDataURL()});
+}
+const sources=[
+  ['all','Tất cả'],
+  ['clusters','Cụm Cảnh (Prefabs)'],
+  ['terrain','Địa hình & Vực sâu'],
+  ['catalog','Catalog-v4'],
+  ['custom','Custom & Núi 2.5D'],
+  ['extra','Extra Biome'],
+  ['landmark','Landmark'],
+  ['fortress','Pháo đài']
+];
+let activeSource=new URLSearchParams(location.search).get('source')||'all',activeGroup='all',searchTerm='';if(!sources.some(([id])=>id===activeSource))activeSource='all';
+const tabWrap=document.querySelector('#source-tabs');
+for(const [k,lbl] of sources){
+  const btn=document.createElement('button');
+  btn.className='tab';
+  btn.textContent=lbl;
+  btn.setAttribute('aria-pressed',k==='all'?'true':'false');
+  btn.onclick=()=>{
+    activeSource=k;
+    tabWrap.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b===btn?'true':'false'));
+    renderAssets();
+  };
+  tabWrap.appendChild(btn);
+}
+const groupSel=document.querySelector('#group-filter');
+for(const [g,cnt] of Object.entries(groupCounts).sort((a,b)=>b[1]-a[1])){
+  const opt=document.createElement('option');
+  opt.value=g;
+  opt.textContent=`${g} (${cnt})`;
+  groupSel.appendChild(opt);
+}
+groupSel.onchange=()=>{activeGroup=groupSel.value;renderAssets();};
+document.querySelector('#search-input').oninput=e=>{searchTerm=e.target.value.trim().toLowerCase();renderAssets();};
+
+function describeAsset(a){
+  const id=a.id.toLowerCase();
+  if(a.source==='clusters')return `${a.sourceLabel} · Ghép sẵn nhiều vật thể đồng bộ theo cụm.`;
+  if(a.source==='terrain')return `${a.sourceLabel} · Địa hình/thủy văn dựng trên nền chiến trường.`;
+  if(a.source==='fortress')return 'Ưu tiên quần xã: Sân Thành / Pháo đài · Công trình & khí tài phòng thủ (Cản đường).';
+  if(id.includes('mtn'))return 'Ưu tiên quần xã: Núi đá (mountain) · Khối núi 2.5D Y-sorted ghép dãy núi rìa bản đồ (Cản).';
+  if(id.includes('broken_tree')||id.includes('dead'))return 'Ưu tiên quần xã: Đất chết (dead) & Sa mạc · Cây khô không lá (Cản).';
+  if(id.includes('burned')||id.includes('charred'))return 'Ưu tiên quần xã: Dung nham (lava, fire) & Đất chết · Cây cháy đen (Cản).';
+  if(id.includes('snow_')||id.includes('ice')||id.includes('frost')||id.includes('white_crystal')||id.includes('blue_crystal'))return 'Ưu tiên quần xã: Băng giá (ice, snow) · Cây/bụi/tinh thể vùng tuyết (Cản trừ bụi tuyết).';
+  if(id.includes('autumn')||id.includes('fruit'))return 'Ưu tiên quần xã: Rừng thu / Đồng cỏ · Cây tán lá thu & cây ăn quả (Cản).';
+  if(id.includes('palm')||id.includes('cactus')||id.includes('sand'))return 'Ưu tiên quần xã: Sa mạc (desert) · Cây cọ, xương rồng & đá cát (Cản).';
+  if(id.includes('red_crystal')||id.includes('dark_red')||id.includes('black_crystal')||id.includes('ember')||id.includes('obsidian')||id.includes('rock7')||id.includes('rock8'))return 'Ưu tiên quần xã: Dung nham & Đất chết (lava, dead) · Đá/tinh thể sẫm (Cản).';
+  if(id.includes('violet_crystal'))return 'Ưu tiên quần xã: Đất chết (dead) · Tinh thể tím phép thuật (Cản).';
+  if(a.group==='trees'||id.includes('tree'))return 'Ưu tiên quần xã: Rừng rậm (dense), Gò cao (high) · Cây tán lớn tạo bóng mát (Cản).';
+  if(id.includes('bush')||id.includes('fern')||id.includes('mushroom')||id.includes('chanterelles')||id.includes('shrub'))return 'Ưu tiên quần xã: Rừng rậm (dense), Vùng trũng (low), Ven đường · Hoa cỏ & dương xỉ (Không cản).';
+  if(id.includes('crystal')||id.includes('monolith')||id.includes('spire'))return 'Ưu tiên quần xã: Gò cao (high), Băng giá (ice) · Tinh thể & trụ đá (Cản).';
+  if(id.includes('rock')||id.includes('boulder'))return 'Ưu tiên quần xã: Núi đá (mountain), Gò cao (high), Ven sông · Đá tảng (Cản).';
+  if(id.includes('ruin')||id.includes('gate')||id.includes('well')||id.includes('house')||id.includes('cage')||id.includes('pillar')||id.includes('statue'))return 'Ưu tiên quần xã: Gò cao (high), Đất chết (dead) · Di tích cổ (Cản).';
+  if(id.includes('signpost'))return 'Ưu tiên quần xã: Ven đường chính · Biển chỉ đường (Không cản).';
+  return `Ưu tiên quần xã: Toàn bản đồ · Vật thể phối cảnh (${a.sourceLabel}).`;
+}
+function renderAssets(){
+  const list=assets.filter(a=>{
+    if(activeSource!=='all'&&a.source!==activeSource)return false;
+    if(activeGroup!=='all'&&a.group!==activeGroup)return false;
+    if(searchTerm&&!a.id.toLowerCase().includes(searchTerm)&&!a.group.toLowerCase().includes(searchTerm)&&!describeAsset(a).toLowerCase().includes(searchTerm))return false;
+    return true;
+  });
+  document.querySelector('#asset-count').textContent=`Hiển thị ${list.length} / ${assets.length} vật thể`;
+  const grid=document.querySelector('#asset-grid');
+  grid.innerHTML=list.map(a=>`<div class="asset-card">
+    <div class="asset-thumb">${a.img?`<img src="${a.img}" alt="${a.id}" loading="lazy">`:'<small style="color:#6d7d6c">No preview</small>'}</div>
+    <div class="asset-id">${a.id}</div>
+    <div class="asset-meta"><span>${a.group}</span><span>${a.width}×${a.height}${a.targetH?' → H:'+a.targetH:''}</span></div>
+    <div class="asset-meta"><span>${a.sourceLabel}</span>${a.mappedTo?`<span style="color:#a3d977">→ ${a.mappedTo}</span>`:''}</div>
+    <small style="color:#b8c7b2;font-size:11px;line-height:1.35">${describeAsset(a)}</small>
+  </div>`).join('');
+}
+renderAssets();
+const ecologyNames={'prop-mushroom-woodland':'Cụm nấm rừng','prop-mushroom-russet':'Cụm nấm nâu đỏ','prop-bamboo-clump':'Cụm tre','prop-ice-boulder':'Tảng băng','prop-ancient-oak':'Đại thụ','prop-giant-boulder':'Đá tảng lớn'};
+document.querySelector('#ecology-grid').innerHTML=Object.entries(ecologyNames).map(([id,name])=>`<article class="asset-card"><div class="asset-thumb"><img src="${customDataUrls.get(id)}" alt="${name}"></div><b>${name}</b><small>Cao trong map: ${CUSTOM_PROP_META[id].targetH}px</small></article>`).join('');
+</script>
+<script src="/vendor/phaser.js"></script>
+<script type="module" src="/environment-review.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {canStand} from '../simulation.mjs';
+import {propFootprint,normalizePropFootprints} from '../public/prop-footprints.js';
+import {MAPS} from '../public/content.js';
+import {waterAt} from '../public/landscape-layout.js';
+import {terrainModifiers} from '../public/world-biomes.js';
+const empty={id:1,width:1200,height:1000,base:{x:1100,y:100},props:[],rivers:[],bridges:[],lanes:[],environment:[],fortifications:[]};
+test('grounded footprints block the trunk but allow walking under the canopy',()=>{const prop={asset:'tree1',x:350,y:350,radius:30},map={...empty,props:normalizePropFootprints([prop])};const f=propFootprint(map.props[0]);assert.ok(f.rx<=10&&f.ry<f.rx);assert.equal(canStand(map,350,350,4),false);assert.equal(canStand(map,350,325,4),true);assert.equal(canStand(map,375,350,4),true);assert.deepEqual(normalizePropFootprints(map.props),map.props);assert.equal(prop.radius,30);});
+test('large scenery has a small foot and decorative plants remain passable',()=>{for(const asset of ['prop-ancient-oak','prop-giant-boulder','prop-ice-boulder']){const f=propFootprint({asset,x:0,y:0,radius:36});assert.ok(f.rx<=19&&f.ry<=10);}const f=propFootprint({asset:'fern1_1',x:0,y:0,radius:0});assert.equal(f.rx,0);for(const m of MAPS)for(const p of m.props){assert.ok(p.radius<=19);assert.ok(p.footprintY<=p.radius);}});
+test('shallow crossings use walkable gravel fords and keep shallow water slowdown',()=>{assert.ok(MAPS.some(m=>m.fords.length>0));for(const m of MAPS){assert.ok(m.fords.every(b=>b.ford));assert.ok(m.bridges.every(b=>!b.ford));}const river={type:'shallow',width:70,points:[[100,400],[600,400]]},map={...empty,rivers:[river],lanes:[[[350,100],[350,700]]],fords:[{x:350,y:400,ford:true}]};assert.equal(waterAt(map,{x:350,y:400})?.type,'shallow');assert.equal(canStand(map,350,400),true);assert.equal(terrainModifiers(map,{x:350,y:400}).speed,.9);assert.equal(waterAt(map,{x:350,y:445}),null);});

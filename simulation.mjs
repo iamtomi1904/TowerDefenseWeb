@@ -1,3 +1,4 @@
+import {propBlocks} from './public/prop-footprints.js';
 import {tickMartial} from './martial-actions.mjs';
 import {tickTide,tideReduction} from './tide-actions.mjs';
 import {UPGRADES,upgradePrice,hiredStats} from './public/progression.js';
@@ -101,7 +102,7 @@ export function canStand(map,x,y,radius=12){
  // Only the house footprint is solid, leaving its southern gate accessible.
  if(x>map.base.x-145-radius&&x<map.base.x+145+radius&&y>map.base.y-205-radius&&y<map.base.y+45+radius)return false;
  if((map.fortifications||[]).some(o=>Math.hypot(x-o.x,y-o.y)<o.radius+radius))return false;
- return !map.props.some(o=>o.radius>0&&Math.hypot(x-o.x,y-o.y)<o.radius+radius);
+ return !map.props.some(o=>propBlocks(o,x,y,radius));
 }
 function move(u,tx,ty,speed,dt,map){
  const dx=tx-u.x,dy=ty-u.y,d=Math.hypot(dx,dy);if(d<.1)return;

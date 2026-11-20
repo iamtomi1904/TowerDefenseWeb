@@ -1,0 +1,7 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {drawRiverBanks,drawShoreRock} from '../public/riverbank-art.js';
+import {drawMapGround} from '../public/terrain.js';
+function context(){const calls=[];return new Proxy({calls},{get(o,k){if(k in o)return o[k];return (...args)=>{calls.push([k,...args]);};},set(o,k,v){o[k]=v;return true;}});}
+test('shore banks draw finite deterministic geometry across biomes without changing water physics',()=>{for(const id of [1,5,6,9,10])for(const points of [[[0,200],[150,150],[300,200]],[[100,0],[100,300]],[[100,100],[100,100],[200,200]]]){const w={width:100,points},snapshot=JSON.stringify(w),a=context(),b=context();drawRiverBanks(a,w,{id});drawRiverBanks(b,w,{id});assert.deepEqual(a.calls,b.calls);assert.equal(JSON.stringify(w),snapshot);assert.ok(a.calls.flat(Infinity).filter(x=>typeof x==='number').every(Number.isFinite));assert.ok(!a.calls.some(c=>c[0]==='ellipse'));}});
+test('review and game share the same deterministic ground renderer and correct grass atlas row',()=>{const grass={asset:'Ground_grass'},source={textures:{get:id=>{assert.equal(id,'Ground_grass');return {getSourceImage:()=>grass};}}},map={id:6,ground:0x89aab1,grassRow:2,width:600,height:340};const a=context(),b=context();drawMapGround(a,source,map);drawMapGround(b,source,map);assert.deepEqual(a.calls,b.calls);assert.ok(a.calls.some(c=>c[0]==='drawImage'&&c[1]===grass&&c[3]===194));assert.equal(a.imageSmoothingEnabled,false);assert.equal(a.globalAlpha,1);});
