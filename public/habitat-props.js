@@ -4,4 +4,23 @@ import {waterAt} from './landscape-layout.js';
 const distanceToPath=(x,y,path,margin=85)=>path.slice(1).some((b,i)=>{const a=path[i],dx=b[0]-a[0],dy=b[1]-a[1],t=Math.max(0,Math.min(1,((x-a[0])*dx+(y-a[1])*dy)/(dx*dx+dy*dy||1)));return Math.hypot(x-a[0]-dx*t,y-a[1]-dy*t)<margin;});
 // Deterministic decorative clusters shared by client and authoritative collision map.
 const onBridge=(map,x,y,pad=56)=>(map.bridges||[]).some(b=>{const dx=x-b.x,dy=y-b.y,ca=Math.cos(b.angle),sa=Math.sin(b.angle);return Math.abs(dx*ca+dy*sa)<b.length*.5+pad&&Math.abs(-dx*sa+dy*ca)<(b.width||160)*.5+pad;});
-export function habitatProps(map){const result=[];let seed=map.id*971;const rand=()=>{seed=seed*16807%2147483647;return seed/2147483647;};for(let y=88;y<map.height-64;y+=48)for(let x=88;x<map.width-64;x+=48){const z=map.environment.find(z=>zoneContains(z,{x,y})),type=z?.type||'grass';if(inCastleCourt(map,{x,y})||onBridge(map,x,y,56)||type==='mountain'||waterAt(map,{x,y}))continue;const sparse=type==='dead'||type==='desert'||(map.id===5&&type==='grass')||(map.id===7&&type==='grass');const density=type==='dense'?.72:sparse?.18:type==='grass'?.10:.44;if(rand()>density||Math.hypot(x-map.base.x,y-map.base.y)<330||map.camps.some(c=>Math.hypot(x-c.x,y-c.y)<110)||map.lanes.some(path=>distanceToPath(x,y,path))||map.forestPaths.some(path=>distanceToPath(x,y,path,55))||[...map.props,...result].some(p=>Math.hypot(x-p.x,y-p.y)<34))continue;const rocky=['high','lava','fire','desert'].includes(type),tree=rand()<(type==='dense'?.65:sparse?.16:rocky?.14:.46),variant=1+Math.floor(rand()*3);const asset=type==='dead'||map.id===7?(tree?(rand()<.85?'broken_tree'+variant:'burned_tree'+variant):rand()<.55?'rock7_'+variant:'brown-gray_ruins'+variant):type==='desert'||map.id===5?(tree?'broken_tree'+variant:rand()<.5?'cactus1_'+variant:rand()<.7?'rock5_'+variant:'sand_ruins'+variant):type==='ice'?(tree?'snow_tree'+variant:rand()<.5?'white_crystal'+variant:'snow_bush'+variant):(type==='lava'||type==='fire')?(tree?'burned_tree'+variant:rand()<.55?'rock8_'+variant:'red_crystal'+variant):(tree?'moss_tree'+variant:rand()<(rocky?.8:.46)?'rock1_'+variant:rand()<.5?'fern1_'+variant:'bush_simple1_'+variant);result.push({id:'habitat-tile-'+x+'-'+y,asset,x,y,scale:tree?.85+rand()*.2:asset.startsWith('rock')?.65+rand()*.28:.7+rand()*.25,radius:tree?17:asset.startsWith('rock')||asset.includes('crystal')||asset.includes('ruins')?11:0,habitat:type});}return result;}
+export function habitatProps(map){
+ const result=[],CELL=128,grid=new Map();
+ const addGrid=p=>{const k=`${(p.x/CELL)|0},${(p.y/CELL)|0}`;let b=grid.get(k);if(!b){b=[];grid.set(k,b);}b.push(p);};
+ const nearGrid=(x,y,r)=>{const gx=(x/CELL)|0,gy=(y/CELL)|0,r2=r*r;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const b=grid.get(`${gx+dx},${gy+dy}`);if(!b)continue;for(let i=0;i<b.length;i++){const dX=b[i].x-x,dY=b[i].y-y;if(dX*dX+dY*dY<r2)return true;}}return false;};
+ for(const p of map.props||[])addGrid(p);
+ let seed=map.id*971;const rand=()=>{seed=seed*16807%2147483647;return seed/2147483647;};
+ const step=map.width>=6000?64:map.width>=4800?54:48;
+ for(let y=88;y<map.height-64;y+=step)for(let x=88;x<map.width-64;x+=step){
+  const z=map.environment.find(z=>zoneContains(z,{x,y})),type=z?.type||'grass';
+  if(inCastleCourt(map,{x,y})||onBridge(map,x,y,56)||type==='mountain'||waterAt(map,{x,y}))continue;
+  const sparse=type==='dead'||type==='desert'||((map.id===5||map.id===7||map.id>=9)&&type==='grass');
+  const density=type==='dense'?.72:sparse?.18:type==='grass'?.10:.44;
+  if(rand()>density||Math.hypot(x-map.base.x,y-map.base.y)<330||nearGrid(x,y,34)||map.camps.some(c=>Math.hypot(x-c.x,y-c.y)<110)||map.lanes.some(path=>distanceToPath(x,y,path))||map.forestPaths.some(path=>distanceToPath(x,y,path,55)))continue;
+  const rocky=['high','lava','fire','desert'].includes(type),tree=rand()<(type==='dense'?.65:sparse?.16:rocky?.14:.46),variant=1+Math.floor(rand()*3);
+  const asset=type==='dead'||map.id===7?(tree?(rand()<.85?'broken_tree'+variant:'burned_tree'+variant):rand()<.55?'rock7_'+variant:'brown-gray_ruins'+variant):type==='desert'||map.id===5?(tree?'broken_tree'+variant:rand()<.5?'cactus1_'+variant:rand()<.7?'rock5_'+variant:'sand_ruins'+variant):type==='ice'?(tree?'snow_tree'+variant:rand()<.5?'white_crystal'+variant:'snow_bush'+variant):(type==='lava'||type==='fire')?(tree?'burned_tree'+variant:rand()<.55?'rock8_'+variant:'red_crystal'+variant):(tree?'moss_tree'+variant:rand()<(rocky?.8:.46)?'rock1_'+variant:rand()<.5?'fern1_'+variant:'bush_simple1_'+variant);
+  const item={id:'habitat-tile-'+x+'-'+y,asset,x,y,scale:tree?.85+rand()*.2:asset.startsWith('rock')?.65+rand()*.28:.7+rand()*.25,radius:tree?17:asset.startsWith('rock')||asset.includes('crystal')||asset.includes('ruins')?11:0,habitat:type};
+  result.push(item);addGrid(item);
+ }
+ return result;
+}

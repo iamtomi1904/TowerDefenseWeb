@@ -1,3 +1,6 @@
+import {preloadWindupActors,playWindupActor} from './windup-actors.js';
+import {playGuardianAction} from './guardian-actions-art.js';
+import {preloadRitualCasting,playRitualCast} from './ritual-casting-art.js';
 import {preloadPassiveActions,playPassiveAction} from './passive-action-art.js';
 import {preloadAscended} from './ascended-art.js';
 import {preloadTroopArt,createTroopAnimations,playTroopActor} from './troop-art.js';
@@ -7,7 +10,7 @@ import {preloadPaintedSkills} from './painted-skill-art.js';
 import {preloadHeroRefresh,createHeroRefreshAnimations,playRefreshedHero} from './hero-refresh-art.js';
 import {preloadRavagerArt,createRavagerAnimations,playRavagerActor} from './ravager-art.js';
 import {preloadSlashArt} from './slash-art.js';
-export function preloadMartialArt(s){preloadPassiveActions(s);preloadTroopArt(s);preloadAscended(s);preloadClassProgression(s);preloadPaintedSkills(s);preloadKnightRefresh(s);s.load.image("elemental-refresh","/assets/combat/elemental-refresh.png");preloadHeroRefresh(s);preloadRavagerArt(s);preloadSlashArt(s);s.load.image('katana-forms','/assets/blademaster/katana-forms.png');}
+export function preloadMartialArt(s){preloadWindupActors(s);preloadRitualCasting(s);preloadPassiveActions(s);preloadTroopArt(s);preloadAscended(s);preloadClassProgression(s);preloadPaintedSkills(s);preloadKnightRefresh(s);s.load.image("elemental-refresh","/assets/combat/elemental-refresh.png");preloadHeroRefresh(s);preloadRavagerArt(s);preloadSlashArt(s);s.load.image('katana-forms','/assets/blademaster/katana-forms.png');}
 export function createMartialAnimations(s){
  if(s.martialArtReady)return;
  createTroopAnimations(s);
@@ -20,6 +23,9 @@ export function createMartialAnimations(s){
  s.martialArtReady=true;
 }
 export function playMartialActor(s,u,obj,action){
+ if(playWindupActor(s,u,obj))return true;
+ if(playRitualCast(s,u,obj))return true;
+ if(u.guardianR&&playGuardianAction(s,u,obj,action))return true;
  if(playPassiveAction(s,u,obj,action))return true;
  if(playTroopActor(s,u,obj,action))return true;
  if(playKnightRefresh(s,u,obj,action))return true;

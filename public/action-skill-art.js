@@ -1,3 +1,4 @@
+import {elementAnimationFrame,arcticAnimationFrame,arcticDimensions,preloadElementAnimations,arcticShardTexture,arcticGustTexture,arcticRoundFrame} from './element-animation.js';
 import {cleanEffectTexture} from './effect-alpha.js';
 import {ACTION_LAYOUT} from './action-fx-layout.js';
 export const ACTION_FX=['water-ring','water-foam','blizzard-sweep','snow-flake','lightning-bolt','fire-tuft','lava-pool','storm-ground','frost-ground','storm-wisp','spell-circle','ice-tornado','volley-arrow','volley-impact','poison-vapor','archer-q'];
@@ -5,7 +6,7 @@ const TAU=Math.PI*2,fract=n=>n-Math.floor(n),clamp=n=>Math.max(0,Math.min(1,n));
 export const RAIN_ARROW_COUNT=1000;
 const key=id=>'action-fx:'+id;
 function texture(s,id){return cleanEffectTexture(s,key(id),{columns:1,rows:1,matteFloor:22,maxSize:512});}
-export function preloadActionSkills(s){for(const id of ACTION_FX)s.load.image(key(id),'/assets/combat/'+(id==='poison-vapor'?'gear-glows':'action-v1')+'/'+(id==='lightning-bolt'?'lightning-bolt-v2':id)+'.png');}
+export function preloadActionSkills(s){preloadElementAnimations(s);for(const id of ACTION_FX)s.load.image(key(id),'/assets/combat/'+(id==='poison-vapor'?'gear-glows':'action-v1')+'/'+(id==='lightning-bolt'?'lightning-bolt-v2':id)+'.png');}
 export function createArcherQProjectile(s,e){
  if(e.skill!=='multishot'||!s.textures?.exists(key('archer-q')))return null;
  const l=ACTION_LAYOUT['archer-q'],images=[];
@@ -18,7 +19,7 @@ export function createActionSkill(s,e){
  const nodes=[];
  function add(id,role,count,depth=2501){for(let i=0;i<count;i++)nodes.push({id,role,i,image:s.add.image(e.x,e.y,texture(s,id)).setDepth(depth)});}
  if(kind==='wave'){add('water-ring','crest',2);add('water-foam','foam',16);}
- if(kind==='snow'){add('spell-circle','ritual',1,24);add('ice-tornado','ice-tornado',3);add('frost-ground','frost-zone',1,23);add('blizzard-sweep','gust',16);add('snow-flake','snow',144);add('snow-flake','streak',72);add('snow-flake','frost',4,24);}
+ if(kind==='snow'){add('spell-circle','ritual',1,24);add('ice-tornado','arctic-canopy',1);add('ice-tornado','ice-tornado',5);add('snow-flake','ice-fragment',28);add('frost-ground','frost-zone',1,23);add('blizzard-sweep','gust',8);add('snow-flake','snow',144);add('snow-flake','streak',72);add('snow-flake','frost',4,24);}
  if(kind==='storm'){add('spell-circle','ritual',1,24);add('storm-ground','storm-zone',1,23);add('storm-wisp','storm-cloud',3,2498);add('storm-wisp','storm-wind',3,2499);}
  if(kind==='storm'||kind==='bolt'){add('lightning-bolt','bolt',kind==='storm'?12:1);add('lightning-bolt','contact',kind==='storm'?36:6,25);}
  if(kind==='bolt'){add('storm-wisp','strike-cloud',2,2499);add('storm-wisp','strike-cloud-flash',1,2500);}
@@ -28,9 +29,10 @@ export function createActionSkill(s,e){
  if(kind==='rain'){add('volley-arrow','rain-arrow',RAIN_ARROW_COUNT);add('volley-impact','rain-impact',RAIN_ARROW_COUNT,25);if(e.poisonEnchanted)add('poison-vapor','rain-poison',24,26);}
  return {isolatedKind:kind,nodes,image:nodes[0].image,parts:nodes.slice(1).map(n=>n.image)};
 }
+export function stormBoundPoint(e,x,y,extent=0){const limit=Math.max(0,(e.radius||205)-extent-4),dx=x-e.x,dy=y-e.y,d=Math.hypot(dx,dy),scale=d>limit?limit/d:1;return {x:e.x+dx*scale,y:e.y+dy*scale};}
 export function snowMotion(e,age,i){
  const r=e.radius||205,phase=fract(age*(2.5+i%3*.18)+i*.618),a=i*2.399-age*(4.8+i%4*.36),d=r*Math.sqrt(fract(i*.381+.13))*(.72+.17*Math.sin(age*2+i));
- return {x:e.x+Math.cos(a)*d+Math.sin(age*2+i)*7,y:e.y+Math.sin(a)*d*.83-(1-phase)*75,phase};
+ const pos=stormBoundPoint(e,e.x+Math.cos(a)*d+Math.sin(age*2+i)*7,e.y+Math.sin(a)*d*.83-(1-phase)*75,18);return {...pos,phase};
 }
 export function strikeMotion(age,i){const clock=age/1.05+i*.263;return {cycle:Math.floor(clock),phase:fract(clock)};}
 export function arrowRainMotion(e,age,i){
@@ -70,9 +72,15 @@ export function updateActionSkill(s,v,t){
   }else if(role==='ritual'){
    image.setBlendMode?.('ADD');image.setPosition(e.x,e.y).setDisplaySize(r*2*wscale,r*2*hscale).setRotation(age*(p.isolatedKind==='storm'?.15:-.12)).setAlpha(fade*birth*.76);image.setTint?.(p.isolatedKind==='storm'?0xd7d2ff:0xd0f5ff);
   }else if(role==='ice-tornado'){
-   const a=i*2.399-age*2.7,d=r*(.2+i*.2),h=76+i*15+Math.sin(age*11+i)*9;image.setOrigin(layout.cx,layout.foot).setPosition(e.x+Math.cos(a)*d,e.y+Math.sin(a)*d*.82).setDisplaySize(h*.55*wscale,h*hscale).setRotation(Math.sin(age*12+i)*.11).setAlpha(fade*birth*(.56+Math.sin(age*4+i)*.08));
+   const phase=fract(age*.62+i/5),a=i*2.399+age*.95,frame=arcticAnimationFrame(s,age+i*.13),width=50+phase*45,w=width/.7,h=width*1.15/.7,extent=Math.hypot(w,h)/2,d=Math.max(0,r-extent-8)*phase;
+   image.setTexture(frame.key,frame.frame).setOrigin(.5,.5).setPosition(e.x+Math.cos(a)*d,e.y+Math.sin(a)*d*.8).setDisplaySize(w,h).setRotation(Math.sin(age*13+i)*.075).setAlpha(fade*birth*Math.sin(phase*Math.PI)*.68);
+  }else if(role==='arctic-canopy'){
+   const frame=arcticRoundFrame(s,age),diameter=r*2/.86;image.setTexture(frame.key,frame.frame).setOrigin(.5,.5).setPosition(e.x,e.y).setDisplaySize(diameter,diameter).setDepth(2497).setRotation(-age*.35).setAlpha(fade*birth*.28);
+  }else if(role==='ice-fragment'){
+   const phase=fract(age*(.55+i%3*.09)+i*.381),a=i*2.399-age*(4.2+i%4*.35),size=25+(i%4)*9,d=(r-size*.72-8)*(.25+phase*.73),pos=stormBoundPoint(e,e.x+Math.cos(a)*d,e.y+Math.sin(a)*d*.83-Math.sin(phase*TAU)*8,size*.72);
+   image.setTexture(arcticShardTexture(s)).setOrigin(.5,.5).setPosition(pos.x,pos.y).setDisplaySize(size,size).setRotation(a+age*2).setDepth(Math.sin(a)>0?2503:2498).setAlpha(fade*birth*(.55+Math.sin(phase*Math.PI)*.4));
   }else if(role==='lava'){
-   image.setPosition(e.x,e.y).setDisplaySize(r*2*wscale,r*2*hscale).setRotation(Math.sin(age*.6)*.012).setAlpha(fade*birth*(.88+Math.sin(age*2)*.04));
+   const frame=elementAnimationFrame(s,2,age);image.setTexture(frame.key,frame.frame).setPosition(e.x,e.y).setDisplaySize(r*2/.72,r*2/.72).setRotation(0).setAlpha(fade*birth*.92);
   }else if(role==='storm-zone'||role==='frost-zone'){
    image.setPosition(e.x,e.y).setDisplaySize(r*2*wscale,r*2*hscale).setRotation(0).setAlpha(fade*birth*(role==='storm-zone'?.5:.42));
   }else if(role==='storm-cloud'){
@@ -88,8 +96,8 @@ export function updateActionSkill(s,v,t){
    const a=i*2.399+age*.3,rad=r*t+Math.sin(i*3+age*15)*3,size=14+i%3*4,hop=Math.sin(t*Math.PI)*(4+i%3*3);
    image.setPosition(e.x+Math.cos(a)*rad,e.y+Math.sin(a)*rad-hop).setDisplaySize(size*wscale,size*.65*hscale).setRotation(a+Math.PI/2).setAlpha(fade*birth*(.6+i%3*.12));
   }else if(role==='gust'){
-   const a=i*2.399-age*(5.4+i%3*.48),d=r*(.2+.66*Math.sqrt(fract(i*.371-age*.13))),size=100+i%3*18;
-   image.setPosition(e.x+Math.cos(a)*d,e.y+Math.sin(a)*d*.83-12-i%3*14).setDisplaySize(size*1.5*wscale,size*.23*hscale).setRotation(a-Math.PI/2).setAlpha(fade*birth*(.72+.08*Math.sin(age*3+i)));
+   const a=i*2.399-age*(3.8+i%3*.45),d=r*(.08+i%2*.06),size=r*(1+i%3*.3),wobble=Math.sin(age*8+i)*.06;
+   image.setTexture(arcticGustTexture(s)).setOrigin(.5,.5).setPosition(e.x+Math.cos(a)*d,e.y+Math.sin(a)*d*.83-6).setDisplaySize(size,size*.9).setRotation(a+wobble).setAlpha(fade*birth*(.44+.12*Math.sin(age*4+i)**2));
   }else if(role==='snow'){
    const pos=snowMotion(e,age,i),size=i%9===0?15:6+i%4*2;
    image.setPosition(pos.x,pos.y).setDisplaySize(size*wscale,size*hscale).setRotation(age*(i%2?1.2:-.8)+i).setAlpha(fade*birth*Math.sin(pos.phase*Math.PI)*(.6+i%3*.12));

@@ -1,5 +1,6 @@
 import {drawRiverSurface,updateRiverSurfaceFX} from './river-surfaces.js';
 import {waterCurrent} from './water-current.js';
+import {getActiveViews,inAnyView,boxInAnyView} from './weather-visibility.js';
 import {drawRiverBanks,drawShoreRock} from './riverbank-art.js';
 import {drawStoneBridge,drawTimberBridge,drawAbyss,bridgeVisualSpan,drawGravelFord} from './landscape-structures.js';
 import {biomePattern} from './biome-art.js';
@@ -157,47 +158,53 @@ export function drawTerritory(c,scene,t){
  c.restore();
 }
 
-export function updateHydrologyFX(scene,time){
- const g=scene.waterFX||scene.weather,cam=scene.cameras.main.worldView;
- if(!g||!cam)return;
+export function updateHydrologyFX(scene,time,views=getActiveViews(scene)){
+ const g=scene.waterFX||scene.weather;
+ if(!g||!views.length)return;
  if(scene.waterFX)scene.waterFX.clear();
+ const cam=scene.cameras?.main,zoom=Math.min(cam?.zoomX??cam?.zoom??1,cam?.zoomY??cam?.zoom??1);
  const r=scene.castleRect;
  const inCourt=(x,y)=>r&&x>=r.left-12&&x<=r.right+12&&y>=r.top-12&&y<=r.bottom+12;
  const onBridge=(x,y)=>(scene.bridges||[]).some(b=>{
   const dx=x-b.x,dy=y-b.y,ca=Math.cos(b.angle),sa=Math.sin(b.angle);
   return Math.abs(dx*ca+dy*sa)<Math.min(920,b.length)*.5&&Math.abs(-dx*sa+dy*ca)<b.width*.34;
  });
+ const step=zoom<.45?2:1;
  for(const w of scene.hydrology||[]){
-  if(w.surface){updateRiverSurfaceFX(g,w,time,cam,(x,y)=>inCourt(x,y)||onBridge(x,y));continue;}
+  if(w.surface){updateRiverSurfaceFX(g,w,time,views,(x,y)=>inCourt(x,y)||onBridge(x,y));continue;}
   const abyss=w.type==='abyss',deep=w.type==='deep',rw=w.width||70,speed=abyss?1400:deep?3200:2000;
   for(let k=1;k<w.points.length;k++){
    const a=w.points[k-1],b=w.points[k];
+   if(!boxInAnyView(views,Math.min(a[0],b[0]),Math.min(a[1],b[1]),Math.max(a[0],b[0]),Math.max(a[1],b[1]),rw+80))continue;
    const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)||1;
    const ux=dx/len,uy=dy/len,nx=-uy,ny=ux;
-   const lanes=deep||abyss?4:3,streams=Math.max(2,Math.round(len/100));
-   for(let s=0;s<streams;s++){
-    for(let l=0;l<lanes;l++){
-     const flow=abyss?null:waterCurrent(w,k,l,time);
+   const lanes=deep||abyss?4:3,streams=Math.max(2,Math.round(len/(zoom<.45?170:100)));
+   for(let l=0;l<lanes;l+=step){
+    const flow=abyss?null:waterCurrent(w,k,l,time);
+    for(let s=0;s<streams;s++){
      const phase=((abyss?time/speed:flow.distance/len)+s/streams+l*.27)%1;
      const taper=abyss?(1-((k-1+phase)/(w.points.length-1))*.82):1;
      const lat=(((l/(lanes-1||1))-.5)*rw*.64*taper)+Math.sin(time/900+k+l)*3;
      const cx=a[0]+dx*phase+nx*lat,cy=a[1]+dy*phase+ny*lat;
-     if(cx<cam.x-80||cx>cam.right+80||cy<cam.y-80||cy>cam.bottom+80)continue;
+     if(!inAnyView(views,cx,cy,80))continue;
      if(inCourt(cx,cy)||(!abyss&&onBridge(cx,cy)))continue;
      const fade=Math.sin(phase*Math.PI);
      if(abyss){
-      // Gió mạnh thổi xoáy dọc theo vực sâu
+      // Gió mạnh thổi xoáy dọc theo vực sâu (pixel-art lines instead of expensive .arc())
       g.lineStyle(2.2,0xc8c0db,fade*.46).lineBetween(cx-ux*22,cy-uy*22,cx+ux*22,cy+uy*22);
-      if(l%2===0)g.lineStyle(1.4,0xe8e2f5,fade*.32).beginPath().arc(cx,cy,10+taper*8,time/240+l,time/240+l+1.9).strokePath();
+      if(l%2===0){
+       const ang=time/240+l,rad=9+taper*7,wx0=cx+Math.cos(ang)*rad,wy0=cy+Math.sin(ang)*rad*.45,wx1=cx+Math.cos(ang+1.3)*rad,wy1=cy+Math.sin(ang+1.3)*rad*.45;
+       g.lineStyle(1.4,0xe8e2f5,fade*.34).lineBetween(wx0,wy0,wx1,wy1);
+      }
       continue;
      }
      const strength=flow.speed/flow.base;
      const streakLen=((deep?24:18)+((s+l)%3)*5)*(.65+strength*.35);
      g.lineStyle(deep?2:2.2,deep?0x9be2ed:0xe6fff8,fade*(deep?.4:.6)*(.7+strength*.3))
       .lineBetween(cx-ux*streakLen*.5,cy-uy*streakLen*.5,cx+ux*streakLen*.5,cy+uy*streakLen*.5);
-     if(l%2===0){
+     if(l%2===0&&zoom>=.45){
       const rippleR=4+((time/420+s+l)%1)*9;
-      g.lineStyle(1,0xf2fffb,fade*(deep?.2:.36)).strokeEllipse(cx,cy,rippleR*2,rippleR*.75);
+      g.lineStyle(1,0xf2fffb,fade*(deep?.2:.36)).lineBetween(cx-rippleR,cy,cx+rippleR,cy).lineBetween(cx-rippleR*.6,cy+3,cx+rippleR*.6,cy+3);
      }
     }
    }

@@ -24,7 +24,7 @@ export function warriorSlamFrame(u){
 export function archerChargeFrame(u,obj,now){
  if(u.hero!=='samurai-archer')return null;
  const charging=u.hp>0&&!(u.stun>0)&&u.martialPose==='bow-charge'&&u.castAnim>0;
- if(charging){obj.archerChargeRemaining=u.castAnim;const t=1-Math.min(1,u.castAnim);return t<.15?18:t<.3?19:t<.5?20:t<.8?21:22;}
+ if(charging){obj.archerChargeRemaining=u.castAnim;const t=1-Math.min(1,u.castAnim/(u.castDuration||1));return t<.15?18:t<.3?19:t<.5?20:t<.8?21:22;}
  if(obj.archerChargeRemaining>0){if(obj.archerChargeRemaining<=.12&&u.hp>0&&!(u.stun>0))obj.archerReleaseUntil=now+160;obj.archerChargeRemaining=0;}
  return u.hp>0&&!(u.stun>0)&&now<(obj.archerReleaseUntil||0)?23:null;
 }

@@ -29,9 +29,9 @@ test('E heals ten small once-per-second ticks, excludes dead/outside units, prot
 });
 test('R uses cursor distance, clamps maximum range, works without enemies, and stage changes clear fields',()=>{
  const {p,r,ctx}=setup(),s=skillAtRank(skillById('blizzard'));
- p.input.aimDistance=180;castTide(r,p,s,ctx);assert.equal(r.zones[0].x,180);
- p.input.aimDistance=900;castTide(r,p,s,ctx);assert.equal(r.zones[1].x,350);
- delete p.input.aimDistance;p.input.aimX=0;p.input.aimY=-1;castTide(r,p,s,ctx);assert.equal(r.zones[2].y,-350);
+ p.input.aimDistance=180;castTide(r,p,s,ctx);assert.equal(r.skillChannels[0].center.x,180);
+ p.input.aimDistance=900;castTide(r,p,s,ctx);assert.equal(r.skillChannels[1].center.x,350);
+ delete p.input.aimDistance;p.input.aimX=0;p.input.aimY=-1;castTide(r,p,s,ctx);assert.equal(r.skillChannels[2].center.y,-350);
  castTide(r,p,skillAtRank(skillById('healing-tide')),ctx);r.stage=2;assert.equal(tideReduction(r,p),0);tickTide(r,.05,ctx,true);assert.equal(r.tideFields.length,0);
 });
 test('standing inside Thuy Duong reduces actual incoming monster attacks by 15%',()=>{

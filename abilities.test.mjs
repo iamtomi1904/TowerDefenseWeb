@@ -23,13 +23,13 @@ for(const s of SKILLS)test(`${s.classId} / ${s.slot} ${s.id}: learned, costs ene
  else assert.ok(p.cooldowns[s.id]>0);
  if(s.cost>0)assert.ok(p.energy<stats(p).maxEnergy);
  assert.ok(r.events.length>0,'Visible effect');
- if(['target','multi','target-burst'].includes(s.kind)){p.input={};for(let i=0;i<15;i++)tick(r,.05,()=>0);}
+ if(['target','multi','target-burst','burst'].includes(s.kind)){p.input={};for(let i=0;i<35;i++)tick(r,.05,()=>0);}
  if(['burst','target','target-burst','multi','chain','dash'].includes(s.kind))assert.ok(e.hp<before,'Damage was applied after impact');
  if(s.kind==='shield')assert.ok(p.shield>0);
  if(s.kind==='heal'||s.kind==='rally')assert.ok(p.hp>stats(p).hp*.5);
  if(['haste','fury'].includes(s.kind))assert.ok(p.buffs.some(b=>b.haste>0));
  if(['zone','meteor'].includes(s.kind)){
-  if(['meteor','tempest'].includes(s.id)){assert.equal(r.zones.length,0);assert.ok(r.skillChannels.some(a=>a.skill.id===s.id));p.input={};for(let i=0;i<15;i++)tick(r,.05,()=>0);}
+  if(['meteor','tempest'].includes(s.id)){assert.equal(r.zones.length,0);assert.ok(r.skillChannels.some(a=>a.skill.id===s.id));p.input={};for(let i=0;i<26;i++)tick(r,.05,()=>0);}
   assert.ok(r.zones.length>0);
  }
 });
@@ -48,7 +48,7 @@ test('shield absorbs real incoming damage before health',()=>{
  const {r,p}=setup('knight-1');buy(r,p,'skill:bulwark');const e=mob(r,p);e.x=p.x;e.y=p.y;e.power=40;e.cd=0;p.input={e:true};const hp=p.hp;tick(r);assert.equal(p.hp,hp);assert.ok(p.shield>0&&p.shield<stats(p).hp*.4);assert.ok(stats(p).armor>6);
 });
 test('meteor waits for telegraph and then damages the marked area',()=>{
- const {r,p}=setup('fire-wizard');buy(r,p,'skill:meteor');const e=mob(r,p);e.speed=0;p.input={r:true};const hp=e.hp;tick(r);assert.equal(e.hp,hp);assert.ok(r.events.some(e=>e.type==='skill-channel'));assert.ok(!r.events.some(e=>e.type==='meteor-fall'));p.input={};let impact=false,fall=false;for(let i=0;i<40;i++){tick(r);fall||=r.events.some(e=>e.type==='meteor-fall');impact||=r.events.some(e=>e.type==='meteor-impact');}assert.ok(fall&&impact);assert.ok(e.hp<hp);assert.equal(r.zones.length,0);
+ const {r,p}=setup('fire-wizard');buy(r,p,'skill:meteor');const e=mob(r,p);e.speed=0;p.input={r:true};const hp=e.hp;tick(r);assert.equal(e.hp,hp);assert.ok(r.events.some(e=>e.type==='skill-channel'));assert.ok(!r.events.some(e=>e.type==='meteor-fall'));p.input={};let impact=false,fall=false;for(let i=0;i<50;i++){tick(r);fall||=r.events.some(e=>e.type==='meteor-fall');impact||=r.events.some(e=>e.type==='meteor-impact');}assert.ok(fall&&impact);assert.ok(e.hp<hp);assert.equal(r.zones.length,0);
 });
 test('mastery unlocks class basic status and is capped',()=>{
  const {r,p}=setup('samurai-archer');assert.equal(buy(r,p,'mastery'),null);assert.equal(buy(r,p,'mastery'),null);const e=mob(r,p);p.input={attack:true};tick(r);p.input={};for(let i=0;i<3;i++)tick(r);assert.ok(e.statuses.poison);assert.ok(stats(p).power>27);assert.equal(buy(r,p,'mastery'),null);assert.ok(buy(r,p,'mastery'));

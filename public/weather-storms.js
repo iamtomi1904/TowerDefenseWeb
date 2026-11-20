@@ -1,4 +1,4 @@
-import {weatherGraphics} from './weather-visibility.js';
+import {weatherGraphics,getActiveViews,inAnyView} from './weather-visibility.js';
 export const STORM_TYPES={thunderstorm:'Bão lốc & chớp',blizzard:'Bão tuyết',sandstorm:'Bão cát',deadstorm:'Bão đất chết',firestorm:'Xoáy lửa dung nham'};
 const snap=v=>Math.round(v/2)*2;
 const wrap=(v,n)=>((v%n)+n)%n;
@@ -14,7 +14,7 @@ function bolt(g,x,y,height,t,seed){
  const p=points[5];g.lineStyle(1,0xd6edff,.7).beginPath().moveTo(...p).lineTo(p[0]+18,p[1]+5).lineTo(p[0]+12,p[1]+16).lineTo(p[0]+28,p[1]+24).strokePath();
  for(let i=0;i<7;i++){const a=i/7*Math.PI*2,r=18+phase*100;g.lineStyle(1,0xb6d8f0,(1-phase/.24)*.5).beginPath().moveTo(x+Math.cos(a)*8,y+Math.sin(a)*3).lineTo(snap(x+Math.cos(a)*r*.7),snap(y+Math.sin(a)*r*.3)).lineTo(snap(x+Math.cos(a+.15)*r),snap(y+Math.sin(a+.15)*r*.4)).strokePath();}
 }
-function vortex(g,x,y,t,kind,seed){
+function vortex(g,x,y,t,kind,seed,skipBolt=false){
  const [dark,mid,light]=palettes[kind],fire=kind==='firestorm',dead=kind==='deadstorm';
  const height=fire?168:dead?135:185,width=fire?57:dead?74:80;
  const sway=Math.sin(t*.9+seed)*10,spin=t*(fire?6.5:dead?3.4:5);
@@ -38,7 +38,7 @@ function vortex(g,x,y,t,kind,seed){
  }
  // Debris skims around the contact area rather than forming a solid disc.
  for(let i=0;i<14;i++){const a=spin*.8+i*2.399,r=18+(i%5)*7,px=snap(x+Math.cos(a)*r),py=snap(y+Math.sin(a)*r*.3);g.lineStyle(1,i%3?mid:light,.6).lineBetween(px,py,px+snap(Math.sin(a)*7),py-2);}
- if(kind==='thunderstorm')bolt(g,x+18,y,height+32,t,seed);
+ if(kind==='thunderstorm'&&!skipBolt)bolt(g,x+18,y,height+32,t,seed);
 }
 function squall(g,x,y,t,kind,seed){
  const snow=kind==='blizzard',[dark,mid,light]=palettes[kind],speed=snow?5.4:4.2;
@@ -55,21 +55,76 @@ function squall(g,x,y,t,kind,seed){
   g.lineStyle(i%3===0?3:2,i%2?mid:light,.34).beginPath().moveTo(px-35,py+8).lineTo(px-15,py+2).lineTo(px+8,py).lineTo(px+32,py-6).strokePath();
  }
 }
-export function drawStorms(scene,time,layers){
- const g=weatherGraphics(scene),cam=scene.cameras.main.worldView,t=time/1000;
- const w=cam.width||cam.right-cam.x,h=cam.height||cam.bottom-cam.y;
- const mapW=scene.mapWidth||w,mapH=scene.mapHeight||h;
+function makeCanvasGfx(ctx){
+ const hex=c=>'#'+c.toString(16).padStart(6,'0');
+ return {
+  lineStyle(w,c,a=1){ctx.lineWidth=w;ctx.strokeStyle=hex(c);ctx.globalAlpha=a;return this;},
+  fillStyle(c,a=1){ctx.fillStyle=hex(c);ctx.globalAlpha=a;return this;},
+  beginPath(){ctx.beginPath();return this;},
+  moveTo(x,y){ctx.moveTo(x,y);return this;},
+  lineTo(x,y){ctx.lineTo(x,y);return this;},
+  strokePath(){ctx.stroke();return this;},
+  lineBetween(x1,y1,x2,y2){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();return this;},
+  fillRect(x,y,w,h){ctx.fillRect(x,y,w,h);return this;},
+  fillTriangle(x1,y1,x2,y2,x3,y3){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.lineTo(x3,y3);ctx.closePath();ctx.fill();return this;}
+ };
+}
+function ensureStormSheet(scene,kind){
+ const key=`storm-sheet-v1-${kind}`;
+ if(scene.textures.exists(key))return key;
+ const isSquall=kind==='blizzard'||kind==='sandstorm';
+ const fw=isSquall?440:240,fh=isSquall?180:230,ax=fw>>1,ay=isSquall?135:200,frames=8;
+ const tc=scene.textures.createCanvas(key,fw*frames,fh),ctx=tc.context;
+ ctx.imageSmoothingEnabled=false;
+ const cg=makeCanvasGfx(ctx);
+ for(let f=0;f<frames;f++){
+  ctx.save();ctx.beginPath();ctx.rect(f*fw,0,fw,fh);ctx.clip();ctx.translate(f*fw,0);
+  const t=(f/frames)*(Math.PI*2/(kind==='firestorm'?6.5:kind==='deadstorm'?3.4:isSquall?(kind==='blizzard'?5.4:4.2):5));
+  if(isSquall)squall(cg,ax,ay,t,kind,0);else vortex(cg,ax,ay,t,kind,0,true);
+  ctx.restore();
+ }
+ tc.refresh();
+ const tex=scene.textures.get(key);
+ for(let f=0;f<frames;f++)tex.add(f,0,f*fw,0,fw,fh);
+ return key;
+}
+export function drawStorms(scene,time,layers,views=getActiveViews(scene)){
+ const pool=scene._stormSprites||(scene._stormSprites=[]);
+ for(let i=0;i<pool.length;i++)if(pool[i]?.scene)pool[i].setVisible(false);
+ if(!views.length)return;
+ const g=weatherGraphics(scene),t=time/1000;
+ const mapW=scene.mapWidth||views[0].right,mapH=scene.mapHeight||views[0].bottom;
  const columns=Math.max(1,Math.ceil(mapW/1100)),rows=Math.max(1,Math.ceil(mapH/850));
  const kinds=[...layers].filter(id=>id in STORM_TYPES);
+ const canBake=!!(scene.textures?.createCanvas&&scene.add?.sprite);
+ let used=0;
  for(const [n,kind] of kinds.entries()){
-  let visible=0;const limit=kinds.length>1?1:3;
+  let visible=0;const limit=kinds.length>1?1:2;
+  const sheetKey=canBake?ensureStormSheet(scene,kind):null;
+  const isSquall=kind==='blizzard'||kind==='sandstorm';
   for(let row=0;row<rows&&visible<limit;row++)for(let col=0;col<columns&&visible<limit;col++){
    const seed=col*17+row*31+Object.keys(STORM_TYPES).indexOf(kind)*7;
-   const x=(col+.5)*mapW/columns+Math.sin(t*.13+seed)*Math.min(65,mapW*.06)+(n-(kinds.length-1)/2)*100;
-   const y=(row+.72)*mapH/rows+Math.cos(t*.11+seed)*Math.min(28,mapH*.05);
-   if(x<cam.x-220||x>cam.x+w+220||y<cam.y-80||y>cam.y+h+240)continue;
+   const rawX=(col+.5)*mapW/columns+Math.sin(t*.13+seed)*Math.min(65,mapW*.06)+(n-(kinds.length-1)/2)*100;
+   const rawY=(row+.72)*mapH/rows+Math.cos(t*.11+seed)*Math.min(28,mapH*.05);
+   const padX=Math.min(210,mapW*.22),padTop=Math.min(220,mapH*.58),padBot=Math.min(48,mapH*.12);
+   const x=Math.max(padX,Math.min(mapW-padX,rawX));
+   const y=Math.max(padTop,Math.min(mapH-padBot,rawY));
+   if(!inAnyView(views,x,y,230))continue;
    visible++;
-   if(kind==='blizzard'||kind==='sandstorm')squall(g,x,y,t,kind,seed);else vortex(g,x,y,t,kind,seed);
+   if(sheetKey){
+    let sp=pool[used];
+    if(!sp||!sp.scene){
+     sp=scene.add.sprite(x,y,sheetKey,0).setDepth(2795);
+     if(scene.mapObjects)scene.mapObjects.push(sp);
+     pool[used]=sp;
+    }
+    used++;
+    const frame=Math.floor(t*10+seed)%8;
+    sp.setTexture(sheetKey,frame).setOrigin(.5,isSquall?135/180:200/230).setPosition(snap(x),snap(y)).setVisible(true);
+    if(kind==='thunderstorm')bolt(g,x+18,y,217,t,seed);
+   }else{
+    if(isSquall)squall(g,x,y,t,kind,seed);else vortex(g,x,y,t,kind,seed);
+   }
   }
  }
 }

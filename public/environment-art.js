@@ -2,6 +2,7 @@ import {drawBiomeTransition} from './biome-transition.js';
 import {drawTerrainRelief} from './terrain-relief.js';
 import {biomePattern} from './biome-art.js';
 import {BIOMES} from './world-biomes.js';
+import {getActiveViews,boxInAnyView} from './weather-visibility.js';
 
 function mulberry32(seed){
  let a=seed|0;
@@ -408,89 +409,95 @@ export function drawEnvironmentPatch(c,scene,z){
  c.restore();
 }
 
-export function updateEnvironmentFX(scene,time){
- const g=scene.weather,cam=scene.cameras.main.worldView;
- if(!g||!cam)return;
+export function updateEnvironmentFX(scene,time,views=getActiveViews(scene)){
+ const g=scene.weather;
+ if(!g||!views.length)return;
+ const cam=scene.cameras?.main,zoom=Math.min(cam?.zoomX??cam?.zoom??1,cam?.zoomY??cam?.zoom??1);
+ if(zoom<.38)return;
+ const step=zoom<.62?2:1;
  for(const z of scene.environment||[]){
-  if(z.x<cam.x-z.rx-80||z.x>cam.right+z.rx+80||z.y<cam.y-z.ry-80||z.y>cam.bottom+z.ry+80)continue;
+  if(!boxInAnyView(views,z.x-(z.rx||180),z.y-(z.ry||120),z.x+(z.rx||180),z.y+(z.ry||120),80))continue;
   if(z.type==='ice'){
-   // Bão tuyết (Blizzard): gió tuyết thổi xiên mạnh + vòng xoáy sương băng
-   for(let i=0;i<26;i++){
-    const phase=i*2.399,t=(time/1400+i/26)%1;
+   // Bão tuyết (Blizzard): gió tuyết thổi xiên mạnh
+   for(let i=0;i<24;i+=step){
+    const phase=i*2.399,t=(time/1400+i/24)%1;
     const x=z.x+Math.cos(phase)*z.rx*.85-t*45+Math.sin(time/350+i)*10;
     const y=z.y+Math.sin(phase)*z.ry*.75-52+t*104;
     const alpha=Math.sin(t*Math.PI)*.9;
-    g.fillStyle(0xf2fcff,alpha).fillCircle(x,y,2+(i%2));
+    const sz=2+(i%2);
+    g.fillStyle(0xf2fcff,alpha).fillRect(x-1,y-1,sz,sz);
     if(i%2===0)g.lineStyle(1.4,0xdff7ff,alpha*.65).lineBetween(x,y,x+14,y-7);
-    if(i%5===0)g.lineStyle(1,0xffffff,alpha*.85).lineBetween(x-3,y,x+3,y).lineBetween(x,y-3,x,y+3);
+    if(i%6===0)g.lineStyle(1,0xffffff,alpha*.85).lineBetween(x-3,y,x+3,y).lineBetween(x,y-3,x,y+3);
    }
   }else if(z.type==='lava'||z.type==='fire'){
    // Núi lửa phun trào (Volcanic Eruption)
    const pulse=.6+.4*Math.sin(time/180);
-   g.fillStyle(0xff5e1a,.22*pulse).fillEllipse(z.x,z.y-2,44,26);
-   for(let i=0;i<7;i++){
-    const t=(time/1350+i/7)%1;
+   g.fillStyle(0xff5e1a,.22*pulse).fillRect(z.x-18,z.y-10,36,16);
+   for(let i=0;i<6;i+=step){
+    const t=(time/1350+i/6)%1;
     const ang=(i*1.9)-2.2,vx=Math.cos(ang)*38,vy=-58;
     const bx=z.x+vx*t,by=z.y-4+vy*t+72*t*t;
     const a=Math.sin(t*Math.PI);
-    g.fillStyle(0xff4d12,a*.85).fillCircle(bx,by,4.2-t*1.8);
-    g.fillStyle(0xffe678,a*.95).fillCircle(bx,by,2.1-t*.8);
+    g.fillStyle(0xff4d12,a*.85).fillRect(bx-2,by-2,4,4);
+    g.fillStyle(0xffe678,a*.95).fillRect(bx-1,by-1,2,2);
    }
-   for(let i=0;i<11;i++){
-    const phase=i*2.399,t=(time/1800+i/11)%1;
+   for(let i=0;i<10;i+=step){
+    const phase=i*2.399,t=(time/1800+i/10)%1;
     const bx=z.x+Math.cos(phase)*z.rx*.72,by=z.y+Math.sin(phase)*z.ry*.72;
     const flicker=Math.sin(time/95+i*3)*3;
     const fh=13+Math.sin(time/120+i)*4;
     g.fillStyle(0xff5e1a,.72).fillTriangle(bx-5,by,bx+5,by,bx+flicker*.5,by-fh);
     g.fillStyle(0xffdf78,.88).fillTriangle(bx-2.5,by,bx+2.5,by,bx+flicker*.3,by-fh*.65);
-    const sy=by-10-t*58,sx=bx+Math.sin(time/450+i)*9;
-    g.fillStyle(0x2b2220,Math.sin(t*Math.PI)*.35).fillCircle(sx,sy,5+t*8);
-    g.fillStyle(0xffaa55,(1-t)*.68).fillCircle(sx-2,sy+4,1.8);
+    const sy=by-10-t*58,sx=bx+Math.sin(time/450+i)*9,ss=4+Math.round(t*6);
+    g.fillStyle(0x2b2220,Math.sin(t*Math.PI)*.35).fillRect(sx-ss*.5,sy-ss*.5,ss,ss);
+    g.fillStyle(0xffaa55,(1-t)*.68).fillRect(sx-3,sy+3,2,2);
    }
   }else if(z.type==='mountain'){
-   // Lốc xoáy vùng đá (Swirling rocky tornado funnel)
-   const rot=time/220,tx=z.x+Math.sin(time/1600)*z.rx*.32,ty=z.y+Math.cos(time/1900)*z.ry*.22;
-   g.fillStyle(0x2a3029,.28).fillEllipse(tx,ty+3,34,16);
-   for(let lv=0;lv<7;lv++){
-    const k=lv/6,ry=ty-lv*11,rx=tx+Math.sin(time/260+lv*.7)*4*(1-k*.3),rw=8+k*22,rh=4+k*8,a=rot+lv*1.1;
-    g.lineStyle(2.4-k*.6,lv%2?0xb8c4b4:0x7c8778,.58-k*.18).strokeEllipse(rx,ry,rw*2,rh*2);
-    g.lineStyle(2,0xe3ede0,.55).beginPath().arc(rx,ry,rw,a,a+1.8).strokePath();
+   // Lốc xoáy vùng đá (Swirling rocky tornado funnel — pixel-art ribbons without expensive .arc())
+   const rot=time/220,tx=z.x+Math.sin(time/1600)*(z.rx||140)*.32,ty=z.y+Math.cos(time/1900)*(z.ry||90)*.22;
+   g.fillStyle(0x2a3029,.28).fillRect(tx-16,ty-2,32,8);
+   for(let lv=0;lv<7;lv+=step){
+    const k=lv/6,ry=ty-lv*11,rx=tx+Math.sin(time/260+lv*.7)*4*(1-k*.3),rw=8+k*22,a=rot+lv*1.1;
+    const x0=rx+Math.cos(a)*rw,y0=ry+Math.sin(a)*rw*.28,x1=rx+Math.cos(a+1.2)*rw,y1=ry+Math.sin(a+1.2)*rw*.28;
+    g.lineStyle(2,lv%2?0xb8c4b4:0x7c8778,.55-k*.16).lineBetween(rx-rw,ry,rx+rw,ry);
+    g.lineStyle(2,0xe3ede0,.55).lineBetween(x0,y0,x1,y1);
    }
-   for(let i=0;i<7;i++){
-    const t=(time/1100+i/7)%1,a=rot*1.4+i*1.1,rad=10+t*22,dx=tx+Math.cos(a)*rad,dy=ty-t*74+Math.sin(a)*rad*.35;
+   for(let i=0;i<6;i+=step){
+    const t=(time/1100+i/6)%1,a=rot*1.4+i*1.1,rad=10+t*22,dx=tx+Math.cos(a)*rad,dy=ty-t*74+Math.sin(a)*rad*.35;
     g.fillStyle(i%2?0x9ba698:0x576154,Math.sin(t*Math.PI)*.85).fillRect(dx-2,dy-2,4,4);
    }
   }else if(z.type==='wind'){
-   for(let i=0;i<9;i++){
-    const phase=i*2.399,t=(time/2000+i/9)%1;
+   for(let i=0;i<8;i+=step){
+    const phase=i*2.399,t=(time/2000+i/8)%1;
     const x=z.x+Math.cos(phase)*z.rx*.65+t*60,y=z.y+Math.sin(phase)*z.ry*.65;
     const a=Math.sin(t*Math.PI)*.42;
-    g.lineStyle(2,0xdafcf0,a).beginPath().arc(x,y,16+t*10,-.8,.7).strokePath();
-    g.fillStyle(0xb7ebb8,a*1.45).fillEllipse(x+12,y-4,4.5,2.2);
+    g.lineStyle(2,0xdafcf0,a).lineBetween(x-14,y+2,x,y-2).lineBetween(x,y-2,x+14,y+1);
+    g.fillStyle(0xb7ebb8,a*1.45).fillRect(x+10,y-5,5,2);
    }
   }else if(z.type==='dense'){
-   // Đom đóm rừng
-   for(let i=0;i<8;i++){
+   for(let i=0;i<8;i+=step){
     const phase=i*2.399,t=(time/3000+i/8)%1;
     const x=z.x+Math.cos(phase)*z.rx*.75+Math.sin(time/1400+i)*14,y=z.y+Math.sin(phase)*z.ry*.7-t*22;
-    g.fillStyle(i%2?0xdaf58c:0xf2f7a1,Math.sin(t*Math.PI)*.65).fillCircle(x,y,2.2);
+    g.fillStyle(i%2?0xdaf58c:0xf2f7a1,Math.sin(t*Math.PI)*.65).fillRect(x-1,y-1,3,3);
    }
-   // Bầy ruồi muỗi bay vo ve thành cụm
-   for(let s=0;s<3;s++){
-    const sx=z.x+Math.cos(s*2.1+z.x)*z.rx*.45,sy=z.y+Math.sin(s*2.7+z.y)*z.ry*.4;
-    for(let k=0;k<6;k++){
-     const gx=sx+Math.sin(time/110+k*1.7+s)*11+Math.cos(time/240+k)*6;
-     const gy=sy+Math.cos(time/95+k*2.3+s)*7-4;
-     g.fillStyle(0x1f261e,.72).fillCircle(gx,gy,1.1);
-     g.fillStyle(0xd9e8d5,.45).fillRect(gx-1.5,gy-1.5,3,1);
+   if(zoom>=.65){
+    for(let s=0;s<3;s++){
+     const sx=z.x+Math.cos(s*2.1+z.x)*z.rx*.45,sy=z.y+Math.sin(s*2.7+z.y)*z.ry*.4;
+     for(let k=0;k<5;k++){
+      const gx=sx+Math.sin(time/110+k*1.7+s)*11+Math.cos(time/240+k)*6;
+      const gy=sy+Math.cos(time/95+k*2.3+s)*7-4;
+      g.fillStyle(0x1f261e,.72).fillRect(gx-1,gy-1,2,2);
+      g.fillStyle(0xd9e8d5,.45).fillRect(gx-1.5,gy-1.5,3,1);
+     }
     }
    }
   }else if(z.type==='dead'){
-   for(let i=0;i<7;i++){
-    const phase=i*2.399,t=(time/2800+i/7)%1;
+   for(let i=0;i<6;i+=step){
+    const phase=i*2.399,t=(time/2800+i/6)%1;
     const x=z.x+Math.cos(phase)*z.rx*.7+Math.sin(time/900+i)*8,y=z.y+Math.sin(phase)*z.ry*.7-t*28;
-    g.lineStyle(2,0xc09acb,Math.sin(t*Math.PI)*.36).beginPath().arc(x,y,7+t*8,-1.5,.5).strokePath();
-    g.fillStyle(0xdcb8eb,Math.sin(t*Math.PI)*.4).fillCircle(x+4,y-4,1.8);
+    const al=Math.sin(t*Math.PI)*.36;
+    g.lineStyle(2,0xc09acb,al).lineBetween(x-8,y+2,x,y-2).lineBetween(x,y-2,x+8,y+1);
+    g.fillStyle(0xdcb8eb,al).fillRect(x+3,y-5,3,3);
    }
   }
  }

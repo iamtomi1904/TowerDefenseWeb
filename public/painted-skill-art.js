@@ -34,10 +34,10 @@ export function updatePaintedSkill(s,v,t){
  const frame=Math.min(5,Math.floor(Math.min(.999,t)*6));let width=r*2.55,height=width,xx=x,yy=y;
  if(p.slam){width=r*2.3;height=width*.9;}
  if(p.cone){width=r*1.45;height=r*.95;xx=x+Math.cos(e.angle||0)*r*.47;yy=y-18+Math.sin(e.angle||0)*r*.47;}
- else if(p.directed){width=r*2.7;height=width;yy=y-16;}
+ else if(p.directed){width=r*(e.type==='wind-vfx'?1.75:2.7);height=width;yy=y-16;}
  let rotation=p.directed?e.angle||0:0;
  if(p.beam){const dx=e.tx-e.x,dy=e.ty-e.y;width=Math.hypot(dx,dy)*1.25;height=Math.min(95,Math.max(48,width*.26));xx=(e.x+e.tx)/2;yy=(e.y+e.ty)/2;rotation=Math.atan2(dy,dx);}
- p.image.setFrame(paintedFrame(s,p.key,p.row,frame)).setPosition(xx,yy).setDisplaySize(Math.max(1,width),Math.max(1,height)).setRotation(rotation).setAlpha(Math.min(1,(1-t)*7)*.95);return true;
+ p.image.setFrame(paintedFrame(s,p.key,p.row,frame)).setPosition(xx,yy).setDisplaySize(Math.max(1,width),Math.max(1,height)).setRotation(rotation).setAlpha(Math.min(1,(1-t)*7)*(e.type==='wind-vfx'?.72:.95));return true;
 }
 export function destroyPaintedSkill(v){if(!v)return;v.painted?.image.destroy();for(const image of v.painted?.parts||[])image.destroy();v.painted=null;}
 function clearBodies(obj){for(const image of obj.paintedBodies?.values()||[])image.destroy();obj.paintedBodies?.clear();}

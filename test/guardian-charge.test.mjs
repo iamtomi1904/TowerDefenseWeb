@@ -1,0 +1,6 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createRoom,addPlayer,stats,tick} from '../simulation.mjs';
+function setup(){const r=createRoom('GUARD'),p=addPlayer(r,{hero:'knight-1'});p.mastery=2;r.phase='battle';r.spawn=999;r.spawnCd=99999;const e={id:'dummy',sprite:'green-slime',x:p.x+35,y:p.y,hp:100000,maxHp:100000,power:0,speed:0,range:0,cooldown:999,cd:999,healCd:999,lane:0,waypoint:1,reward:0};r.enemies.push(e);return {r,p,e};}
+test('guardian third attack holds 1.5 seconds before damage and cannot overlap another attack',()=>{const {r,p,e}=setup();p.attackCount=2;p.input={attack:true,aimX:1,aimY:0};const hp=e.hp;tick(r,.05,()=>.5);for(let i=0;i<29;i++)tick(r,.05,()=>.5);assert.equal(e.hp,hp);assert.equal(p.attackCount,3);tick(r,.05,()=>.5);assert.ok(e.hp<hp);assert.ok(e.stun>0);assert.equal(p.attackCount,3);});
+test('guardian Q grants reflected shield only after ground impact and stun cancels preparation',()=>{for(const interrupted of [false,true]){const {r,p,e}=setup();p.input={q:true};tick(r,.05,()=>.5);p.input={};assert.equal(p.shield,0);if(interrupted)p.stun=2;for(let i=0;i<29;i++)tick(r,.05,()=>.5);assert.equal(p.shield,0);tick(r,.05,()=>.5);assert.equal(p.shield>0,!interrupted);}});

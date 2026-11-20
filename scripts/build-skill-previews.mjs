@@ -31,7 +31,7 @@ export function buildSkillPreview(hero,slot,{dual=false,poisonCombo=false,mounte
  const skill=slot==='P'?{id:'passive',duration:12}:skillById(CLASSES[p.classId].skills.find(id=>skillById(id).slot===slot));
  const frames=[],origin={x:p.x,y:p.y};
  const multiPaladin=hero==='knight-2'&&slot==='Q',multiFallen=hero==='knight-3'&&slot==='Q';
- const totalFrames=passiveCase?200:multiPaladin?(mounted?120:100):multiFallen?(mounted?100:72):Math.ceil((Math.max(skill.duration||0,(skill.delay||0)+(skill.fieldDuration||0),1)+1.5+(poisonCombo?.75:0))/.05);
+ const totalFrames=passiveCase?200:multiPaladin?(mounted?120:100):multiFallen?(mounted?100:72):Math.ceil((Math.max(skill.id==='meteor'?7:skill.id==='blizzard'?6.5:skill.duration||0,(skill.delay||0)+(skill.fieldDuration||0),1)+2.0+(poisonCombo?.75:0))/.05);
  for(let i=0;i<totalFrames;i++){
   const qPress=slot==='P'?false:multiPaladin?(i===0||i===12||i===24):multiFallen?(i===0||i===26):i===(poisonCombo?15:0);
   if(slot==='P'&&hero==='goblin-assassin')room.enemies.forEach(e=>e.face=1);

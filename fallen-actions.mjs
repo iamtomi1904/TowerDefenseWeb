@@ -28,8 +28,8 @@ export function castFallen(r,p,s,ctx){
   }else{
    p.fallenQStep=0;p.fallenQWindow=0;p.fallenQLock=0;p.fallenFlurry=null;p.cooldowns[s.id]=p.fallenQCooldown||s.cooldown;
    if(mounted){
-    p.castAnim=1.05;
-    p.fallenQCharge={delay:1.0,x,y,range:range+45,mult:s.mult};
+    p.castAnim=1.55;
+    p.fallenQCharge={delay:1.5,x,y,range:range+45,mult:s.mult};
     fx('q2-charge',140);
    }else{
     if(ctx.move){ctx.move(p,p.x+x*C.q.q2Dash,p.y+y*C.q.q2Dash,C.q.q2Dash);p.face=x<0?-1:1;}

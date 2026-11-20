@@ -2,7 +2,7 @@ import {randomUUID} from 'node:crypto';
 import {gemArmorDamage,armorMultiplier} from './gem-effects.mjs';
 const passiveFX=(r,p,target=p)=>r.events.push({id:randomUUID(),type:'passive-vfx',classId:p.classId,sourceId:p.id,targetId:target.id,x:target.x,y:target.y-20,duration:.65,radius:48});
 export function passivePose(r,p,kind,target=p){
- if(p.passivePose?.kind!==kind||p.passivePose?.attack!==p.attackCount||!(p.passivePose?.time>0))p.passivePose={kind,time:['ranger','darkelf'].includes(kind)?.22:.55,duration:['ranger','darkelf'].includes(kind)?.22:.55,attack:p.attackCount,serial:(p.passivePose?.serial||0)+1};
+ if(p.passivePose?.kind!==kind||p.passivePose?.attack!==p.attackCount||!(p.passivePose?.time>0))p.passivePose={kind,time:kind==='guardian'?1.75:['ranger','darkelf'].includes(kind)?.22:.55,duration:kind==='guardian'?1.75:['ranger','darkelf'].includes(kind)?.22:.55,attack:p.attackCount,serial:(p.passivePose?.serial||0)+1};
  if((kind==='guardian'&&target===p)||p.passivePose.fxEmitted)return;
  p.passivePose.fxEmitted=true;
  r.events.push({id:randomUUID(),type:'passive-action-fx',level:p.level||1,face:p.face||1,action:kind,sourceId:p.id,targetId:target.id,x:p.x,y:p.y-24,tx:target.x,ty:target.y-24,duration:.55});
@@ -37,7 +37,7 @@ function triggerWaterHeal(r,p,stats){
  const s=stats(p),pct=p.mastery>=2?.12:.08,count=p.mastery>=2?2:1;
  healing(r,p,s.hp*pct,s.hp);
  const allies=r.players.filter(a=>a!==p&&a.hp>0&&dist(p,a)<=280).sort((a,b)=>(a.hp/stats(a).hp)-(b.hp/stats(b).hp)).slice(0,count);
- for(const a of allies){const healed=healing(r,a,stats(a).hp*pct,stats(a).hp,p);if(healed>0)r.events.push({id:randomUUID(),type:'passive-action-fx',level:p.level||1,face:p.face||1,action:'heal-water',sourceId:p.id,targetId:a.id,x:p.x,y:p.y-25,tx:a.x,ty:a.y-25,duration:.65});}
+ for(const a of allies){const healed=healing(r,a,stats(a).hp*pct,stats(a).hp);if(healed>0)r.events.push({id:randomUUID(),type:'passive-action-fx',level:p.level||1,face:p.face||1,action:'heal-water',sourceId:p.id,targetId:a.id,x:p.x,y:p.y-25,tx:a.x,ty:a.y-25,duration:.65});}
 }
 export function passiveUpkeep(r,p,dt,stats,kill){
  if(p.passivePose){p.passivePose.time=Math.max(0,p.passivePose.time-dt);if(p.hp<=0||p.stun>0)p.passivePose.time=0;}

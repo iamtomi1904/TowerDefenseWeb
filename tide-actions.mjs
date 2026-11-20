@@ -16,8 +16,9 @@ export function castTide(r,p,s,ctx){
  if(s.id==='blizzard'){
   const aim=aimOf(p),range=Number.isFinite(p.input?.aimDistance)?Math.max(1,Math.min(s.range,p.input.aimDistance)):s.range;
   const x=p.x+aim.x*range,y=p.y+aim.y*range;
-  r.zones.push({id:ctx.id(),owner:p.id,x,y,radius:s.radius,remaining:s.duration,delay:0,interval:s.interval,clock:0,skill:s.id,rank:s.rank,fx:s.fx});
-  ctx.fx({type:'aoe',skill:s.id,sourceId:p.id,x,y:y-10,radius:s.radius,duration:s.duration,previewDuration:s.duration,fx:s.fx});
+  p.martialLock=1.5;p.castAnim=1.5;p.castDuration=1.5;p.martialPose='arctic-chant';
+  r.skillChannels||=[];r.skillChannels.push({owner:p.id,stage:r.stage,skill:{...s},center:{x,y},delay:1.5});
+
  }
 }
 export function tickTide(r,dt,ctx,active){

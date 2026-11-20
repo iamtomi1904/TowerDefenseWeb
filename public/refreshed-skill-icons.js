@@ -1,0 +1,2 @@
+export const REFRESHED_SKILL_IDS=['elf-eclipse','venom','arrow-rain','multishot','dash-cut','windstep','bladestorm','shield-bash','earthquake'];
+export function refreshedSkillIcon(el,id){const i=REFRESHED_SKILL_IDS.indexOf(id);if(i<0)return false;const image='url("/assets/skill-icons-refresh-v1.png")';el.style.setProperty('--icon',image);el.style.backgroundImage=image;el.style.setProperty('background-size','300% 300%','important');el.style.setProperty('background-position',`${i%3*50}% ${Math.floor(i/3)*50}%`,'important');el.style.imageRendering='pixelated';return true;}

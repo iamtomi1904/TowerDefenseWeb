@@ -1,3 +1,5 @@
+import {meteorEvent,updateMeteors,clearMeteors} from './meteor-painted.js';
+import {handleRitualEvent,updateRitualFX,clearRitualFX,clearRitualActor} from './ritual-casting-art.js';
 import {registerActorBody} from './actor-body-registration.js';
 import {updateGuardianEffects} from './guardian-actions-art.js';
 import {applyAscended} from './ascended-art.js';
@@ -43,6 +45,7 @@ function pulse(s,e,{duration=.75,particles=20,meteor=false}={}){
 export function renderEvent(s,e,seen){
  if(seen.has(e.id))return;seen.add(e.id);if(seen.size>3000)seen.delete(seen.values().next().value);
  if(e.type==='passive-vfx'||e.type==='passive-action-fx'){remember(s,{kind:'passive',g:s.add.graphics(),e,age:0,duration:e.duration||.65});return;}
+ if(handleRitualEvent(s,e))return;
  if(e.type==='martial-vfx'&&e.action==='leap-charge')return; // The axe anticipation is carried by the actor, not a ring left at takeoff.
  if(e.type==='martial-vfx'){if(e.action==='quake-land')s.cameras?.main?.shake?.(170,.005);const slash=createSlashVisual(s,e);remember(s,{kind:'martial',age:0,duration:e.duration||.5,g:s.add.graphics().setDepth(2500),e:{...e,slashArt:!!slash},slash});return;}
  if(e.type==='wind-vfx'){addWindVFX(s,e);return;}
@@ -73,10 +76,7 @@ export function renderEvent(s,e,seen){
   body.add(shape);const archerQ=createArcherQProjectile(s,e);if(archerQ){shape.setVisible(false);body.add(archerQ);}if(e.skill==='venom'&&s.textures.exists('art:venom')){shape.setVisible(false);const arrow=s.add.image(0,0,'art:venom');arrow.setDisplaySize(66,66*arrow.height/arrow.width);body.add(arrow);}
   remember(s,{kind:'projectile',g,body,e,color,age:0,duration:e.duration||.4,moonArrow,points:[],last:{x:e.x,y:e.y}});return;
  }
- if(e.type==='meteor-fall'){
-  remember(s,{kind:'meteor',age:0,duration:e.duration||1.1,g:s.add.graphics().setDepth(2700),e,color:0xffb269});return;
- }
- if(e.type==='meteor-impact'){pulse(s,{...e,skill:'meteor'},{duration:1.35,particles:40,meteor:true});spriteFX(s,'explosion',e.x,e.y,e.radius*1.8,.9);const cam=s.cameras.main;if(Math.hypot(cam.midPoint.x-e.x,cam.midPoint.y-e.y)<700)cam.shake(180,.005);return;}
+ if(meteorEvent(s,e))return;
  if(e.type==='warning'){remember(s,{kind:'warning',age:0,duration:e.duration||.4,g:s.add.graphics().setDepth(20),e,color:colorOf(e)});return;}
  if(['tide-wave','tide-field','tide-lift'].includes(e.type)){remember(s,{kind:'tide',age:0,duration:e.duration||.6,g:s.add.graphics().setDepth(e.type==='tide-field'?3:2500),rimSprites:e.type==='tide-field'?new Map():null,e});return;}
  if(e.type==='aoe'&&e.skill==='arrow-rain'){const storm=s.liveVFX?.find(v=>v.kind==='arrowstorm'&&Math.hypot(v.e.x-e.x,v.e.y-e.y)<12&&v.e.sourceId===e.sourceId);if(storm){storm.duration=Math.max(storm.duration,storm.age+(e.fieldRemaining??.3));return;}remember(s,{kind:'arrowstorm',age:0,duration:e.fieldRemaining??5,g:s.add.graphics().setDepth(2550),e,radius:e.radius||190});return;}
@@ -101,7 +101,8 @@ export function renderEvent(s,e,seen){
  }
  if(e.type==='effect'){spriteFX(s,e.fx||'wind',e.x,e.y,e.size||90,.8);}
 }
-export function updateVFX(s,dt){
+export function updateVFX(s,dt){updateMeteors(s,dt);
+ updateRitualFX(s,dt);
  updateWindVFX(s,dt);updateVanguardVFX(s,dt);updateFallenVFX(s,dt);updateHolyStrikes(s,dt);updateShadowVFX(s,dt);updateBossVFX(s,dt);
  const alive=[];for(const v of s.liveVFX||[]){v.age+=dt;const t=Math.min(1,v.age/v.duration),fade=1-t,g=v.g;g?.clear();updateElementalVisual(s,v,t);updateSpellCircle(s,v,t);if(v.impactGround){v.impactGround.age=v.age;updatePaintedSkill(s,v.impactGround,Math.min(1,v.age/1.2));}
   if(updatePaintedSkill(s,v,t)){
@@ -147,8 +148,9 @@ export function updateVFX(s,dt){
   if(t>=1){v.rune?.destroy();destroyPaintedSkill(v.impactGround);destroyPaintedSkill(v);destroySlashVisual(v.slash);v.elemental?.image.destroy();destroyFieldRims(v.rimSprites,'tide');g?.destroy();v.body?.destroy();v.rock?.destroy();v.overlay?.destroy();v.label?.destroy();}else alive.push(v);
  }s.liveVFX=alive;
 }
-export function clearVFX(s){clearWindVFX(s);clearVanguardVFX(s);clearFallenVFX(s);clearHolyStrikes(s);clearShadowVFX(s);clearBossVFX(s);s.lootGraphics?.clear();for(const v of s.liveVFX||[]){v.rune?.destroy();destroyPaintedSkill(v.impactGround);destroyPaintedSkill(v);destroySlashVisual(v.slash);v.elemental?.image.destroy();destroyFieldRims(v.rimSprites,'tide');v.g?.destroy();v.body?.destroy();v.rock?.destroy();v.overlay?.destroy();v.label?.destroy();}s.liveVFX=[];}
+export function clearVFX(s){clearMeteors(s);clearRitualFX(s);clearWindVFX(s);clearVanguardVFX(s);clearFallenVFX(s);clearHolyStrikes(s);clearShadowVFX(s);clearBossVFX(s);s.lootGraphics?.clear();for(const v of s.liveVFX||[]){v.rune?.destroy();destroyPaintedSkill(v.impactGround);destroyPaintedSkill(v);destroySlashVisual(v.slash);v.elemental?.image.destroy();destroyFieldRims(v.rimSprites,'tide');v.g?.destroy();v.body?.destroy();v.rock?.destroy();v.overlay?.destroy();v.label?.destroy();}s.liveVFX=[];}
 export function clearActorVFX(s,obj){
+ clearRitualActor(obj);
  obj.passiveArt?.destroy();obj.passiveArt=null;obj.passiveValue=undefined;obj.passivePulse=undefined;for(const im of obj.guardImages||[])im.destroy();obj.guardImages=null;obj.guardLastWave=0;
  updateClassProgression(s,{hp:0},obj,0);
  updatePaintedBody(s,{hp:0},obj,0);

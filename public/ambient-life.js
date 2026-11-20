@@ -1,5 +1,6 @@
 import {waterAt} from './landscape-layout.js';
 import {propBlocks} from './prop-footprints.js';
+import {getActiveViews,inAnyView,boxInAnyView} from './weather-visibility.js';
 export const AMBIENT_KINDS={butterfly:'Bướm ghé hoa',bird:'Chim đậu cây',crow:'Quạ đậu cây, đá',frog:'Ếch bờ nước',fish:'Cá dưới nước',rabbit:'Thỏ dưới tán cây',squirrel:'Sóc nhặt hạt',deer:'Nai nghỉ dưới tán cây',flock:'Đàn chim bay',flower:'Hoa cúc',poppy:'Hoa anh túc',iris:'Hoa diên vĩ',bluebell:'Hoa chuông',glowflower:'Hoa phát sáng',firefly:'Đàn đom đóm',ember:'Đốm lửa',smoke:'Khói',lily:'Súng thủy sinh',reed:'Lau sậy',duckweed:'Bèo nước',flame:'Lửa trại'};
 const waterKinds=new Set(['fish','lily','duckweed']);
 const plantKinds=new Set(['flower','poppy','iris','bluebell','glowflower','reed','lily','duckweed']);
@@ -87,14 +88,31 @@ export function ambientPose(item,time){
 }
 export function installAmbientLife(scene,map,catalog){
  makeAmbientTextures(scene);scene.ambientNudges=new Map();scene.ambientPropCoordinates=new Map((map.props||[]).map(p=>[p.x+':'+p.y,p.id]));scene.critters=[];scene.crows=[];
- scene.ambientLife=createAmbientLife(map,catalog).map(item=>{item.worldWidth=map.width;const sprite=scene.add.sprite(item.x,item.y,'ambient:'+item.kind,0).setOrigin(.5,.84);scene.mapObjects.push(sprite);return {item,sprite};});
+ scene.ambientLife=createAmbientLife(map,catalog).map(item=>{
+  item.worldWidth=map.width;
+  if(item.kind==='flock'){item.isFlock=true;}
+  else if(item.from&&item.to){item.minX=Math.min(item.from.x,item.to.x)-85;item.maxX=Math.max(item.from.x,item.to.x)+85;item.minY=Math.min(item.from.y,item.to.y)-110;item.maxY=Math.max(item.from.y,item.to.y)+85;}
+  else if(item.to){item.minX=Math.min(item.x,item.to.x)-80;item.maxX=Math.max(item.x,item.to.x)+80;item.minY=Math.min(item.y,item.to.y)-90;item.maxY=Math.max(item.y,item.to.y)+80;}
+  else if(item.segment){const {a,b,width}=item.segment;item.minX=Math.min(a[0],b[0])-width-60;item.maxX=Math.max(a[0],b[0])+width+60;item.minY=Math.min(a[1],b[1])-width-60;item.maxY=Math.max(a[1],b[1])+width+60;}
+  else{item.minX=item.x-75;item.maxX=item.x+75;item.minY=item.y-105;item.maxY=item.y+75;}
+  const sprite=scene.add.sprite(item.x,item.y,'ambient:'+item.kind,0).setOrigin(.5,.84);
+  scene.mapObjects.push(sprite);
+  return {item,sprite};
+ });
  scene.ambientEffects=scene.add.graphics().setDepth(2750);scene.mapObjects.push(scene.ambientEffects);
 }
-export function updateAmbientLife(scene,time){
- if(!scene.ambientLife)return;const cam=scene.cameras.main.worldView,g=scene.ambientEffects;g.clear();scene.ambientNudges.clear();
+export function updateAmbientLife(scene,time,views=getActiveViews(scene)){
+ if(!scene.ambientLife)return;const g=scene.ambientEffects;g.clear();scene.ambientNudges.clear();
+ if(!views.length)return;
  for(const {item,sprite}of scene.ambientLife){
-  const p=ambientPose(item,time),visible=p.x>cam.x-80&&p.x<cam.right+80&&p.y>cam.y-100&&p.y<cam.bottom+80;
-  sprite.setVisible(visible&&(!scene.ambientFilter||scene.ambientFilter(item.kind)));if(!visible)continue;
+  if(!item.isFlock&&!boxInAnyView(views,item.minX,item.minY,item.maxX,item.maxY,0)){
+   if(sprite.visible)sprite.setVisible(false);
+   continue;
+  }
+  const p=ambientPose(item,time),visible=inAnyView(views,p.x,p.y,85);
+  const show=visible&&(!scene.ambientFilter||scene.ambientFilter(item.kind));
+  if(sprite.visible!==show)sprite.setVisible(show);
+  if(!show)continue;
   sprite.setPosition(p.x,p.y).setFrame(p.frame).setAlpha(p.alpha).setFlipX(p.flip).setRotation(p.rotation||0).setScale(p.scale||1).setDepth(waterKinds.has(item.kind)?-93:item.kind==='flock'?2600:p.groundY+2);
   const hit=p.interaction;if(hit?.propId){scene.ambientNudges.set(hit.propId,hit.strength);g.fillStyle(0x80994c,.6).fillRect(hit.x-8,hit.y+10+(time/70)%22,3,2);}
   if(hit?.splash)g.lineStyle(1,0xd5eee0,(1-hit.progress)*.55).strokeEllipse(hit.x,hit.y,8+hit.progress*14,3+hit.progress*5);

@@ -55,8 +55,5 @@ export function drawClassIdentity(scene,u,obj,time){
   const wx=x-face*14*k,wy=y-23*k;
   g.lineStyle(1,c,.4).lineBetween(wx,wy,wx-face*(u.moving?12:5)*k,wy+5*k);
  }
- if(style.classId==='guardian'&&u.shield>0){
-  const px=x+face*20*k,py=y-26*k;
-  g.lineStyle(2,c,.75).strokePoints([{x:px-10*k,y:py-13*k},{x:px+10*k,y:py-13*k},{x:px+8*k,y:py+7*k},{x:px,y:py+15*k},{x:px-8*k,y:py+7*k}],true);
- }
+
 }

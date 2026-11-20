@@ -42,7 +42,7 @@ function drawHolyRange(scene,u,obj,time){
  drawHolySustainedField(g,u.x,u.y,r,time,burstT,!!u.holyMounted,scene,obj);
 }
 function destroyHoly(v){v.g.destroy();v.image?.destroy();}
-export function addHolyStrike(scene,e){scene.holyStrikes||=[];if(scene.holyStrikes.length>=60)destroyHoly(scene.holyStrikes.shift());const isAura=e.action==='aura',basic=e.action==='strike'||!e.skill&&!isAura&&Number.isFinite(e.angle),v={e,age:0,basic,isAura,duration:isAura?.9:basic?.23:e.action==='q3-charge'?1:e.action==='q3'?(e.mounted?.72:.55):.42,g:scene.add.graphics().setDepth(isAura?2420:2702)};
+export function addHolyStrike(scene,e){scene.holyStrikes||=[];if(scene.holyStrikes.length>=60)destroyHoly(scene.holyStrikes.shift());const isAura=e.action==='aura',basic=e.action==='strike'||!e.skill&&!isAura&&Number.isFinite(e.angle),v={e,age:0,basic,isAura,duration:isAura?.9:basic?.23:e.action==='q3-charge'?1.5:e.action==='q3'?(e.mounted?.72:.55):.42,g:scene.add.graphics().setDepth(isAura?2420:2702)};
  if(['q1','q2','q3'].includes(e.action)){
   const tex=ensureKnightQTexture(scene,e.action==='q1'?'knight-q-holy-1':e.action==='q2'?'knight-q-holy-2':'knight-q-holy-3');
   if(tex){v.image=scene.add.image(e.x,e.y-18,tex).setDepth(2703);}

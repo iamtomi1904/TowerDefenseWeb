@@ -1,0 +1,1428 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Phòng Chờ Giữ Thành · Ấn Thành</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  color-scheme:light;
+  --bg:#f8f4ea;
+  --bg-soft:#f1eadb;
+  --surface:#fffdf9;
+  --surface-tint:#f5efe0;
+  --surface-hover:#efe7d3;
+  --text:#192a21;
+  --muted:#56695e;
+  --emerald:#176148;
+  --emerald-deep:#0f4532;
+  --emerald-soft:#e2f0e9;
+  --gold:#9e6d16;
+  --gold-soft:#f6e8c8;
+  --danger:#b93829;
+  --danger-soft:#fbeae8;
+  --line:#dcd2be;
+  --line-strong:#c4b596;
+  --shadow-sm:0 3px 10px rgba(25,42,33,.05);
+  --shadow-md:0 10px 26px rgba(25,42,33,.08);
+}
+html,body{
+  width:100%;
+  height:100vh;
+  height:100dvh;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 18% 0%,#fffaf0 0%,transparent 50%),
+    radial-gradient(ellipse at 85% 8%,#e3f2ea 0%,transparent 45%),
+    var(--bg);
+  color:var(--text);
+  font:13px/1.42 "Segoe UI",system-ui,-apple-system,sans-serif;
+  user-select:none;
+}
+body{
+  display:flex;
+  flex-direction:column;
+}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg-soft)}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--emerald)}
+
+/* TOP BAR — MATCHES HOME PAGE TEMPLATE */
+.topbar{
+  height:54px;
+  background:rgba(255,253,249,.92);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line-strong);
+  padding:0 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-shrink:0;
+}
+.topbar-left,.topbar-nav,.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.brand{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  text-decoration:none;
+  color:var(--emerald-deep);
+  font-weight:900;
+  font-size:15px;
+  letter-spacing:1.2px;
+  white-space:nowrap;
+}
+.brand small{
+  display:block;
+  font-size:8px;
+  color:var(--muted);
+  letter-spacing:1.5px;
+  font-weight:700;
+}
+.brand-mark{
+  display:grid;
+  place-items:center;
+  width:32px;
+  height:36px;
+  background:linear-gradient(135deg,#1d6e53 0%,#124634 100%);
+  border:1px solid #d69e36;
+  color:#fce7b2;
+  font-family:Georgia,serif;
+  font-size:20px;
+  font-weight:900;
+  clip-path:polygon(0 0,100% 0,100% 82%,50% 100%,0 82%);
+  flex-shrink:0;
+}
+.divider-v{width:1px;height:20px;background:var(--line-strong);flex-shrink:0}
+.btn-leave{
+  background:var(--surface);
+  color:var(--text);
+  border:1px solid var(--line-strong);
+  padding:6px 12px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:700;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:.15s;
+}
+.btn-leave:hover{border-color:var(--emerald);color:var(--emerald)}
+.room-code-btn{
+  background:var(--surface-tint);
+  color:var(--text);
+  border:1px solid var(--line-strong);
+  padding:5px 11px;
+  border-radius:8px;
+  font:700 12px monospace;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  white-space:nowrap;
+  transition:.15s;
+}
+.room-code-btn:hover{border-color:var(--emerald);background:var(--emerald-soft)}
+.conn-status{
+  font-size:11.5px;
+  color:var(--muted);
+  font-weight:600;
+  white-space:nowrap;
+}
+.nav-pill{
+  background:var(--gold-soft);
+  color:#6e4b0c;
+  border:1px solid #dcc084;
+  padding:6px 13px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  white-space:nowrap;
+  transition:.15s;
+}
+.nav-pill:hover{background:#f0ddb3;color:#4f3506}
+.topbar-btn{
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  color:var(--text);
+  padding:6px 12px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  white-space:nowrap;
+  transition:.15s;
+}
+.topbar-btn:hover{border-color:var(--emerald);color:var(--emerald);background:var(--emerald-soft)}
+.badge-count{
+  background:var(--emerald);
+  color:#fff;
+  font-size:10px;
+  font-weight:800;
+  padding:1px 6px;
+  border-radius:999px;
+}
+
+/* MAIN 3-COLUMN 1-PAGE GRID */
+.lobby-grid{
+  flex:1;
+  min-height:0;
+  max-width:1440px;
+  width:100%;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:clamp(285px,22vw,335px) minmax(0,1fr) clamp(295px,23vw,345px);
+  gap:12px;
+  padding:12px 16px;
+  overflow:hidden;
+}
+.col-left,.col-center,.col-right{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-height:0;
+  overflow:hidden;
+}
+.panel{
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  border-radius:12px;
+  padding:11px 13px;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  box-shadow:var(--shadow-sm);
+}
+.section-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:8px;
+  flex-shrink:0;
+}
+.section-title{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.08em;
+  color:var(--muted);
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.link-action{
+  background:none;
+  border:none;
+  color:var(--emerald);
+  font-size:11.5px;
+  font-weight:700;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.link-action:hover{text-decoration:underline}
+
+/* QUICK INVITE BY NAME ROW */
+.invite-inline-row{
+  display:flex;
+  gap:6px;
+  margin-bottom:8px;
+  flex-shrink:0;
+}
+.invite-inline-row input{
+  flex:1;
+  min-width:0;
+  background:var(--bg);
+  border:1px solid var(--line-strong);
+  border-radius:7px;
+  padding:6px 10px;
+  color:var(--text);
+  font-size:12px;
+  outline:none;
+}
+.invite-inline-row input:focus{border-color:var(--emerald);background:#fff}
+.invite-inline-row button{
+  background:var(--emerald);
+  border:1px solid var(--emerald-deep);
+  color:#fff;
+  font-weight:700;
+  font-size:11.5px;
+  padding:6px 11px;
+  border-radius:7px;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:.15s;
+}
+.invite-inline-row button:hover{filter:brightness(1.08)}
+
+/* LEFT COLUMN: 4 PLAYER SLOTS */
+.slots-wrap{
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-rows:repeat(4,minmax(0,1fr));
+  gap:8px;
+}
+.player-slot{
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:9px 11px;
+  display:flex;
+  flex-direction:row;
+  align-items:stretch;
+  gap:11px;
+  position:relative;
+  min-height:0;
+  transition:.18s;
+}
+.player-slot.is-me{
+  background:var(--surface);
+  border-color:var(--line-strong);
+  box-shadow:var(--shadow-sm);
+}
+.player-slot.is-ready{
+  border-color:var(--emerald);
+  background:var(--emerald-soft);
+}
+.player-slot.is-empty{
+  border-style:dashed;
+  border-color:var(--line-strong);
+  background:var(--bg-soft);
+  flex-direction:row;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.crown-badge{
+  position:absolute;
+  top:-7px;
+  left:8px;
+  z-index:2;
+  padding:1px 7px;
+  border-radius:4px;
+  background:var(--gold-soft);
+  border:1px solid #d5b46e;
+  color:#6b4809;
+  font-size:9.5px;
+  font-weight:800;
+}
+.slot-avatar{
+  width:clamp(78px,7.5vw,98px);
+  height:100%;
+  min-height:68px;
+  border-radius:9px;
+  background:radial-gradient(circle at 50% 62%,#fffdf9 0%,#ebe1cc 100%);
+  border:1px solid var(--line-strong);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  flex-shrink:0;
+}
+.slot-main{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:4px;
+}
+.slot-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:6px;
+  min-width:0;
+}
+.slot-name-row{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  flex-wrap:wrap;
+}
+.slot-name{
+  font-weight:800;
+  font-size:13.5px;
+  color:var(--text);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:125px;
+}
+.badge-you{
+  background:var(--surface-tint);
+  color:var(--muted);
+  border:1px solid var(--line-strong);
+  font-size:9.5px;
+  font-weight:800;
+  padding:1px 5px;
+  border-radius:4px;
+}
+.slot-lv{color:var(--muted);font-size:11px;font-weight:700}
+.slot-hero-box{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.slot-hero-name{
+  font-weight:800;
+  font-size:13.5px;
+  color:var(--emerald-deep);
+}
+.slot-hero-stats{
+  font-size:11px;
+  color:var(--muted);
+  font-weight:600;
+}
+.slot-actions{display:flex;gap:4px;flex-shrink:0}
+.icon-btn{
+  height:24px;
+  padding:0 7px;
+  border-radius:6px;
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.15s;
+}
+.icon-btn:hover{border-color:var(--emerald);color:var(--emerald)}
+.slot-bottom{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  padding-top:5px;
+  border-top:1px solid rgba(25,42,33,.08);
+  font-size:11px;
+}
+.slot-role-label{
+  color:var(--muted);
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.status-pill{
+  font-size:10px;
+  font-weight:800;
+  padding:2px 8px;
+  border-radius:999px;
+  white-space:nowrap;
+}
+.status-pill.picking{
+  background:var(--surface-tint);
+  color:var(--muted);
+  border:1px solid var(--line-strong);
+}
+.status-pill.ready{
+  background:var(--emerald);
+  color:#fff;
+  border:1px solid var(--emerald-deep);
+}
+.empty-left{display:flex;align-items:center;gap:10px;min-width:0}
+.empty-plus{
+  width:46px;
+  height:46px;
+  border-radius:9px;
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  font-weight:800;
+  flex-shrink:0;
+}
+.empty-actions{display:flex;gap:5px;flex-shrink:0}
+.btn-slot-act{
+  background:var(--surface);
+  color:var(--text);
+  border:1px solid var(--line-strong);
+  padding:5px 9px;
+  border-radius:6px;
+  font-size:11px;
+  font-weight:700;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:.15s;
+}
+.btn-slot-act:hover{border-color:var(--emerald);color:var(--emerald)}
+
+/* CENTER COLUMN TOP: HERO SHOWCASE & Q/E/R SKILLS */
+.hero-showcase{
+  flex:0 0 auto;
+  gap:9px;
+}
+.hero-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.hero-header-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-width:0;
+  flex:1;
+}
+.hero-big-avatar{
+  width:78px;
+  height:78px;
+  border-radius:12px;
+  background:radial-gradient(circle at 50% 62%,#fffdf9 0%,#ebe1cc 100%);
+  border:1.5px solid var(--line-strong);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  overflow:hidden;
+}
+.hero-title-group{min-width:0;flex:1}
+.hero-title-row{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-wrap:wrap;
+}
+.hero-title-row h2{
+  font-size:19px;
+  font-weight:900;
+  color:var(--text);
+  line-height:1.2;
+}
+.role-tag{
+  background:var(--surface-tint);
+  color:var(--muted);
+  border:1px solid var(--line-strong);
+  font-size:10.5px;
+  font-weight:700;
+  padding:1px 8px;
+  border-radius:5px;
+  white-space:nowrap;
+}
+.hero-summary{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:4px;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.btn-lock-hero{
+  background:var(--emerald);
+  color:#fff;
+  border:1px solid var(--emerald-deep);
+  padding:10px 18px;
+  border-radius:8px;
+  font-size:12.5px;
+  font-weight:800;
+  cursor:pointer;
+  flex-shrink:0;
+  white-space:nowrap;
+  box-shadow:0 3px 10px rgba(23,97,72,.18);
+  transition:.15s;
+}
+.btn-lock-hero:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn-lock-hero.locked{
+  background:var(--surface-tint);
+  color:var(--emerald-deep);
+  border-color:var(--emerald);
+  box-shadow:none;
+}
+
+/* 3 SKILL CARDS (Q / E / R) — CLEAN EDITORIAL CARDS */
+.skill-cards-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.skill-card{
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:8px 10px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  min-width:0;
+}
+.skill-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+}
+.skill-key-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:20px;
+  height:20px;
+  border-radius:5px;
+  background:var(--surface);
+  color:var(--emerald-deep);
+  border:1px solid var(--line-strong);
+  font-size:10.5px;
+  font-weight:900;
+  flex-shrink:0;
+}
+.skill-name{
+  font-size:12.5px;
+  font-weight:800;
+  color:var(--text);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.skill-cd{
+  font-size:11px;
+  font-weight:700;
+  color:var(--muted);
+  background:var(--surface);
+  border:1px solid var(--line);
+  padding:1px 6px;
+  border-radius:4px;
+  flex-shrink:0;
+}
+.skill-desc{
+  font-size:11.5px;
+  color:var(--muted);
+  line-height:1.4;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+/* CENTER COLUMN BOTTOM: 14 HEROES GRID */
+.roster-panel{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
+.filter-tabs{display:flex;gap:5px;flex-wrap:wrap}
+.filter-tab{
+  background:var(--bg);
+  color:var(--muted);
+  border:1px solid var(--line);
+  padding:4px 10px;
+  border-radius:6px;
+  font-size:11px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.15s;
+}
+.filter-tab:hover{color:var(--text);border-color:var(--line-strong)}
+.filter-tab.active{
+  background:var(--emerald);
+  color:#fff;
+  border-color:var(--emerald-deep);
+}
+.heroes-grid{
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.hero-tile{
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:7px;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:space-between;
+  gap:5px;
+  cursor:pointer;
+  position:relative;
+  min-height:0;
+  overflow:hidden;
+  transition:.15s;
+}
+.hero-tile:hover{background:var(--surface-tint);border-color:var(--line-strong);transform:translateY(-2px)}
+.hero-tile.selected{
+  background:var(--emerald-soft);
+  border:2px solid var(--emerald);
+  box-shadow:0 4px 14px rgba(23,97,72,.14);
+}
+.picked-dot{
+  position:absolute;
+  top:9px;
+  right:9px;
+  z-index:2;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--emerald);
+  box-shadow:0 0 0 2px #fff;
+}
+.hero-tile-avatar{
+  flex:1;
+  width:100%;
+  min-height:0;
+  border-radius:8px;
+  background:radial-gradient(circle at 50% 62%,#fffdf9 0%,#ebe1cc 100%);
+  border:1px solid var(--line-strong);
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.hero-tile-name{
+  font-size:12.5px;
+  font-weight:800;
+  color:var(--text);
+  text-align:center;
+  line-height:1.15;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:100%;
+  flex-shrink:0;
+}
+.hero-tile.selected .hero-tile-name{color:var(--emerald-deep)}
+.hero-tile-sub{
+  font-size:10.5px;
+  color:var(--muted);
+  text-align:center;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:100%;
+  flex-shrink:0;
+}
+
+/* RIGHT COLUMN: MAP, DIFFICULTY, SYNERGY, CHAT, START */
+.map-select{
+  background:var(--bg);
+  color:var(--text);
+  border:1px solid var(--line-strong);
+  border-radius:6px;
+  padding:4px 8px;
+  font-size:11.5px;
+  font-weight:700;
+  cursor:pointer;
+  max-width:170px;
+}
+.map-card-preview{
+  background:var(--surface-tint);
+  border:1px solid var(--line-strong);
+  border-radius:9px;
+  padding:9px 11px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.map-badge-top{
+  display:inline-block;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.06em;
+  color:var(--muted);
+}
+.map-name-big{
+  font-size:15px;
+  font-weight:900;
+  color:var(--text);
+  line-height:1.2;
+}
+.map-meta-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  font-size:11px;
+  color:var(--muted);
+  flex-wrap:wrap;
+}
+
+/* DIFFICULTY & SYNERGY */
+.diff-buttons{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:7px;
+  padding:3px;
+  gap:4px;
+  margin-bottom:8px;
+}
+.diff-btn{
+  background:transparent;
+  color:var(--muted);
+  border:none;
+  padding:5px;
+  border-radius:5px;
+  font-size:11.5px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.15s;
+}
+.diff-btn.active{
+  background:var(--emerald);
+  color:#fff;
+}
+.synergy-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:11.5px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+.synergy-head strong{color:var(--text);font-weight:800}
+.synergy-bars{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+}
+.syn-box{
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:7px;
+  padding:5px 7px;
+}
+.syn-top{
+  display:flex;
+  justify-content:space-between;
+  font-size:10.5px;
+  font-weight:700;
+  color:var(--muted);
+  margin-bottom:3px;
+}
+.syn-top b{color:var(--text)}
+.syn-track{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.syn-fill{height:100%;background:var(--emerald);border-radius:2px;transition:width .25s}
+
+/* CHAT PANEL */
+.chat-panel{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
+.quick-chats{display:flex;gap:4px}
+.qchat-btn{
+  background:var(--bg);
+  color:var(--muted);
+  border:1px solid var(--line);
+  padding:2px 7px;
+  border-radius:5px;
+  font-size:10.5px;
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.qchat-btn:hover{border-color:var(--emerald);color:var(--emerald)}
+.chat-log{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:7px;
+  padding:7px 9px;
+  margin:4px 0 7px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  font-size:12px;
+  color:var(--text);
+}
+.chat-msg b{color:var(--emerald-deep)}
+.chat-msg.sys{color:var(--muted);font-style:italic;font-size:11.5px}
+.chat-input-row{display:flex;gap:6px;flex-shrink:0}
+.chat-input-row input{
+  flex:1;
+  min-width:0;
+  background:var(--bg);
+  color:var(--text);
+  border:1px solid var(--line-strong);
+  border-radius:6px;
+  padding:6px 9px;
+  font-size:12px;
+}
+.chat-input-row input:focus{outline:none;border-color:var(--emerald);background:#fff}
+.btn-send{
+  background:var(--surface-tint);
+  color:var(--text);
+  border:1px solid var(--line-strong);
+  padding:0 13px;
+  border-radius:6px;
+  font-weight:700;
+  font-size:12px;
+  cursor:pointer;
+}
+.btn-send:hover{border-color:var(--emerald);color:var(--emerald)}
+
+/* START FOOTER — PROMINENT CTA */
+.start-box{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  flex-shrink:0;
+  background:linear-gradient(180deg,#fffdf9 0%,#f3ead6 100%);
+  border:1.5px solid #c9ad6a;
+  border-radius:12px;
+  padding:10px 12px;
+  box-shadow:0 8px 22px rgba(25,42,33,.1);
+}
+.ready-status-text{
+  text-align:center;
+  font-size:11.5px;
+  font-weight:700;
+  color:var(--emerald-deep);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.btn-start-match{
+  width:100%;
+  padding:14px 16px;
+  border-radius:10px;
+  border:2px solid #e7c36f;
+  background:linear-gradient(180deg,#1f7d5c 0%,#11523b 100%);
+  color:#fff;
+  font-size:15px;
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:0 6px 20px rgba(17,82,59,.32),inset 0 1px 0 rgba(255,255,255,.28);
+  transition:.18s;
+}
+.btn-start-match:hover{
+  filter:brightness(1.08);
+  transform:translateY(-1px);
+  box-shadow:0 10px 26px rgba(17,82,59,.4);
+}
+.btn-start-match.ready{
+  background:linear-gradient(180deg,#d89e2b 0%,#b07812 100%);
+  color:#fff;
+  border-color:#fae09e;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(176,120,18,.38),inset 0 1px 0 rgba(255,255,255,.35);
+}
+.btn-start-match.ready:hover{filter:brightness(1.08);transform:translateY(-1px)}
+
+/* MODALS & TOASTS */
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(25,42,33,.38);
+  backdrop-filter:blur(4px);
+  z-index:1000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+.modal-backdrop.open{display:flex}
+.modal-card{
+  width:min(760px,96vw);
+  max-height:88dvh;
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  border-radius:14px;
+  box-shadow:0 24px 60px rgba(25,42,33,.18);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:13px 18px;
+  background:var(--surface-tint);
+  border-bottom:1px solid var(--line);
+}
+.modal-head h3{font-size:15px;font-weight:800;color:var(--text)}
+.modal-close{
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  color:var(--muted);
+  width:28px;
+  height:28px;
+  border-radius:7px;
+  cursor:pointer;
+  font-weight:800;
+}
+.modal-close:hover{color:var(--text);border-color:var(--emerald)}
+.modal-body{
+  padding:16px 18px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.social-grid{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:12px;
+}
+.sub-card{
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+}
+.sub-card h4{
+  font-size:11.5px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:var(--muted);
+  border-bottom:1px solid var(--line);
+  padding-bottom:6px;
+}
+.list-scroll{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  max-height:230px;
+  overflow-y:auto;
+}
+.friend-row,.history-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px 10px;
+}
+.friend-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+.friend-name{font-size:13px;font-weight:700;color:var(--text)}
+.friend-sub{font-size:11.5px;color:var(--muted)}
+.status-dot{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  margin-right:5px;
+}
+.status-dot.on{background:#1fb879}
+.status-dot.off{background:#b2bdb6}
+.mini-btn{
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  color:var(--text);
+  font-size:11.5px;
+  font-weight:700;
+  padding:5px 10px;
+  border-radius:6px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.mini-btn:hover{border-color:var(--emerald);color:var(--emerald)}
+.mini-btn.gold{
+  background:var(--emerald);
+  border-color:var(--emerald-deep);
+  color:#fff;
+}
+.mini-btn.gold:hover{filter:brightness(1.08);color:#fff}
+.mini-btn.danger{
+  background:var(--danger-soft);
+  border-color:#e5b5af;
+  color:var(--danger);
+}
+.profile-stats-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+}
+.stat-pill{
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:10px;
+  text-align:center;
+}
+.stat-pill span{display:block;font-size:11px;color:var(--muted)}
+.stat-pill b{display:block;font-size:17px;color:var(--emerald-deep);margin-top:2px}
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.form-field{display:flex;flex-direction:column;gap:4px}
+.form-field.full{grid-column:1 / -1}
+.form-field label{font-size:11.5px;color:var(--muted);font-weight:700}
+.form-field input,.form-field textarea,.form-field select{
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  border-radius:7px;
+  padding:7px 9px;
+  color:var(--text);
+  font-size:12.5px;
+  font-family:inherit;
+}
+.roster-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:5px;
+}
+.roster-chip{
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:3px 8px;
+  font-size:11px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.toast-stack{
+  position:fixed;
+  bottom:16px;
+  right:16px;
+  z-index:1200;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  max-width:350px;
+}
+.lobby-toast{
+  background:var(--surface);
+  border:1.5px solid var(--emerald);
+  border-radius:10px;
+  padding:11px 13px;
+  box-shadow:var(--shadow-md);
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-size:12.5px;
+  color:var(--text);
+}
+
+/* RESPONSIVE 1: COMPACT HEIGHT LAPTOPS (e.g. 1366x768 or 125% Windows scaling) — KEEP 1 PAGE NO SCROLL */
+@media(min-width:1081px) and (max-height:780px){
+  .topbar{height:44px;padding:0 12px}
+  .lobby-grid{padding:8px 12px;gap:8px}
+  .col-left,.col-center,.col-right{gap:7px}
+  .panel{padding:8px 10px}
+  .section-header{margin-bottom:5px}
+  .invite-inline-row{margin-bottom:5px}
+  .slots-wrap{gap:6px}
+  .player-slot{padding:7px 9px}
+  .slot-avatar{width:76px;height:100%;min-height:58px}
+  .hero-big-avatar{width:68px;height:68px}
+  .hero-title-row h2{font-size:17px}
+  .skill-card{padding:6px 8px;gap:3px}
+  .skill-desc{-webkit-line-clamp:2;font-size:11px}
+  .heroes-grid{gap:6px}
+  .hero-tile{padding:6px}
+  .hero-tile-avatar{flex:1;width:100%;min-height:0}
+  .map-card-preview{padding:6px 9px;gap:3px}
+  .map-name-big{font-size:13.5px}
+  .diff-buttons{margin-bottom:5px}
+  .btn-start-match{padding:11px;font-size:14px}
+}
+
+/* RESPONSIVE 2: MEDIUM DESKTOP WIDTH (1081px - 1340px) */
+@media(max-width:1340px) and (min-width:1081px){
+  .lobby-grid{grid-template-columns:280px minmax(0,1fr) 290px}
+}
+
+/* RESPONSIVE 3: TABLET & SMALL LAPTOP (<= 1080px) */
+@media(max-width:1080px){
+  html,body{height:auto;min-height:100dvh;overflow-y:auto}
+  .topbar{height:auto;padding:8px 12px;flex-wrap:wrap}
+  .topbar-nav{order:3;width:100%;justify-content:flex-start;overflow-x:auto;padding-top:4px}
+  .lobby-grid{
+    grid-template-columns:1fr 1fr;
+    overflow:visible;
+  }
+  .col-center{grid-column:1 / -1;order:1}
+  .col-left{order:2}
+  .col-right{order:3}
+  .slots-wrap{grid-template-rows:repeat(4,auto)}
+  .heroes-grid{
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    grid-template-rows:auto;
+  }
+  .hero-tile-avatar{height:110px}
+  .chat-log{min-height:140px;max-height:220px}
+}
+
+/* RESPONSIVE 4: MOBILE (<= 720px) */
+@media(max-width:720px){
+  .lobby-grid{grid-template-columns:1fr;padding:8px}
+  .col-left,.col-center,.col-right{grid-column:1 / -1}
+  .hero-header{flex-direction:column;align-items:stretch}
+  .btn-lock-hero{width:100%;text-align:center}
+  .skill-cards-grid{grid-template-columns:1fr}
+  .heroes-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .social-grid,.form-grid{grid-template-columns:1fr}
+  .profile-stats-grid{grid-template-columns:repeat(2,1fr)}
+  .topbar-right{width:100%;justify-content:space-between}
+  .topbar-btn{flex:1;justify-content:center}
+}
+
+@media(max-width:440px){
+  .heroes-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <a class="brand" href="/">
+      <span class="brand-mark">W</span>
+      <span>THE WORLD<small>PHÒNG CHỜ GIỮ THÀNH</small></span>
+    </a>
+    <div class="divider-v"></div>
+    <a class="btn-leave" href="/defense.html">← Thoát phòng</a>
+    <button class="room-code-btn" id="copy-code" title="Sao chép mã phòng">Mã phòng: #----</button>
+    <span class="conn-status" id="ws-conn-badge">Đang kết nối...</span>
+  </div>
+  <nav class="topbar-nav" aria-label="Tra cứu nhanh" style="display:none">
+    <a class="nav-pill" href="/encyclopedia.html">Bách Khoa Toàn Thư</a>
+  </nav>
+  <div class="topbar-right">
+    <button class="topbar-btn" id="open-social-btn" type="button">Bạn bè &amp; Mời <span class="badge-count" id="social-badge" style="display:none">0</span></button>
+    <button class="topbar-btn" id="open-history-btn" type="button" style="display:none">Lịch sử trận</button>
+    <button class="topbar-btn" id="open-profile-btn" type="button" style="display:none">Hồ sơ cá nhân</button>
+  </div>
+</header>
+
+<main class="lobby-grid">
+  <!-- LEFT COLUMN: 4 TEAM SLOTS -->
+  <section class="col-left">
+    <div class="panel" style="flex:1">
+      <div class="section-header">
+        <span class="section-title">ĐỘI HÌNH NGƯỜI GIỮ CỔNG (<span id="team-count">1</span>/4)</span>
+        <button class="link-action" id="copy-invite">Sao chép link mời</button>
+      </div>
+      <form class="invite-inline-row" id="quick-invite-form">
+        <input id="quick-invite-input" type="text" placeholder="Nhập tài khoản hoặc tên người chơi..." autocomplete="off">
+        <button type="submit">Mời vào phòng</button>
+      </form>
+      <div class="slots-wrap" id="team-slots"></div>
+    </div>
+  </section>
+
+  <!-- CENTER COLUMN: HERO DETAILS + Q/E/R + 14 HERO GRID -->
+  <section class="col-center">
+    <div class="panel hero-showcase">
+      <div class="hero-header">
+        <div class="hero-header-left">
+          <div class="hero-big-avatar" id="big-avatar"></div>
+          <div class="hero-title-group">
+            <div class="hero-title-row">
+              <h2 id="hero-class-title">Kiếm khách phong hệ</h2>
+              <div id="hero-role-tags" style="display:flex;gap:5px;flex-wrap:wrap"></div>
+            </div>
+            <p class="hero-summary" id="hero-summary-text"></p>
+          </div>
+        </div>
+        <button class="btn-lock-hero" id="lock-hero-btn">Khóa Anh Hùng</button>
+      </div>
+      <div class="skill-cards-grid" id="skill-cards"></div>
+    </div>
+
+    <div class="panel roster-panel">
+      <div class="section-header">
+        <span class="section-title">DANH SÁCH 14 ANH HÙNG</span>
+        <div class="filter-tabs" id="role-filters">
+          <button class="filter-tab active" data-filter="all">Tất cả</button>
+          <button class="filter-tab" data-filter="phys">Vật lý</button>
+          <button class="filter-tab" data-filter="magic">Phép thuật</button>
+          <button class="filter-tab" data-filter="tank">Phòng ngự / Hỗ trợ</button>
+        </div>
+      </div>
+      <div class="heroes-grid" id="roster-grid"></div>
+    </div>
+  </section>
+
+  <!-- RIGHT COLUMN: MAP, DIFFICULTY, SYNERGY, CHAT, START -->
+  <section class="col-right">
+    <div class="panel" style="flex-shrink:0">
+      <div class="section-header">
+        <span class="section-title">BẢN ĐỒ CHIẾN DỊCH</span>
+        <select class="map-select" id="map-picker" aria-label="Chọn bản đồ"></select>
+      </div>
+      <div class="map-card-preview" id="map-preview"></div>
+    </div>
+
+    <div class="panel" style="flex-shrink:0">
+      <div class="section-header">
+        <span class="section-title">ĐỘ KHÓ CHIẾN DỊCH</span>
+        <span id="reward-mult" style="color:var(--muted);font-size:11px;font-weight:700">x1.0 Phần thưởng</span>
+      </div>
+      <div class="diff-buttons" id="diff-picker">
+        <button class="diff-btn" data-diff="easy" data-mult="x0.85 Phần thưởng">Dễ</button>
+        <button class="diff-btn active" data-diff="normal" data-mult="x1.0 Phần thưởng">Thường</button>
+        <button class="diff-btn" data-diff="insane" data-mult="x1.35 Phần thưởng">Điên Cuồng</button>
+      </div>
+      <div class="synergy-head">
+        <span>Phối hợp đội hình:</span>
+        <strong id="synergy-status">Đang phân tích đội hình...</strong>
+      </div>
+      <div class="synergy-bars">
+        <div class="syn-box">
+          <div class="syn-top"><span>Vật lý</span><b id="syn-phys-num">0</b></div>
+          <div class="syn-track"><div class="syn-fill" id="syn-phys-bar" style="width:0%"></div></div>
+        </div>
+        <div class="syn-box">
+          <div class="syn-top"><span>Phép thuật</span><b id="syn-magic-num">0</b></div>
+          <div class="syn-track"><div class="syn-fill" id="syn-magic-bar" style="width:0%"></div></div>
+        </div>
+        <div class="syn-box">
+          <div class="syn-top"><span>Thủ/Hỗ trợ</span><b id="syn-tank-num">0</b></div>
+          <div class="syn-track"><div class="syn-fill" id="syn-tank-bar" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel chat-panel">
+      <div class="section-header">
+        <span class="section-title">TRÒ CHUYỆN ĐỘI</span>
+        <div class="quick-chats">
+          <button class="qchat-btn" data-msg="Mình giữ cổng chính nhé!">Giữ cổng chính</button>
+          <button class="qchat-btn" data-msg="Sẵn sàng xuất trận!">Sẵn sàng</button>
+        </div>
+      </div>
+      <div class="chat-log" id="chat-log"></div>
+      <form class="chat-input-row" id="chat-form">
+        <input id="chat-input" type="text" placeholder="Nhắn chiến thuật cho đội..." maxlength="140" autocomplete="off">
+        <button class="btn-send" type="submit">Gửi</button>
+      </form>
+    </div>
+
+    <div class="start-box">
+      <div class="ready-status-text" id="ready-status-text">Đang kết nối phòng chờ...</div>
+      <button class="btn-start-match" id="start-match-btn">BẮT ĐẦU GIỮ THÀNH</button>
+    </div>
+  </section>
+</main>
+
+<!-- MODAL 1: BẠN BÈ & MỜI THEO TÊN -->
+<div class="modal-backdrop" id="social-modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3>Bạn Bè &amp; Mời Vào Phòng</h3>
+      <button class="modal-close" data-close="social-modal" type="button">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="sub-card">
+        <h4>Tìm người chơi theo tên để Kết bạn hoặc Mời vào phòng</h4>
+        <form class="invite-inline-row" id="user-search-form" style="margin:0">
+          <input id="user-search-input" type="text" placeholder="Nhập username hoặc tên hiển thị..." autocomplete="off">
+          <button type="submit">Tìm kiếm</button>
+        </form>
+        <div class="list-scroll" id="user-search-results"></div>
+      </div>
+      <div class="social-grid">
+        <div class="sub-card">
+          <h4>Danh sách bạn bè (<span id="friends-count">0</span>)</h4>
+          <div class="list-scroll" id="friends-list"></div>
+        </div>
+        <div class="sub-card">
+          <h4>Lời mời phòng &amp; Kết bạn</h4>
+          <div class="list-scroll" id="requests-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 2: THÔNG TIN CÁ NHÂN (HỒ SƠ) -->
+<div class="modal-backdrop" id="profile-modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3>Thông Tin Cá Nhân &amp; Hồ Sơ Chỉ Huy</h3>
+      <button class="modal-close" data-close="profile-modal" type="button">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="profile-stats-grid">
+        <div class="stat-pill"><span>Cấp độ</span><b id="pf-level">1</b></div>
+        <div class="stat-pill"><span>Tổng số trận</span><b id="pf-matches">0</b></div>
+        <div class="stat-pill"><span>Trận thắng</span><b id="pf-wins">0</b></div>
+        <div class="stat-pill"><span>Tổng hạ gục</span><b id="pf-kills">0</b></div>
+        <div class="stat-pill"><span>Mốc cao nhất</span><b id="pf-stage">1</b></div>
+      </div>
+      <form class="sub-card" id="profile-form">
+        <h4>Cập nhật hồ sơ cá nhân</h4>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="pf-username">Tài khoản đăng nhập</label>
+            <input id="pf-username" type="text" disabled>
+          </div>
+          <div class="form-field">
+            <label for="pf-display-name">Tên hiển thị trong phòng</label>
+            <input id="pf-display-name" type="text" maxlength="24" required>
+          </div>
+          <div class="form-field">
+            <label for="pf-title">Danh hiệu chỉ huy</label>
+            <input id="pf-title" type="text" maxlength="40" placeholder="Tân binh giữ thành">
+          </div>
+          <div class="form-field">
+            <label for="pf-hero">Tướng đại diện</label>
+            <select id="pf-hero"></select>
+          </div>
+          <div class="form-field full">
+            <label for="pf-bio">Giới thiệu bản thân (Bio)</label>
+            <textarea id="pf-bio" rows="3" maxlength="240" placeholder="Sở trường giữ cổng, thích phối hợp Pháp sư / Kiếm khách..."></textarea>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <span id="pf-save-status" style="font-size:12px;color:var(--emerald)"></span>
+          <button class="mini-btn gold" type="submit" style="padding:7px 15px;font-size:12px">Lưu thông tin cá nhân</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 3: LỊCH SỬ TRẬN ĐẤU -->
+<div class="modal-backdrop" id="history-modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3>Lịch Sử Trận Đấu &amp; Đồng Đội</h3>
+      <button class="modal-close" data-close="history-modal" type="button">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="list-scroll" id="history-list" style="max-height:62dvh"></div>
+    </div>
+  </div>
+</div>
+
+<!-- REALTIME TOAST CONTAINER -->
+<div class="toast-stack" id="toast-stack"></div>
+
+<script type="module" src="/lobby.js"></script>
+</body>
+</html>

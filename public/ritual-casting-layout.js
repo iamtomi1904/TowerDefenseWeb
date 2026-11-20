@@ -1,0 +1,2 @@
+export const RITUAL_ACTOR_ROWS=[{"crop": [45, 13, 175, 230], "foot": 243, "bodyRatio": 0.79076}, {"crop": [43, 13, 177, 230], "foot": 243, "bodyRatio": 0.78668}, {"crop": [59, 32, 174, 207], "foot": 239, "bodyRatio": 0.9375}, {"crop": [60, 32, 173, 207], "foot": 239, "bodyRatio": 0.9375}];
+export const KATANA_SUMMON_LAYOUT={"blade": [244, 94, 182, 498], "circle": [697, 120, 451, 411], "impact": [71, 746, 501, 332], "light": [741, 747, 385, 319]};

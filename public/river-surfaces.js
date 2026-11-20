@@ -1,6 +1,7 @@
 import {biomePattern} from './biome-art.js';
 import {drawRiverBanks} from './riverbank-art.js';
 import {waterCurrent} from './water-current.js';
+import {inAnyView,boxInAnyView} from './weather-visibility.js';
 const snap=n=>Math.round(n/2)*2;
 function trace(c,pts){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));}
 function polygon(c,points,color){c.fillStyle=color;c.beginPath();points.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));c.closePath();c.fill();}
@@ -30,14 +31,20 @@ export function drawRiverSurface(c,scene,w,map){
  }
  c.restore();c.restore();
 }
-export function updateRiverSurfaceFX(g,w,time,cam,hidden=()=>false){
+export function updateRiverSurfaceFX(g,w,time,viewsOrCam,hidden=()=>false){
+ const views=Array.isArray(viewsOrCam)?viewsOrCam:viewsOrCam?[viewsOrCam]:[];
+ if(!views.length)return;
+ const pad=(w.width||70)+40;
  for(let k=1;k<w.points.length;k++){
-  const a=w.points[k-1],b=w.points[k],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)||1,ux=dx/len,uy=dy/len,nx=-uy,ny=ux;
+  const a=w.points[k-1],b=w.points[k];
+  if(!boxInAnyView(views,Math.min(a[0],b[0]),Math.min(a[1],b[1]),Math.max(a[0],b[0]),Math.max(a[1],b[1]),pad))continue;
+  const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)||1,ux=dx/len,uy=dy/len,nx=-uy,ny=ux;
   const count=Math.max(2,Math.ceil(len/85));
+  const flow=waterCurrent({...w,flowSpeed:w.surface==='lava'?22:12},k,1,time);
   for(let i=0;i<count;i++){
-   const flow=waterCurrent({...w,flowSpeed:w.surface==='lava'?22:12},k,1,time),u=(flow.distance/len+i/count)%1;
+   const u=(flow.distance/len+i/count)%1;
    const off=Math.sin(i*2.399+k)*w.width*.28,x=a[0]+dx*u+nx*off,y=a[1]+dy*u+ny*off;
-   if(x<cam.x-30||x>cam.right+30||y<cam.y-30||y>cam.bottom+30||hidden(x,y))continue;
+   if(!inAnyView(views,x,y,30)||hidden(x,y))continue;
    if(w.surface==='ice'){
     const alpha=Math.max(0,Math.sin(time/1100+i+k)-.65);if(alpha)g.lineStyle(1,0xeaffff,alpha).lineBetween(x-4,y,x+4,y).lineBetween(x,y-3,x,y+3);
    }else if(w.surface==='dry'){

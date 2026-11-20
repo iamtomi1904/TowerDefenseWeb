@@ -9,4 +9,19 @@ export function tickSpirit(r,t,dt,ctx){const p=r.players.find(p=>p.id===t.owner)
  if(target&&!target.flying){if(distance(t,target)>c.range)ctx.moveUnit(t,target.x,target.y,c.speed,dt);else if(t.cd<=0){t.cd=c.cooldown;t.anim=.32;t.face=target.x<t.x?-1:1;ctx.damage(target,t.power,p,'summon');fx('branch',target.x,target.y,45);}}else if(distance(t,p)>70)ctx.moveUnit(t,p.x-35*(p.face||1),p.y+20,c.speed,dt);
 }
 export function tickShadow(r,dt,ctx){const dashes=[];for(const d of r.shadowDashes||[]){const p=r.players.find(p=>p.id===d.owner);if(!p||p.hp<=0){if(p)p.dashing=false;continue;}const from={x:p.x,y:p.y};const step=Math.min(dt,d.remaining)/d.duration*d.range;ctx.move(p,p.x+d.dx*step,p.y+d.dy*step,step);d.remaining-=dt;for(const e of r.enemies)if(e.hp>0&&!e.flying&&!d.hits.includes(e.id)&&distanceToSegment(e.x,e.y,[from.x,from.y],[p.x,p.y])<=d.radius&&(!ctx.clearLine||ctx.clearLine(p,e))){d.hits.push(e.id);ctx.damage(e,ctx.stats(p).power*d.mult,p);}ctx.fx({type:'shadow-vfx',action:'dash-slash',sourceId:p.id,x:p.x,y:p.y,fromX:from.x,fromY:from.y,angle:Math.atan2(d.dy,d.dx),radius:d.radius,color:0xd6e8b7});if(d.remaining>0&&distance(from,p)>step*.3)dashes.push(d);else p.dashing=false;}r.shadowDashes=dashes;
- const zones=[];for(const z of r.shadowZones||[]){const p=r.players.find(p=>p.id===z.owner);if(!p)continue;if(z.delay>0){z.delay-=dt;if(z.delay>0){zones.push(z);continue;}z.clock=0;for(const e of r.enemies)if(e.hp>0&&distance(e,z)<z.radius){ctx.damage(e,ctx.stats(p).power*z.mult,p);applyStatus(e,{stun:z.stun},p,ctx.stats(p).power);}ctx.fx({type:'shadow-vfx',action:'moonfall',x:z.x,y:z.y,radius:z.radius,color:0xbba9ed});}else z.time-=dt;z.clock-=dt;if(z.clock<=0){z.clock+=z.interval;for(const e of r.enemies)if(e.hp>0&&distance(e,z)<z.radius){ctx.damage(e,ctx.stats(p).power*z.fieldMult,p,'zone');applyStatus(e,{slow:.25,statusDuration:1},p,ctx.stats(p).power);}ctx.fx({type:'shadow-vfx',action:'moonfield',x:z.x,y:z.y,radius:z.radius,color:0x9eafd7});}if(z.time>0)zones.push(z);}r.shadowZones=zones;}
+ const zones=[];
+ for(const z of r.shadowZones||[]){
+  const p=r.players.find(p=>p.id===z.owner);if(!p)continue;
+  const step=Math.min(dt,Math.max(0,z.delay));z.delay=Math.max(0,z.delay-step);z.elapsed=Math.min(z.fallDuration,z.elapsed+step);z.clock+=step;
+  while(z.clock+1e-8>=z.interval){z.clock=Math.max(0,z.clock-z.interval);for(const e of r.enemies)if(e.hp>0&&distance(e,z)<=z.radius)ctx.damage(e,ctx.stats(p).power*z.fallMult,p,'zone');}
+  if(z.delay<=1e-8){
+   for(const e of r.enemies)if(e.hp>0&&distance(e,z)<=z.radius){ctx.damage(e,ctx.stats(p).power*z.mult,p);applyStatus(e,{stun:1},p,ctx.stats(p).power);}
+   ctx.fx({type:'shadow-vfx',action:'moonfall',x:z.x,y:z.y,radius:z.radius,duration:.95,color:0xc39af3});
+  }else zones.push(z);
+ }
+ r.shadowZones=zones;
+}
+export function beginMoonfall(r,p,s,center,ctx){
+ const duration=s.delay||3;const z={id:ctx.id(),owner:p.id,...center,radius:s.radius,mult:s.mult,stun:1,delay:duration,fallDuration:duration,elapsed:0,interval:s.fallInterval||.5,fallMult:s.fallMult||.35,clock:0};
+ r.shadowZones||=[];r.shadowZones.push(z);ctx.fx({type:'shadow-vfx',action:'eclipse-warn',...center,radius:s.radius,duration,stateDriven:true,color:0xc39af3});return z;
+}

@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bách Khoa Toàn Thư · Ấn Thành</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-page:#f5f0e4;
+  --bg-sidebar:#ebe3d1;
+  --bg-card:#fffdf8;
+  --bg-active:#195c46;
+  --ink:#1b2b23;
+  --ink-muted:#576a5f;
+  --emerald:#195c46;
+  --emerald-light:#e2efe9;
+  --gold:#b48125;
+  --gold-soft:#f5e7c6;
+  --border:#d5cab4;
+  --border-strong:#bba985;
+}
+html,body{
+  width:100%;
+  height:100vh;
+  height:100dvh;
+  overflow:hidden;
+  background:var(--bg-page);
+  color:var(--ink);
+  font:13.5px/1.45 'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+body{
+  display:flex;
+  flex-direction:column;
+}
+
+/* TOPBAR */
+.topbar{
+  height:54px;
+  background:linear-gradient(180deg,#fffdf8 0%,#f1eadb 100%);
+  border-bottom:1px solid var(--border-strong);
+  padding:0 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  flex-shrink:0;
+  box-shadow:0 2px 10px rgba(27,43,35,.06);
+}
+.topbar-left,.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.brand-link{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  text-decoration:none;
+  color:var(--ink);
+  font-weight:800;
+  font-size:15px;
+  letter-spacing:.03em;
+}
+.brand-emblem{
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  background:linear-gradient(135deg,#1d6b52 0%,#124635 100%);
+  color:#f9e5b4;
+  display:grid;
+  place-items:center;
+  font-family:Georgia,serif;
+  font-size:17px;
+  font-weight:900;
+  box-shadow:0 2px 6px rgba(25,92,70,.25);
+}
+.divider-v{width:1px;height:20px;background:var(--border-strong)}
+.page-badge{
+  background:var(--gold-soft);
+  color:#7c540e;
+  border:1px solid #d9b872;
+  padding:3px 10px;
+  border-radius:999px;
+  font-size:11.5px;
+  font-weight:800;
+  letter-spacing:.04em;
+}
+.nav-btn{
+  background:var(--bg-card);
+  color:var(--ink);
+  border:1px solid var(--border-strong);
+  padding:6px 13px;
+  border-radius:8px;
+  font-size:12.5px;
+  font-weight:700;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  transition:.15s;
+}
+.nav-btn:hover{border-color:var(--emerald);color:var(--emerald);background:#fff}
+.nav-btn.primary{
+  background:linear-gradient(180deg,#1f6e54 0%,#15513d 100%);
+  color:#fff;
+  border-color:#124433;
+  box-shadow:0 2px 8px rgba(25,92,70,.22);
+}
+.nav-btn.primary:hover{filter:brightness(1.07)}
+
+/* MAIN SHELL: SIDEBAR + CONTENT VIEWER */
+.codex-shell{
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-columns:280px minmax(0,1fr);
+  overflow:hidden;
+}
+
+/* SIDEBAR */
+.codex-sidebar{
+  background:var(--bg-sidebar);
+  border-right:1px solid var(--border-strong);
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  padding:12px;
+  gap:10px;
+}
+.search-box{
+  position:relative;
+  flex-shrink:0;
+}
+.search-box input{
+  width:100%;
+  background:var(--bg-card);
+  border:1px solid var(--border-strong);
+  border-radius:8px;
+  padding:8px 11px;
+  color:var(--ink);
+  font-size:12.5px;
+  outline:none;
+}
+.search-box input:focus{border-color:var(--emerald);box-shadow:0 0 0 2px rgba(25,92,70,.15)}
+
+.chapter-tabs{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:5px;
+  flex-shrink:0;
+}
+.chapter-pill{
+  background:#dfd5bf;
+  border:1px solid #c7b99c;
+  color:#3c4f44;
+  padding:5px 7px;
+  border-radius:7px;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+  text-align:center;
+  transition:.15s;
+}
+.chapter-pill:hover{background:#e9e1cf}
+.chapter-pill.active{
+  background:var(--emerald);
+  color:#fff;
+  border-color:var(--emerald);
+}
+
+.codex-nav-list{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  padding-right:3px;
+}
+.codex-group{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.codex-group-title{
+  font-size:10.5px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+  color:#6c5b3b;
+  padding:2px 6px;
+}
+.codex-item{
+  background:rgba(255,253,248,.65);
+  border:1px solid transparent;
+  border-radius:9px;
+  padding:8px 10px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  cursor:pointer;
+  text-align:left;
+  color:var(--ink);
+  transition:.15s;
+}
+.codex-item:hover{
+  background:var(--bg-card);
+  border-color:var(--border-strong);
+}
+.codex-item.active{
+  background:var(--bg-active);
+  color:#fff;
+  border-color:#0f3e2e;
+  box-shadow:0 4px 12px rgba(25,92,70,.22);
+}
+.codex-icon{
+  width:30px;
+  height:30px;
+  border-radius:7px;
+  background:var(--gold-soft);
+  color:#795310;
+  display:grid;
+  place-items:center;
+  font-size:15px;
+  flex-shrink:0;
+}
+.codex-item.active .codex-icon{
+  background:rgba(255,255,255,.16);
+  color:#fde6ad;
+}
+.codex-meta{min-width:0;flex:1}
+.codex-meta strong{
+  display:block;
+  font-size:12.5px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.codex-meta span{
+  display:block;
+  font-size:11px;
+  color:var(--ink-muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.codex-item.active .codex-meta span{color:#cbe6dc}
+
+/* VIEWER STAGE */
+.codex-stage{
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  background:var(--bg-card);
+}
+.stage-bar{
+  height:44px;
+  padding:0 16px;
+  background:#f8f3e8;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-shrink:0;
+}
+.stage-info{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.stage-info h1{
+  font-size:14.5px;
+  font-weight:800;
+  color:var(--emerald);
+  white-space:nowrap;
+}
+.stage-info p{
+  font-size:12px;
+  color:var(--ink-muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.stage-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-shrink:0;
+}
+.btn-open-raw{
+  background:#fff;
+  color:var(--emerald);
+  border:1px solid var(--border-strong);
+  padding:4px 10px;
+  border-radius:6px;
+  font-size:11.5px;
+  font-weight:700;
+  text-decoration:none;
+}
+.btn-open-raw:hover{border-color:var(--emerald);background:var(--emerald-light)}
+
+.frame-wrap{
+  flex:1;
+  min-height:0;
+  position:relative;
+  background:#f8f4ea;
+}
+.codex-iframe{
+  width:100%;
+  height:100%;
+  border:none;
+  display:block;
+}
+
+@media(max-width:920px){
+  .codex-shell{
+    grid-template-columns:1fr;
+    grid-template-rows:auto minmax(0,1fr);
+  }
+  .codex-sidebar{
+    border-right:none;
+    border-bottom:1px solid var(--border-strong);
+    padding:8px 12px;
+    max-height:195px;
+  }
+  .codex-nav-list{
+    flex-direction:row;
+    overflow-x:auto;
+    overflow-y:hidden;
+    gap:8px;
+    padding-bottom:4px;
+  }
+  .codex-group{
+    flex-direction:row;
+    align-items:center;
+    gap:6px;
+  }
+  .codex-group-title{display:none}
+  .codex-item{min-width:190px;padding:6px 9px}
+}
+@media(max-width:600px){
+  .topbar{height:auto;padding:8px 12px;flex-wrap:wrap}
+  .page-badge,.stage-info p{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <a class="brand-link" href="/">
+      <span class="brand-emblem">W</span>
+      <span>ẤN THÀNH · THE WORLD</span>
+    </a>
+    <div class="divider-v"></div>
+    <span class="page-badge">📖 BÁCH KHOA TOÀN THƯ</span>
+  </div>
+  <div class="topbar-right">
+    <a class="nav-btn" href="/">← Trang chủ</a>
+    <a class="nav-btn" href="/lobby.html">🛡 Phòng chờ</a>
+    <a class="nav-btn primary" href="/defense.html">⚔ Chơi Giữ Thành ↗</a>
+  </div>
+</header>
+
+<main class="codex-shell">
+  <aside class="codex-sidebar">
+    <div class="search-box">
+      <input id="codex-search" type="search" placeholder="🔍 Tìm anh hùng, quái, boss, vật phẩm..." autocomplete="off">
+    </div>
+    <div class="chapter-tabs" id="chapter-filters">
+      <button class="chapter-pill active" data-cat="all" type="button">Tất cả (18)</button>
+      <button class="chapter-pill" data-cat="heroes" type="button">Anh hùng</button>
+      <button class="chapter-pill" data-cat="combat" type="button">Quái &amp; Lính</button>
+      <button class="chapter-pill" data-cat="world" type="button">Vật phẩm &amp; Map</button>
+    </div>
+    <nav class="codex-nav-list" id="codex-nav" aria-label="Danh mục Bách khoa toàn thư"></nav>
+  </aside>
+
+  <section class="codex-stage">
+    <div class="stage-bar">
+      <div class="stage-info">
+        <h1 id="stage-title">Xưởng Nhân Vật (14 Anh Hùng)</h1>
+        <p id="stage-desc">Xem tạo hình, cấp độ tiến hóa và chi tiết kỹ năng Q / E / R của 14 anh hùng.</p>
+      </div>
+      <div class="stage-actions">
+        <a class="btn-open-raw" id="stage-raw-link" href="/class-gallery.html" target="_blank" rel="noopener">Mở tab riêng ↗</a>
+      </div>
+    </div>
+    <div class="frame-wrap">
+      <iframe class="codex-iframe" id="codex-frame" src="/class-gallery.html" title="Nội dung Bách Khoa Toàn Thư"></iframe>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+const ENTRIES = [
+  // 1. ANH HÙNG & KỸ NĂNG
+  {
+    id: 'class-gallery',
+    cat: 'heroes',
+    group: 'Anh Hùng & Kỹ Năng',
+    icon: '👤',
+    title: 'Xưởng Nhân Vật (14 Anh Hùng)',
+    sub: '14 anh hùng, tiến hóa ngoại hình & Q/E/R',
+    desc: 'Tổng quan 14 anh hùng Ấn Thành, tiến hóa trang bị theo cấp độ và mô phỏng kỹ năng Q / E / R.',
+    url: '/class-gallery.html'
+  },
+  {
+    id: 'skill-gallery',
+    cat: 'heroes',
+    group: 'Anh Hùng & Kỹ Năng',
+    icon: '✨',
+    title: 'Thư Viện Kỹ Năng',
+    sub: 'Toàn bộ chiêu thức & hiệu ứng nguyên tố',
+    desc: 'Tra cứu chi tiết thông số, thời gian hồi chiêu và hiệu ứng kỹ năng của tất cả hệ phái.',
+    url: '/skill-gallery.html'
+  },
+  {
+    id: 'wind-gallery',
+    cat: 'heroes',
+    group: 'Anh Hùng & Kỹ Năng',
+    icon: '🌪',
+    title: 'Phong Kiếm Khách & Kiếm Chủ',
+    sub: 'Kiếm vũ, lướt gió & Kiếm Vực',
+    desc: 'Chi tiết bộ chuyển động, thế kiếm và kỹ năng của Phong Kiếm Khách & Kiếm Chủ.',
+    url: '/wind-gallery.html'
+  },
+  {
+    id: 'vanguard-gallery',
+    cat: 'heroes',
+    group: 'Anh Hùng & Kỹ Năng',
+    icon: '🛡',
+    title: 'Bất Khuất (Vanguard)',
+    sub: 'Giáo khiên, hóa Cự Nhân & hào quang',
+    desc: 'Tiêu điểm anh hùng Bất Khuất: đòn liên kích hút máu, hóa Cự Nhân và hào quang mặt trời.',
+    url: '/vanguard-gallery.html'
+  },
+  {
+    id: 'paladin-gallery',
+    cat: 'heroes',
+    group: 'Anh Hùng & Kỹ Năng',
+    icon: '☀️',
+    title: 'Thánh Kỵ Sĩ (Paladin)',
+    sub: 'Trọng kiếm ánh sáng & chiến mã thánh',
+    desc: 'Tiêu điểm Thánh Kỵ Sĩ: thánh vực bảo hộ, trọng kiếm ánh sáng và thiên mã xung kích.',
+    url: '/paladin-gallery.html'
+  },
+  {
+    id: 'fallen-gallery',
+    cat: 'heroes',
+    group: 'Anh Hùng & Kỹ Năng',
+    icon: '🌑',
+    title: 'Hắc Kỵ Sĩ (Fallen)',
+    sub: 'Hắc ấn, trảm xuyên giáp & chiến mã',
+    desc: 'Tiêu điểm Hắc Kỵ Sĩ: trảm kích hắc ám, ấn chú hút sinh lực và chiến mã diệt vong.',
+    url: '/fallen-gallery.html'
+  },
+  {
+    id: 'shadow-gallery',
+    cat: 'heroes',
+    group: 'Anh Hùng & Kỹ Năng',
+    icon: '🗡',
+    title: 'Ám Ảnh & Sát Thủ',
+    sub: 'Song đao, ẩn thân & nguyệt thực',
+    desc: 'Chi tiết kỹ năng ẩn thân, ám sát liên hoàn và tương tác ngọc của hệ Ám Ảnh.',
+    url: '/shadow-gallery.html'
+  },
+  {
+    id: 'aura-stats',
+    cat: 'heroes',
+    group: 'Anh Hùng & Kỹ Năng',
+    icon: '💠',
+    title: 'Hào Quang & Chỉ Số (Aura)',
+    sub: 'Vòng hào quang đội & tự thân',
+    desc: 'Bảng thông số hào quang hỗ trợ đồng đội và hiệu ứng buff tự thân theo cấp độ.',
+    url: '/aura-stats.html'
+  },
+
+  // 2. QUÁI VẬT, THỦ LĨNH & QUÂN ĐOÀN
+  {
+    id: 'bestiary',
+    cat: 'combat',
+    group: 'Quái Vật, Boss & Quân Đoàn',
+    icon: '💀',
+    title: 'Bách Khoa Quái Vật',
+    sub: 'Chỉ số, hệ phái & cách khắc chế',
+    desc: 'Danh sách đầy đủ các chủng loại quái vật vây thành, chỉ số máu, giáp và điểm yếu.',
+    url: '/bestiary.html'
+  },
+  {
+    id: 'boss-gallery',
+    cat: 'combat',
+    group: 'Quái Vật, Boss & Quân Đoàn',
+    icon: '👹',
+    title: 'Boss 10 Vùng Đất',
+    sub: 'Đại thủ lĩnh cuối mỗi mốc chiến dịch',
+    desc: 'Phân tích các đòn đánh diện rộng, giai đoạn cuồng nộ và cơ chế của 10 Boss giữ mốc.',
+    url: '/boss-gallery.html'
+  },
+  {
+    id: 'forest-leaders',
+    cat: 'combat',
+    group: 'Quái Vật, Boss & Quân Đoàn',
+    icon: '👑',
+    title: 'Thủ Lĩnh Rừng & Bùa Lợi',
+    sub: 'Săn rừng nhận vàng & bùa cường hóa',
+    desc: 'Thông tin các Thủ Lĩnh Rừng canh giữ lãnh địa phụ và hiệu ứng Bùa Lợi khi tiêu diệt.',
+    url: '/forest-leaders.html'
+  },
+  {
+    id: 'enemy-attack-gallery',
+    cat: 'combat',
+    group: 'Quái Vật, Boss & Quân Đoàn',
+    icon: '⚔️',
+    title: 'Hoạt Ảnh Quái Ra Đòn',
+    sub: '39 hoạt ảnh lấy đà & tấn công',
+    desc: 'Trình diễn trực tiếp hoạt ảnh lấy đà, vung vũ khí và phun kỹ năng của 39 loại quái & boss.',
+    url: '/enemy-attack-gallery.html'
+  },
+  {
+    id: 'troop-gallery',
+    cat: 'combat',
+    group: 'Quái Vật, Boss & Quân Đoàn',
+    icon: '🛡️',
+    title: 'Quân Đoàn Giáp Bạc (9 Loại Lính)',
+    sub: 'Doanh trại lính giữ thành & nâng cấp',
+    desc: '9 binh chủng trung cổ bảo vệ cổng thành: bộ binh, cung thủ, thương binh, pháp sư hỗ trợ.',
+    url: '/troop-gallery.html'
+  },
+
+  // 3. VẬT PHẨM, BẢN ĐỒ & PHÒNG LAB
+  {
+    id: 'items-gallery',
+    cat: 'world',
+    group: 'Vật Phẩm, Bản Đồ & Xưởng Lab',
+    icon: '💎',
+    title: 'Vật Phẩm & Ngọc Nguyên Tố',
+    sub: 'Di vật rừng, trang bị & 6 loại ngọc',
+    desc: 'Tra cứu toàn bộ Ngọc Nguyên Tố mua tại thành, Di Vật Rừng tăng chỉ số và vật phẩm tiêu hao.',
+    url: '/items-gallery.html'
+  },
+  {
+    id: 'biome-gallery',
+    cat: 'world',
+    group: 'Vật Phẩm, Bản Đồ & Xưởng Lab',
+    icon: '🌲',
+    title: '10 Vùng Đất & Thời Tiết',
+    sub: 'Quần xã sinh thái, mưa, tuyết & bão cát',
+    desc: 'Khám phá cảnh quan, thảm thực vật và hiệu ứng thời tiết đặc trưng của 10 chiến trường.',
+    url: '/biome-gallery.html'
+  },
+  {
+    id: 'world-atlas',
+    cat: 'world',
+    group: 'Vật Phẩm, Bản Đồ & Xưởng Lab',
+    icon: '🗺️',
+    title: 'Bản Đồ Thế Giới (World Atlas)',
+    sub: 'Địa đồ tổng quan 10 thành trì',
+    desc: 'Bản đồ toàn cảnh lục địa Ấn Thành, vị trí 10 thành trì phong ấn và các vùng đất lân cận.',
+    url: '/world-atlas.html'
+  },
+  {
+    id: 'map-viewer',
+    cat: 'world',
+    group: 'Vật Phẩm, Bản Đồ & Xưởng Lab',
+    icon: '🧭',
+    title: 'Trình Xem Chiến Trường',
+    sub: 'Soi chi tiết địa hình & đường hành quân',
+    desc: 'Quan sát trực tiếp bố cục cổng thành, đường quái đi và các bãi quái rừng trên từng bản đồ.',
+    url: '/map-viewer.html'
+  },
+  {
+    id: 'effect-lab',
+    cat: 'world',
+    group: 'Vật Phẩm, Bản Đồ & Xưởng Lab',
+    icon: '🧪',
+    title: 'Xưởng Hiệu Ứng (Effect Lab)',
+    sub: 'Thử nghiệm VFX, phép thuật & hạt',
+    desc: 'Phòng thử nghiệm trực quan các hiệu ứng kỹ năng, vụ nổ nguyên tố và vòng phép.',
+    url: '/effect-lab.html'
+  }
+];
+
+const params = new URLSearchParams(location.search);
+let activeId = ENTRIES.some(e => e.id === params.get('tab')) ? params.get('tab') : 'class-gallery';
+let activeCat = 'all';
+let searchQuery = '';
+
+const navEl = document.getElementById('codex-nav');
+const frameEl = document.getElementById('codex-frame');
+const titleEl = document.getElementById('stage-title');
+const descEl = document.getElementById('stage-desc');
+const rawLinkEl = document.getElementById('stage-raw-link');
+
+function selectEntry(id) {
+  const entry = ENTRIES.find(e => e.id === id) || ENTRIES[0];
+  activeId = entry.id;
+  titleEl.textContent = `${entry.icon} ${entry.title}`;
+  descEl.textContent = entry.desc;
+  rawLinkEl.href = entry.url;
+  if (frameEl.getAttribute('src') !== entry.url) {
+    frameEl.setAttribute('src', entry.url);
+  }
+  const q = new URLSearchParams(location.search);
+  q.set('tab', entry.id);
+  history.replaceState(null, '', `/encyclopedia.html?${q.toString()}`);
+  renderNav();
+}
+
+function renderNav() {
+  const q = searchQuery.trim().toLowerCase();
+  const filtered = ENTRIES.filter(e => {
+    if (activeCat !== 'all' && e.cat !== activeCat) return false;
+    if (!q) return true;
+    return (
+      e.title.toLowerCase().includes(q) ||
+      e.sub.toLowerCase().includes(q) ||
+      e.desc.toLowerCase().includes(q)
+    );
+  });
+
+  const groups = new Map();
+  for (const item of filtered) {
+    if (!groups.has(item.group)) groups.set(item.group, []);
+    groups.get(item.group).push(item);
+  }
+
+  navEl.innerHTML = '';
+  for (const [groupName, items] of groups.entries()) {
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'codex-group';
+    groupDiv.innerHTML = `<div class="codex-group-title">${groupName}</div>`;
+    for (const item of items) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `codex-item ${item.id === activeId ? 'active' : ''}`;
+      btn.innerHTML = `
+        <span class="codex-icon">${item.icon}</span>
+        <span class="codex-meta">
+          <strong>${item.title}</strong>
+          <span>${item.sub}</span>
+        </span>
+      `;
+      btn.addEventListener('click', () => selectEntry(item.id));
+      groupDiv.appendChild(btn);
+    }
+    navEl.appendChild(groupDiv);
+  }
+}
+
+document.getElementById('chapter-filters').addEventListener('click', e => {
+  const btn = e.target.closest('.chapter-pill');
+  if (!btn) return;
+  document.querySelectorAll('.chapter-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeCat = btn.dataset.cat;
+  renderNav();
+});
+
+document.getElementById('codex-search').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  renderNav();
+});
+
+frameEl.addEventListener('load', () => {
+  try {
+    const doc = frameEl.contentDocument;
+    if (!doc || !doc.head) return;
+    if (!doc.getElementById('shared-home-template')) {
+      const style = doc.createElement('style');
+      style.id = 'shared-home-template';
+      style.textContent = `
+        :root {
+          color-scheme: light !important;
+          --bg: #f8f4ea !important;
+          --panel: #fffdf9 !important;
+          --surface: #fffdf9 !important;
+          --card: #fffdf9 !important;
+          --line: #dcd2be !important;
+          --border: #c4b596 !important;
+          --text: #192a21 !important;
+          --ink: #192a21 !important;
+          --muted: #56695e !important;
+          --gold: #176148 !important;
+        }
+        body {
+          background: #f8f4ea !important;
+          color: #192a21 !important;
+          font-family: "Segoe UI", system-ui, sans-serif !important;
+        }
+        body > header, body > footer { display: none !important; }
+        h1, h2, h3, h4, strong, b, th { color: #192a21 !important; }
+        p, small, span, td, li, label, .muted, .note, .sub { color: #4c5f54; }
+        a { color: #176148 !important; }
+        article, section.card, .card, .panel, .box, .item-card, .troop-card, .boss-card, .leader-card, .biome-card, .stat-card, aside {
+          background: #fffdf9 !important;
+          border-color: #c4b596 !important;
+          color: #192a21 !important;
+          box-shadow: 0 4px 14px rgba(25,42,33,.05) !important;
+        }
+        button, select, input {
+          background: #fffdf9 !important;
+          color: #192a21 !important;
+          border: 1px solid #c4b596 !important;
+          border-radius: 7px !important;
+        }
+        button[aria-pressed="true"], button.active, .tab.active {
+          background: #176148 !important;
+          color: #ffffff !important;
+          border-color: #0f4532 !important;
+        }
+      `;
+      doc.head.appendChild(style);
+    }
+  } catch {}
+});
+
+selectEntry(activeId);
+</script>
+</body>
+</html>

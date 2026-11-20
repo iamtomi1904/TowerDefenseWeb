@@ -1,6 +1,7 @@
 import {installAmbientLife,updateAmbientLife} from './ambient-life.js';
 import {drawRoadNetwork} from './landscape-structures.js';
 import {weatherForMap,drawWeather} from './weather-art.js';
+import {getActiveViews,inAnyView} from './weather-visibility.js';
 import {drawCastleCourt,castleCourt,inCastleCourt} from './castle-court.js';
 import {drawHydrology,drawTerritory,updateHydrologyFX} from './landscape-art.js';
 import {drawEnvironmentPatch,updateEnvironmentFX} from './environment-art.js';
@@ -157,7 +158,7 @@ export function renderMap(s,m,catalog,entities){
  if(s.mapObjects)for(const obj of s.mapObjects)obj.destroy();s.mapObjects=[];
  if(s.groundKey&&s.textures.exists(s.groundKey))s.textures.remove(s.groundKey);
  const key='ground-'+m.id;s.groundKey=key;
- const resolution=Math.min(1,3840/m.width),canvas=s.textures.createCanvas(key,Math.ceil(m.width*resolution),Math.ceil(m.height*resolution)),c=canvas.context;c.scale(resolution,resolution);c.imageSmoothingEnabled=false;s.mapWidth=m.width;s.mapHeight=m.height;s.environment=m.environment;
+ const resolution=Math.min(1,2400/m.width),canvas=s.textures.createCanvas(key,Math.ceil(m.width*resolution),Math.ceil(m.height*resolution)),c=canvas.context;c.scale(resolution,resolution);c.imageSmoothingEnabled=false;s.mapWidth=m.width;s.mapHeight=m.height;s.environment=m.environment;
  let seed=m.id*531;const rand=()=>{seed=seed*16807%2147483647;return seed/2147483647;};
 
  drawMapGround(c,s,m,rand);
@@ -258,9 +259,14 @@ export function renderMap(s,m,catalog,entities){
  const sun=c.createRadialGradient(m.width*.45,m.height*.38,m.width*.08,m.width*.5,m.height*.5,m.width*.68);
  sun.addColorStop(0,sunCol);sun.addColorStop(.7,'rgba(0,0,0,0)');sun.addColorStop(1,'rgba(8,14,10,0.24)');
  c.fillStyle=sun;c.fillRect(0,0,m.width,m.height);
- canvas.refresh();s.mapObjects.push(s.add.image(0,0,key).setOrigin(0).setScale(1/resolution).setDepth(-100));for(const t of m.territories)s.mapObjects.push(s.add.text(t.x,t.y-t.radius*.72,'LÃNH ĐỊA · '+t.name.toUpperCase(),{fontFamily:'Segoe UI',fontSize:'14px',color:hex(t.color),stroke:'#152318',strokeThickness:4}).setOrigin(.5).setDepth(t.y));for(const water of m.rivers||[]){const point=water.points.find(pt=>!inCastleCourt(m,{x:pt[0],y:pt[1]}))||water.points[Math.floor(water.points.length/2)];s.mapObjects.push(s.add.text(point[0],point[1]+water.width/2+24,water.name,{fontFamily:'Segoe UI',fontSize:'12px',color:water.type==='deep'?'#a9dce9':'#d0eee1',stroke:'#193229',strokeThickness:3}).setOrigin(.5).setDepth(point[1]));}for(const z of m.environment)s.mapObjects.push(s.add.text(z.x,z.y-z.ry-18,BIOMES[z.type].name,{fontFamily:'Segoe UI',fontSize:'11px',color:'#e7ead1',stroke:'#152318',strokeThickness:3}).setOrigin(.5).setDepth(z.y));
  const infoById=new Map(catalog.props.map(p=>[p.id,p]));
- const shadows=s.add.graphics().setDepth(-96);s.mapObjects.push(shadows);
+ // Bake all static prop & tree shadows directly onto the 2D ground canvas instead of a 15,000-ellipse WebGL Phaser.Graphics
+ const shadows={
+  fillStyle(col,a=1){c.fillStyle=hex(col);c.globalAlpha=a;return this;},
+  fillEllipse(x,y,w,h){c.beginPath();c.ellipse(x,y,w*.5,h*.5,0,0,Math.PI*2);c.fill();return this;},
+  fillCircle(x,y,r){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fill();return this;},
+  fillRect(x,y,w,h){c.fillRect(x,y,w,h);return this;}
+ };
  // 2.5D Y-sorted pixel-art mountain massifs, trees & rocky outcrops synchronized with terrain
  const ridgeTreeId=m.id===6?'snow_tree1':m.id===3?'autumn_tree1':(m.id===9||m.id===10)?'burned_tree1':'christmas_tree1';
  const ridgeAltId=m.id===6?'rock2_1':m.id===3?'tree1':(m.id===9||m.id===10)?'rock3_1':'rock1_1';
@@ -347,7 +353,10 @@ export function renderMap(s,m,catalog,entities){
  const harshMap=m.id===6||m.id===7||m.id>=9;
  const lushFlora=['bush_pink_flowers1','bush_blue_flowers1','bush_red_flowers1','bush_orange_flowers1','bush_simple1_1','bush_simple1_2','fern1_1','fern1_2','fern2_1','chanterelles1','chanterelles2'];
  const harshFlora=['chanterelles1','rock1_1','rock2_1','beige_green_mushroom1'];
- for(const lane of m.lanes){for(let k=1;k<lane.length;k++){const a=lane[k-1],b=lane[k],len=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let t=45;t<len;t+=34){for(const side of [-1,1]){const x=a[0]+(b[0]-a[0])*t/len-(b[1]-a[1])/len*side*(66+rand()*16),y=a[1]+(b[1]-a[1])*t/len+(b[0]-a[0])/len*side*(66+rand()*16);if(Math.hypot(x-m.base.x,y-m.base.y)<250||onBridge(x,y,52)||waterAt(m,{x,y}))continue;const zHit=(m.environment||[]).some(z=>['ice','lava','fire','swamp','dead'].includes(z.type)&&Math.hypot((x-z.x)/(z.rx||1),(y-z.y)/(z.ry||1))<=1);const pool=(harshMap||zHit)?harshFlora:lushFlora,id=pool[Math.floor(rand()*pool.length)],info=infoById.get(id)||ensureCustomPropTexture(s,id);if(info){shadows.fillStyle(0x101c13,.20).fillEllipse(x,y+1,16,7);const propObj=s.add.image(x,y,id).setOrigin(.5,.85).setScale((24+rand()*12)/info.height).setFlipX(rand()>.5).setDepth(y);s.mapObjects.push(propObj);if(!id.startsWith('rock'))s.swayProps.push({obj:propObj,x,y,baseScaleX:propObj.scaleX,baseScaleY:propObj.scaleY,amp:.065,phase:x*.019+y*.011});}}}}}
+ const roadStep=m.width>=5000?56:36;
+ for(const lane of m.lanes){for(let k=1;k<lane.length;k++){const a=lane[k-1],b=lane[k],len=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let t=45;t<len;t+=roadStep){for(const side of [-1,1]){const x=a[0]+(b[0]-a[0])*t/len-(b[1]-a[1])/len*side*(66+rand()*16),y=a[1]+(b[1]-a[1])*t/len+(b[0]-a[0])/len*side*(66+rand()*16);if(Math.hypot(x-m.base.x,y-m.base.y)<250||onBridge(x,y,52)||waterAt(m,{x,y}))continue;const zHit=(m.environment||[]).some(z=>['ice','lava','fire','swamp','dead'].includes(z.type)&&Math.hypot((x-z.x)/(z.rx||1),(y-z.y)/(z.ry||1))<=1);const pool=(harshMap||zHit)?harshFlora:lushFlora,id=pool[Math.floor(rand()*pool.length)],info=infoById.get(id)||ensureCustomPropTexture(s,id);if(info){shadows.fillStyle(0x101c13,.20).fillEllipse(x,y+1,16,7);const sc=(24+rand()*12)/info.height;if(id.startsWith('rock')&&s.textures.exists(id)){const img=s.textures.get(id).getSourceImage();if(img){c.globalAlpha=1;const dw=info.width*sc,dh=info.height*sc;c.drawImage(img,x-dw*.5,y-dh*.85,dw,dh);continue;}}const propObj=s.add.image(x,y,id).setOrigin(.5,.85).setScale(sc).setFlipX(rand()>.5).setDepth(y);s.mapObjects.push(propObj);if(!id.startsWith('rock'))s.swayProps.push({obj:propObj,x,y,baseScaleX:propObj.scaleX,baseScaleY:propObj.scaleY,amp:.065,phase:x*.019+y*.011});}}}}}
+ c.globalAlpha=1;
+ canvas.refresh();const gTex=s.textures.get(key),cw=canvas.width,ch=canvas.height,hw=cw>>1,hh=ch>>1;for(const [ci,cx,cy,fw,fh] of [[0,0,0,hw,hh],[1,hw,0,cw-hw,hh],[2,0,hh,hw,ch-hh],[3,hw,hh,cw-hw,ch-hh]]){gTex.add('chunk-'+ci,0,cx,cy,fw,fh);s.mapObjects.push(s.add.image(cx/resolution,cy/resolution,key,'chunk-'+ci).setOrigin(0).setScale(1/resolution).setDepth(-100));}for(const t of m.territories)s.mapObjects.push(s.add.text(t.x,t.y-t.radius*.72,'LÃNH ĐỊA · '+t.name.toUpperCase(),{fontFamily:'Segoe UI',fontSize:'14px',color:hex(t.color),stroke:'#152318',strokeThickness:4}).setOrigin(.5).setDepth(t.y));for(const water of m.rivers||[]){const point=water.points.find(pt=>!inCastleCourt(m,{x:pt[0],y:pt[1]}))||water.points[Math.floor(water.points.length/2)];s.mapObjects.push(s.add.text(point[0],point[1]+water.width/2+24,water.name,{fontFamily:'Segoe UI',fontSize:'12px',color:water.type==='deep'?'#a9dce9':'#d0eee1',stroke:'#193229',strokeThickness:3}).setOrigin(.5).setDepth(point[1]));}for(const z of m.environment)s.mapObjects.push(s.add.text(z.x,z.y-z.ry-18,BIOMES[z.type].name,{fontFamily:'Segoe UI',fontSize:'11px',color:'#e7ead1',stroke:'#152318',strokeThickness:3}).setOrigin(.5).setDepth(z.y));
  s.mapObjects.push(...buildFortress(s,m,catalog));
  const glow=s.add.graphics().setDepth(m.base.y+56);glow.fillStyle(0xffd58b,.1).fillCircle(m.base.x-25,m.base.y+27,18).fillCircle(m.base.x+25,m.base.y+27,18);s.mapObjects.push(glow);
  for(const lane of m.lanes){const [x,y]=lane[0];const portal=s.add.graphics().setDepth(-20);portal.fillStyle(0x1c0e0c,.65).fillEllipse(x,y,98,58);portal.fillStyle(0x4a1a12,.45).fillEllipse(x,y,74,42);portal.lineStyle(3.5,0xff7a45,.9).strokeEllipse(x,y,68,39);portal.lineStyle(2,0xffcfa3,.7).strokeEllipse(x,y,86,50);portal.lineStyle(1.5,0xffe8b8,.5).strokeEllipse(x,y,44,25);for(let i=0;i<8;i++){const a=i/8*Math.PI*2,sx=x+Math.cos(a)*44,sy=y+Math.sin(a)*25;portal.fillStyle(0x3a2d2b,.95).fillTriangle(sx-5,sy+2,sx+5,sy+2,sx,sy-13);portal.fillStyle(0xff9b5e,.9).fillCircle(sx,sy-5,2);}s.mapObjects.push(portal,s.add.text(x,y-46,'QUÂN VÂY HÃM',{fontFamily:'Segoe UI',fontSize:'10px',color:'#f5c7a3',stroke:'#211512',strokeThickness:3}).setOrigin(.5));}
@@ -363,70 +372,124 @@ export function renderMap(s,m,catalog,entities){
   return {kind:['rabbit','squirrel','butterfly'][i%3],x:z.x+(rand()-.5)*z.rx*1.1,y:z.y+(rand()-.5)*z.ry*1.1,phase:rand()*6.28,color:[0xffe478,0xf7a8c4,0xa3e8ff][i%3]};
  });
  s.weather=s.add.graphics().setDepth(2800);s.mapObjects.push(s.weather);s.weatherStage=m.id;s.weatherLayers=weatherForMap(m);
- s.atmosphere=s.add.graphics().setDepth(3500).setScrollFactor(0);s.mapObjects.push(s.atmosphere);
+ s.atmosphere=s.add.graphics().setDepth(3500);s.mapObjects.push(s.atmosphere);s._weatherClipMask=null;
  s.weatherPoints=Array.from({length:95},()=>({x:rand()*m.width,y:rand()*m.height,speed:.5+rand(),phase:rand()*6}));
  s.fogBanks=Array.from({length:10},(_,i)=>({x:(i/10)*1.4,y:.1+(i*0.17)%0.8,rx:220+rand()*180,ry:65+rand()*55,speed:.012+rand()*.012,phase:rand()*6}));
+ // Index swayProps and swayFlowers into 256x256 spatial chunks so offscreen map regions remain 100% dormant until panned to
+ s.swayChunkGrid=new Map();
+ for(const item of s.swayProps||[]){
+  const ck=((item.x>>8)<<16)|(item.y>>8);
+  let bucket=s.swayChunkGrid.get(ck);if(!bucket){bucket=[];s.swayChunkGrid.set(ck,bucket);}
+  bucket.push(item);
+ }
+ s.swayFlowerGrid=new Map();
+ for(const f of s.swayFlowers||[]){
+  const ck=((f.x>>8)<<16)|(f.y>>8);
+  let bucket=s.swayFlowerGrid.get(ck);if(!bucket){bucket=[];s.swayFlowerGrid.set(ck,bucket);}
+  bucket.push(f);
+ }
  installAmbientLife(s,m,catalog);
 }
 export function updateScenery(s,time){
- updateAmbientLife(s,time);
- for(const a of s.fauna||[]){const t=time/6000+a.phase,x=a.x+Math.sin(t)*38,y=a.y+Math.cos(t*.7)*20,dx=x-a.sprite.x,dy=y-a.sprite.y,row=Math.abs(dx)>Math.abs(dy)?dx<0?2:3:dy<0?1:0;a.sprite.setPosition(x,y).setDepth(y).play(`${a.id}:walk${row?':'+row:''}`,true);}
- const cam=s.cameras?.main?.worldView;
+ if(typeof document!=='undefined'&&document.hidden)return;
+ if(time-(s._lastSceneryTime||0)<33)return;
+ s._lastSceneryTime=time;
+ const views=getActiveViews(s);
+ s._activeViews=views;
+ if(!views.length)return;
+ const cam=s.cameras?.main,zoom=Math.min(cam?.zoomX??cam?.zoom??1,cam?.zoomY??cam?.zoom??1);
+ const frameId=(s._sceneryFrame=(s._sceneryFrame||0)+1);
+ if(zoom>=.42){
+  updateAmbientLife(s,time,views);
+  for(const a of s.fauna||[]){
+   if(!inAnyView(views,a.x,a.y,110)){if(a.sprite.visible)a.sprite.setVisible(false);continue;}
+   if(!a.sprite.visible)a.sprite.setVisible(true);
+   const t=time/6000+a.phase,x=a.x+Math.sin(t)*38,y=a.y+Math.cos(t*.7)*20,dx=x-a.sprite.x,dy=y-a.sprite.y,row=Math.abs(dx)>Math.abs(dy)?dx<0?2:3:dy<0?1:0;
+   a.sprite.setPosition(x,y).setDepth(y).play(`${a.id}:walk${row?':'+row:''}`,true);
+  }
+ }else{
+  if(s.ambientEffects)s.ambientEffects.clear();
+  for(const {sprite}of s.ambientLife||[])if(sprite.visible)sprite.setVisible(false);
+  for(const a of s.fauna||[])if(a.sprite.visible)a.sprite.setVisible(false);
+ }
  const sector=Math.floor(time/6000)%4,frac=(time%6000)/6000,blend=frac>.8?(frac-.8)/.2:0;
  const windAngle=(sector+blend*blend*(3-2*blend))*(Math.PI/2),wx=Math.cos(windAngle),wy=Math.sin(windAngle);
- if(cam&&s.swayProps?.length){
-  for(const item of s.swayProps){
-   if(item.x<cam.x-120||item.x>cam.right+120||item.y<cam.y-120||item.y>cam.bottom+140)continue;
-   const wave=Math.sin(time/480-(item.x*wx+item.y*wy)*.012+item.phase);
-   item.obj.rotation=(wx*.85+.15*Math.sin(item.phase))*wave*item.amp+(s.ambientNudges?.get(s.ambientPropCoordinates?.get(item.x+':'+item.y))||0);
-   item.obj.scaleY=item.baseScaleY*(1-wy*wave*item.amp*.45);
-   item.obj.scaleX=item.baseScaleX*(1+Math.abs(wx)*wave*item.amp*.15);
+ if(zoom>=.42&&s.swayChunkGrid?.size){
+  const swayStep=zoom<.68?2:1;
+  for(let vi=0;vi<views.length;vi++){
+   const v=views[vi],cx0=(v.x-120)>>8,cx1=(v.right+120)>>8,cy0=(v.y-120)>>8,cy1=(v.bottom+140)>>8;
+   for(let cx=cx0;cx<=cx1;cx++)for(let cy=cy0;cy<=cy1;cy++){
+    const bucket=s.swayChunkGrid.get((cx<<16)|cy);
+    if(!bucket||bucket._f===frameId)continue;
+    bucket._f=frameId;
+    for(let i=0;i<bucket.length;i+=swayStep){
+     const item=bucket[i];
+     const wave=Math.sin(time/480-(item.x*wx+item.y*wy)*.012+item.phase);
+     item.obj.rotation=(wx*.85+.15*Math.sin(item.phase))*wave*item.amp+(s.ambientNudges?.get(s.ambientPropCoordinates?.get(item.x+':'+item.y))||0);
+     item.obj.scaleY=item.baseScaleY*(1-wy*wave*item.amp*.45);
+     item.obj.scaleX=item.baseScaleX*(1+Math.abs(wx)*wave*item.amp*.15);
+    }
+   }
   }
  }
  if(s.foliageFX){
   s.foliageFX.clear();
-  if(cam&&s.swayFlowers?.length){
-   for(const f of s.swayFlowers){
-    if(f.x<cam.x-40||f.x>cam.right+40||f.y<cam.y-40||f.y>cam.bottom+40)continue;
-    const wave=Math.sin(time/420-(f.x*wx+f.y*wy)*.015+f.phase);
-    const dx=wx*wave*3.5,dy=wy*wave*1.8;
-    s.foliageFX.lineStyle(1.5,0x3c6b35,.85).lineBetween(f.x,f.y,f.x+dx,f.y-5+dy);
-    s.foliageFX.fillStyle(f.color,.9).fillCircle(f.x+dx,f.y-5+dy,2.3);
-    s.foliageFX.fillStyle(0xfff6bd,.95).fillCircle(f.x+dx,f.y-5+dy,.9);
+  if(zoom>=.65&&s.swayFlowerGrid?.size){
+   for(let vi=0;vi<views.length;vi++){
+    const v=views[vi],cx0=(v.x-40)>>8,cx1=(v.right+40)>>8,cy0=(v.y-40)>>8,cy1=(v.bottom+40)>>8;
+    for(let cx=cx0;cx<=cx1;cx++)for(let cy=cy0;cy<=cy1;cy++){
+     const bucket=s.swayFlowerGrid.get((cx<<16)|cy);
+     if(!bucket||bucket._f===frameId)continue;
+     bucket._f=frameId;
+     for(let i=0;i<bucket.length;i++){
+      const f=bucket[i];
+      const wave=Math.sin(time/420-(f.x*wx+f.y*wy)*.015+f.phase);
+      const dx=wx*wave*3.5,dy=wy*wave*1.8;
+      s.foliageFX.lineStyle(1.5,0x3c6b35,.85).lineBetween(f.x,f.y,f.x+dx,f.y-5+dy);
+      s.foliageFX.fillStyle(f.color,.9).fillRect(f.x+dx-2,f.y-7+dy,4,4);
+      s.foliageFX.fillStyle(0xfff6bd,.95).fillRect(f.x+dx-1,f.y-6+dy,2,2);
+     }
+    }
    }
   }
-  if(cam&&s.critters?.length){
+  if(zoom>=.55&&s.critters?.length){
    for(const cr of s.critters){
+    if(!inAnyView(views,cr.x,cr.y,70))continue;
     const t=time/1000+cr.phase,cx=cr.x+Math.sin(t*.7)*28,cy=cr.y+Math.cos(t*.55)*16,dir=Math.cos(t*.7)>=0?1:-1;
-    if(cx<cam.x-40||cx>cam.right+40||cy<cam.y-40||cy>cam.bottom+40)continue;
+    if(!inAnyView(views,cx,cy,40))continue;
     if(cr.kind==='butterfly'){
      const wing=Math.abs(Math.sin(time/80+cr.phase))*3.5,fy=cy-10+Math.sin(time/180+cr.phase)*4;
-     s.foliageFX.fillStyle(cr.color,.9).fillEllipse(cx-wing,fy,3.5,2.5).fillEllipse(cx+wing,fy,3.5,2.5);
+     s.foliageFX.fillStyle(cr.color,.9).fillRect(cx-wing-2,fy-1,3,3).fillRect(cx+wing-1,fy-1,3,3);
      s.foliageFX.fillStyle(0x2a241d,1).fillRect(cx-.5,fy-2,1,4);
     }else if(cr.kind==='rabbit'){
      const hop=Math.max(0,Math.sin(time/220+cr.phase))*5;
-     s.foliageFX.fillStyle(0x141f15,.25).fillEllipse(cx,cy+2,8,3.5);
-     s.foliageFX.fillStyle(0xe8dfd1,.95).fillEllipse(cx,cy-hop,7,5).fillCircle(cx+dir*3,cy-3-hop,2.5);
+     s.foliageFX.fillStyle(0x141f15,.25).fillRect(cx-4,cy+1,8,3);
+     s.foliageFX.fillStyle(0xe8dfd1,.95).fillRect(cx-3,cy-2-hop,6,4).fillRect(cx+dir*2,cy-5-hop,3,3);
      s.foliageFX.fillRect(cx+dir*2,cy-7-hop,1.5,4).fillRect(cx+dir*3.8,cy-6.5-hop,1.5,3.5);
     }else{
      const scur=Math.abs(Math.sin(time/140+cr.phase))*2.5;
-     s.foliageFX.fillStyle(0x141f15,.25).fillEllipse(cx,cy+2,8,3.5);
-     s.foliageFX.fillStyle(0xa86434,.95).fillEllipse(cx,cy-scur,6.5,4.2).fillCircle(cx+dir*3,cy-2-scur,2.2);
-     s.foliageFX.fillStyle(0xc77d48,.95).fillEllipse(cx-dir*4,cy-3-scur,4,5);
+     s.foliageFX.fillStyle(0x141f15,.25).fillRect(cx-4,cy+1,8,3);
+     s.foliageFX.fillStyle(0xa86434,.95).fillRect(cx-3,cy-2-scur,6,4).fillRect(cx+dir*2,cy-4-scur,3,3);
+     s.foliageFX.fillStyle(0xc77d48,.95).fillRect(cx-dir*5,cy-5-scur,3,5);
     }
    }
   }
  }
  if(s.crowFX){
   s.crowFX.clear();
-  if(cam&&s.crows?.length){
+  if(s.crows?.length){
    for(const c of s.crows){
+    const minX=Math.min(c.from.x,c.to.x),maxX=Math.max(c.from.x,c.to.x);
+    const minY=Math.min(c.from.y,c.to.y)-60,maxY=Math.max(c.from.y,c.to.y);
+    let near=false;
+    for(let vi=0;vi<views.length;vi++){const v=views[vi];if(maxX>=v.x-60&&minX<=v.right+60&&maxY>=v.y-60&&minY<=v.bottom+60){near=true;break;}}
+    if(!near)continue;
     const cycle=(time/1000/c.period+c.phase)%2;
     const flying=cycle>1.35;
     const u=flying?(cycle-1.35)/.65:0;
     const cx=flying?c.from.x+(c.to.x-c.from.x)*u:c.from.x;
     const cy=flying?c.from.y+(c.to.y-c.from.y)*u-Math.sin(u*Math.PI)*55:c.from.y;
-    if(cx<cam.x-60||cx>cam.right+60||cy<cam.y-60||cy>cam.bottom+60)continue;
+    if(!inAnyView(views,cx,cy,60))continue;
     if(flying){
      const flap=Math.sin(time/55+c.phase)*5;
      s.crowFX.lineStyle(2,0x141118,.95).lineBetween(cx-6,cy-flap,cx,cy).lineBetween(cx,cy,cx+6,cy-flap);
@@ -439,8 +502,8 @@ export function updateScenery(s,time){
    }
   }
  }
- if(!s.weather)return;s.weather.clear();const stage=s.weatherStage;updateEnvironmentFX(s,time);updateHydrologyFX(s,time);
- drawWeather(s,time);
+ if(!s.weather)return;s.weather.clear();updateEnvironmentFX(s,time,views);updateHydrologyFX(s,time,views);
+ drawWeather(s,time,views);
 }
 export function drawMiniMap(s,state,map){
  const g=s.mini;g.clear();const w=174,h=116,x=Math.max(8,s.scale.width-188),y=13;

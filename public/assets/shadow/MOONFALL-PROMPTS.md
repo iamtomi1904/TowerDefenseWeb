@@ -1,0 +1,6 @@
+Full round violet moon, crater texture, transparent 2x2 pixel VFX atlas: moon, corona, earth impact, ground cracks. Original C:\Users\Admin\.codex\generated_images\01a1ecaa-9dd8-7680-8407-63d0de55028a\exec-1b6e9c94-3af2-4477-88f9-f3d6841ec62c.png copied unchanged.
+Skill icon atlas: 3x3 gold frame pixel icons matching skill-icons-v2.png. Row-major: elf-eclipse, venom, arrow-rain, multishot, dash-cut, windstep, bladestorm, shield-bash, earthquake. Source exec-924a8b7f-f2bd-47c1-bc82-027243cb0597.png.
+
+2026-11-20, built-in imagegen: moon-animated-v2.png four frames of crater glow ribbons and rippling corona; moon-sigil-v1.png hollow lunar rune circle; moon-air-thin-v3.png isolated razor-thin lower semicircle air-pressure film, tapered upward side streaks, transparent center, no cloud masses. Earlier moon-air-v2.png retained as unused source. Generated PNGs copied unchanged. Runtime only extracts sprite frames and removes alpha matte; no procedural moon/air/sigil drawings.
+
+moon-air-shear-v4.png (built-in imagegen, source exec-aa5f2b4e-929a-453c-bb43-87c50e686ed4.png): referenced user Alune screenshot; isolated shallow wide white-blue compressed-air shear under sphere, thin side-flung tapered ribbons, no upright bowl/cloud masses. Copied unchanged. Replaces thin-v3 runtime sprite.

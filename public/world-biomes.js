@@ -57,13 +57,18 @@ export function expandBattlefield(m){const scale=mapExpansion(m.id),pos=p=>({...
  }
  const onBridge=(x,y,pad=56)=>(expanded.bridges||[]).some(b=>{const dx=x-b.x,dy=y-b.y,ca=Math.cos(b.angle),sa=Math.sin(b.angle);return Math.abs(dx*ca+dy*sa)<b.length*.5+pad&&Math.abs(-dx*sa+dy*ca)<(b.width||160)*.5+pad;});
  expanded.props=expanded.props.filter(p=>!inCastleCourt(expanded,p)&&!onBridge(p.x,p.y,56)&&!waterAt(expanded,p)&&!landscape.relief.some(z=>z.type==='mountain'&&zoneContains(z,p))&&Math.hypot(p.x-base.x,p.y-base.y)>300&&!lanes.some(l=>l.some((v,k)=>k&&pointDistance(p.x,p.y,l[k-1],v)<85))&&!camps.some(c=>Math.hypot(p.x-c.x,p.y-c.y)<110)&&!corridors.some(l=>pointDistance(p.x,p.y,l[0],l[1])<64));
- const okSpot=(x,y,minGap=48,blocking=true)=>x>60&&x<expanded.width-60&&y>70&&y<expanded.height-70&&!inCastleCourt(expanded,{x,y})&&!onBridge(x,y,56)&&!waterAt(expanded,{x,y})&&!landscape.relief.some(z=>z.type==='mountain'&&zoneContains(z,{x,y}))&&Math.hypot(x-base.x,y-base.y)>(blocking?300:260)&&!lanes.some(l=>l.some((v,k)=>k&&pointDistance(x,y,l[k-1],v)<(blocking?96:56)))&&!m.forestPaths.some(l=>pointDistance(x,y,[l[0][0]*scale,l[0][1]*scale],[l[1][0]*scale,l[1][1]*scale])<(blocking?58:38))&&!camps.some(c=>Math.hypot(x-c.x,y-c.y)<(blocking?112:82))&&!corridors.some(l=>pointDistance(x,y,l[0],l[1])<(blocking?68:44))&&!expanded.props.some(p=>Math.hypot(p.x-x,p.y-y)<minGap);
- const addOrdered=(asset,x,y,sc=1,minGap=48)=>{const r=propBlockingRadius(asset);if(okSpot(x,y,minGap,r>0))expanded.props.push({id:'ord-'+expanded.props.length,asset,x:Math.round(x),y:Math.round(y),scale:sc,radius:r});};
+ const CELL=128,propGrid=new Map();
+ const addGrid=p=>{const k=`${(p.x/CELL)|0},${(p.y/CELL)|0}`;let b=propGrid.get(k);if(!b){b=[];propGrid.set(k,b);}b.push(p);};
+ const nearGrid=(x,y,r)=>{const gx=(x/CELL)|0,gy=(y/CELL)|0,r2=r*r;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const b=propGrid.get(`${gx+dx},${gy+dy}`);if(!b)continue;for(let i=0;i<b.length;i++){const dX=b[i].x-x,dY=b[i].y-y;if(dX*dX+dY*dY<r2)return true;}}return false;};
+ for(const p of expanded.props)addGrid(p);
+ const okSpot=(x,y,minGap=48,blocking=true)=>x>60&&x<expanded.width-60&&y>70&&y<expanded.height-70&&!inCastleCourt(expanded,{x,y})&&!onBridge(x,y,56)&&!waterAt(expanded,{x,y})&&!landscape.relief.some(z=>z.type==='mountain'&&zoneContains(z,{x,y}))&&Math.hypot(x-base.x,y-base.y)>(blocking?300:260)&&!nearGrid(x,y,minGap)&&!lanes.some(l=>l.some((v,k)=>k&&pointDistance(x,y,l[k-1],v)<(blocking?96:56)))&&!m.forestPaths.some(l=>pointDistance(x,y,[l[0][0]*scale,l[0][1]*scale],[l[1][0]*scale,l[1][1]*scale])<(blocking?58:38))&&!camps.some(c=>Math.hypot(x-c.x,y-c.y)<(blocking?112:82))&&!corridors.some(l=>pointDistance(x,y,l[0],l[1])<(blocking?68:44));
+ const addOrdered=(asset,x,y,sc=1,minGap=48)=>{const r=propBlockingRadius(asset);if(okSpot(x,y,minGap,r>0)){const it={id:'ord-'+expanded.props.length,asset,x:Math.round(x),y:Math.round(y),scale:sc,radius:r};expanded.props.push(it);addGrid(it);}};
+ const placeClusterGrid=(cid,cx,cy,minGap,blocking)=>{const n0=expanded.props.length;placeCluster(expanded.props,cid,cx,cy,(x,y)=>okSpot(x,y,minGap,blocking));for(let i=n0;i<expanded.props.length;i++)addGrid(expanded.props[i]);};
  for(const asset of m.id===6?['prop-ice-boulder','prop-giant-boulder']:m.id>=9||m.id===5?['prop-giant-boulder']:['prop-ancient-oak','prop-giant-boulder']){
   let count=0;for(let k=0;k<60&&count<3;k++){
    const x=150+(k*839+m.id*367)%(expanded.width-300),y=160+(k*617+m.id*257)%(expanded.height-320);
    const clearance=asset==='prop-ancient-oak'?200:130;
-   if(lanes.some(l=>l.some((b,j)=>j&&pointDistance(x,y,l[j-1],b)<clearance))||expanded.props.some(p=>Math.hypot(p.x-x,p.y-y)<clearance*.6))continue;
+   if(lanes.some(l=>l.some((b,j)=>j&&pointDistance(x,y,l[j-1],b)<clearance))||nearGrid(x,y,clearance*.6))continue;
    const before=expanded.props.length;addOrdered(asset,x,y,1,clearance*.6);if(expanded.props.length>before)count++;
   }
  }
@@ -79,17 +84,18 @@ export function expandBattlefield(m){const scale=mapExpansion(m.id),pos=p=>({...
  const treePool=m.id===6?['grove-snow-pines']:m.id===3?['grove-autumn-glade','grove-fruit-orchard','grove-arc-trees']:m.id===5?['grove-dead-woods','grove-broken-trees','grove-palm-oasis']:(m.id===9||m.id===10)?['grove-dead-woods','grove-broken-trees']:m.id===7?['grove-dead-woods','grove-broken-trees']:['grove-oak-canopy','grove-arc-trees','grove-triangle-pines','grove-triangle-oak','grove-mixed-size','grove-flower-park','grove-fruit-orchard'];
  const grassPool=m.id===6?['patch-frost-crystals','patch-crystal-cluster-blue']:m.id===5?['patch-boulders-mixed','patch-mossy-stones']:(m.id===9||m.id===10)?['patch-crystal-cluster-red','patch-ember-rocks']:m.id===7?['patch-crystal-cluster-violet','patch-boulders-mixed']:['patch-dense-flowers','patch-dense-blue-flowers','patch-boulders-mixed','patch-crystal-cluster-blue','patch-fern-carpet','patch-mushroom-ring','patch-mossy-stones'];
  const bldClusters=['camp-watch-post','camp-hunter-hearth','camp-ruin-shrine','camp-stone-monolith','camp-supply-depot'];
- const gxCount=Math.max(6,Math.round(expanded.width/310)),gyCount=Math.max(4,Math.round(expanded.height/300));
+ const cellW=expanded.width>=6000?410:expanded.width>=4800?355:310,cellH=expanded.height>=4000?390:expanded.height>=3200?345:300;
+ const gxCount=Math.max(6,Math.round(expanded.width/cellW)),gyCount=Math.max(4,Math.round(expanded.height/cellH));
  for(let gy=0;gy<gyCount;gy++)for(let gx=0;gx<gxCount;gx++){
   const cx=(gx+.55+(gy%2?.12:-.12))*(expanded.width/gxCount),cy=(gy+.52+(gx%2?.1:-.1))*(expanded.height/gyCount);
   const idx=gy*gxCount+gx,inDead=expanded.environment.some(z=>z.type==='dead'&&zoneContains(z,{x:cx,y:cy}));
-  const isSparseMap=m.id===5||m.id===7||inDead;
+  const isSparseMap=m.id===5||m.id===7||m.id>=9||inDead;
   let cid=idx%7===3?bldClusters[idx%bldClusters.length]:(isSparseMap?(idx%4===0?treePool[idx%treePool.length]:grassPool[idx%grassPool.length]):(idx%3!==2?treePool[idx%treePool.length]:grassPool[idx%grassPool.length]));
   if(inDead&&cid.startsWith('grove-'))cid=idx%2?'grove-dead-woods':'grove-broken-trees';
   else if(inDead&&cid.startsWith('patch-'))cid='patch-crystal-cluster-violet';
   const isNonBlock=cid.startsWith('patch-')&&!cid.includes('stone')&&!cid.includes('boulder')&&!cid.includes('ember')&&!cid.includes('crystal-cluster');
-  placeCluster(expanded.props,cid,cx,cy,(x,y)=>okSpot(x,y,isNonBlock?12:18,!isNonBlock));
-  if(idx%2===0)placeCluster(expanded.props,m.id===9||m.id===10?'patch-ember-rocks':'patch-boulders-mixed',cx+72,cy+44,(x,y)=>okSpot(x,y,16,true));
+  placeClusterGrid(cid,cx,cy,isNonBlock?12:18,!isNonBlock);
+  if(idx%(isSparseMap?4:2)===0)placeClusterGrid(m.id===9||m.id===10?'patch-ember-rocks':'patch-boulders-mixed',cx+72,cy+44,16,true);
  }
  // Quy luật 2: Dải cây rêu ven sông (cản) & cụm dương xỉ/hoa ven bờ (không cản)
  for(const w of expanded.rivers||[]){

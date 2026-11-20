@@ -11,3 +11,36 @@ export function weatherGraphics(scene){
  });return entry.methods.get(key);}});wrappers.set(target,entry);}
  entry.minimum=Math.min(4,1.2/zoom);return entry.proxy;
 }
+// Collect all active camera viewports (single screen, split-screen, or multi-camera co-op), clipped to [0,0,mapW,mapH].
+export function getActiveViews(scene){
+ const cams=scene.cameras?.cameras?.length?scene.cameras.cameras:scene.cameras?.main?[scene.cameras.main]:[];
+ const mapW=scene.mapWidth||10000,mapH=scene.mapHeight||10000;
+ const out=[];
+ for(const cam of cams){
+  if(cam.visible===false||cam.ignoreScenery)continue;
+  const wv=cam.worldView;if(!wv)continue;
+  const cw=wv.width||(wv.right-wv.x),ch=wv.height||(wv.bottom-wv.y);
+  if(cw<=2||ch<=2)continue;
+  const x=Math.max(0,wv.x),y=Math.max(0,wv.y);
+  const right=Math.min(mapW,wv.x+cw),bottom=Math.min(mapH,wv.y+ch);
+  const width=right-x,height=bottom-y;
+  if(width<=2||height<=2)continue;
+  if(out.some(v=>Math.abs(v.x-x)<4&&Math.abs(v.y-y)<4&&Math.abs(v.width-width)<4&&Math.abs(v.height-height)<4))continue;
+  out.push({x,y,right,bottom,width,height});
+ }
+ return out;
+}
+export function inAnyView(views,x,y,pad=0){
+ for(let i=0;i<views.length;i++){
+  const v=views[i];
+  if(x>=v.x-pad&&x<=v.right+pad&&y>=v.y-pad&&y<=v.bottom+pad)return true;
+ }
+ return false;
+}
+export function boxInAnyView(views,minX,minY,maxX,maxY,pad=0){
+ for(let i=0;i<views.length;i++){
+  const v=views[i];
+  if(maxX>=v.x-pad&&minX<=v.right+pad&&maxY>=v.y-pad&&minY<=v.bottom+pad)return true;
+ }
+ return false;
+}

@@ -16,8 +16,8 @@ export function castHoly(r,p,s,ctx){p.castAnim=.55;p.castCount=(p.castCount||0)+
   }else{
    p.holyQStep=0;p.holyQWindow=0;p.holyQLock=0;p.cooldowns[s.id]=p.holyQCooldown||s.cooldown;
    if(mounted){
-    p.castAnim=1.05;
-    p.holyQCharge={delay:1.0,ax,ay,range:C.q.mountedShockRadius,power,cooldown:s.cooldown};
+    p.castAnim=1.55;
+    p.holyQCharge={delay:1.5,ax,ay,range:C.q.mountedShockRadius,power,cooldown:s.cooldown};
     fx('q3-charge',140,{step:3});
    }else{
     p.holyLeapTime=.28;p.holyLeapDuration=.28;

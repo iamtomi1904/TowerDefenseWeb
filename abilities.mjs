@@ -5,11 +5,11 @@ import {castWind} from './wind-actions.mjs';
 import {castVanguard} from './vanguard-actions.mjs';
 import {castFallen} from './fallen-actions.mjs';
 import {castHoly} from './paladin-actions.mjs';
-import {aimOf,summonSpirit} from './shadow-actions.mjs';
+import {aimOf,summonSpirit,beginMoonfall} from './shadow-actions.mjs';
 import {CLASSES,skillCap,skillById,skillAtRank,skillPrice} from './public/skills.js';
 import {distanceToSegment} from './public/content.js';
 import {canHitAir,shotStyle} from './projectiles.mjs';
-import {passiveCast,healing} from './passives.mjs';
+import {passiveCast,healing,triggerGuardianWave} from './passives.mjs';
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 export function initializeSkills(p,classId){p.classId=classId;p.skills={[CLASSES[classId].skills[0]]:1};p.cooldowns={};p.energy=CLASSES[classId].energy;p.mastery=0;p.shield=0;p.buffs=[];p.attackCount=0;p.passiveHits=0;p.passiveCd=0;p.fallenMounted=false;p.fallenAuraTime=0;p.fallenAura=null;p.fallenTarget=null;p.vanguardTime=0;p.vanguardPose=null;p.vanguardPoseTime=0;p.windStacks=0;p.windBladeStacks=0;p.windStackTime=0;p.windCounter=0;p.windAction=null;p.windGuard=0;p.windFieldBuff=false;}
 export function buySkill(p,id,stage=1){
@@ -49,7 +49,7 @@ export function cast(r,p,slot,ctx){
  const stats=ctx.stats(p),targets=r.enemies.filter(e=>e.hp>0&&(airCapable||canHitAir(e))&&targetDistance(p,e)<(s.range||s.radius||240)).sort((a,b)=>distance(p,a)-distance(p,b));
  const requiresTarget=['multi','target','target-burst','chain','meteor'].includes(s.kind);
  if(requiresTarget&&!targets.length)return false;
- if(!holyCombo&&!fallenCombo){p.energy-=s.cost;p.cooldowns[id]=s.cooldown;}p.anim=.5;passiveCast(r,p,slot,ctx.stats,applyStatus);
+ if(!holyCombo&&!fallenCombo){p.energy-=s.cost;p.cooldowns[id]=s.cooldown;}p.anim=.5;if(!(p.hero==='knight-1'&&s.id==='shield-bash'))passiveCast(r,p,slot,ctx.stats,applyStatus);
  // Explicit cast sequence restarts the sprite action even during a basic attack.
  if(['pyromancer','tidecaller','stormcaller','berserker','ranger','duelist','guardian','ravager','darkelf'].includes(p.classId)){
   p.castCount=(p.castCount||0)+1;p.castAnim=['pyromancer','tidecaller','stormcaller'].includes(p.classId)?.65:.5;p.castSkill=s.id;if(p.classId==='guardian')p.castAnim=s.slot==='R'?.9:.5;
@@ -64,15 +64,19 @@ export function cast(r,p,slot,ctx){
  if(s.classId==='fallen'){castFallen(r,p,s,ctx);return true;}
  if(s.classId==='paladin'){castHoly(r,p,s,ctx);return true;}
  if(['meteor','tempest','elf-eclipse'].includes(s.id)){
-  const windup=s.id==='tempest'?.7:.6,aim=aimOf(p),target=targets[0];
+  const windup=s.id==='elf-eclipse'?1.5:s.id==='tempest'?1.2:1.1,aim=aimOf(p),target=targets[0];
   const center=s.kind==='elf-eclipse'?{x:p.x+aim.x*s.range,y:p.y+aim.y*s.range}:s.self||!target?{x:p.x,y:p.y}:{x:target.x,y:target.y};
-  p.martialLock=windup;p.castAnim=windup*2;p.castDuration=windup*2;
+  p.martialLock=windup;p.castAnim=s.id==='elf-eclipse'?windup:windup*2;p.castDuration=p.castAnim;if(s.id==='elf-eclipse')p.martialPose='moon-chant';
   r.skillChannels||=[];r.skillChannels.push({owner:p.id,stage:r.stage,skill:{...s},center,delay:windup});
   ctx.fx({type:'skill-channel',skill:s.id,sourceId:p.id,x:p.x,y:p.y,duration:windup,radius:40});return true;
  }
+ if(s.id==='rally'){
+  p.martialLock=3;p.castAnim=3;p.castDuration=3;p.guardianR={elapsed:0};
+  r.skillChannels||=[];r.skillChannels.push({owner:p.id,stage:r.stage,skill:{...s},elapsed:0,delay:3});return true;
+ }
  if(s.id==='shield-bash'){
-  p.martialLock=1.25;p.castAnim=1.25;p.castDuration=1.25;
-  r.skillChannels||=[];r.skillChannels.push({owner:p.id,stage:r.stage,skill:{...s},center:{x:p.x,y:p.y},delay:1});return true;
+  p.martialLock=1.75;p.castAnim=1.75;p.castDuration=1.75;
+  r.skillChannels||=[];r.skillChannels.push({owner:p.id,stage:r.stage,skill:{...s},center:{x:p.x,y:p.y},delay:1.5});return true;
  }
  const hit=e=>{if(!airCapable&&!canHitAir(e))return;const tankBonus=s.id==='shield-bash'?stats.hp*(.08+((s.rank||1)-1)*.02)+stats.armor*(.9+((s.rank||1)-1)*.2):0;ctx.damage(e,stats.power*s.mult+tankBonus,p);status(e,s,p,stats.power);};
  const event=(x,y,size,extra={})=>ctx.fx({type:['shield','haste','fury','heal','rally'].includes(s.kind)?'aura':'aoe',skill:s.id,angle:s.id==='cleave'?p.castAngle:undefined,sourceId:p.id,gem:p.gemEquipped?p.gem:null,fx:s.fx,x,y,size,radius:size/2,color:p.classId==='pyromancer'?0xffa354:p.classId==='stormcaller'?0x9adcff:p.classId==='tidecaller'?0x88e3ec:p.classId==='berserker'?0xf79470:0xcfe59d,...extra});
@@ -81,7 +85,7 @@ export function cast(r,p,slot,ctx){
  if(s.kind==='spirit')summonSpirit(r,p,ctx);
  if(s.kind==='assassin-dash'){const aim=aimOf(p);p.dashing=true;p.castAnim=s.travelTime;p.castCount=(p.castCount||0)+1;r.shadowDashes||=[];r.shadowDashes.push({owner:p.id,dx:aim.x,dy:aim.y,range:s.range,radius:s.radius,mult:s.mult,duration:s.travelTime,remaining:s.travelTime,hits:[]});ctx.fx({type:'shadow-vfx',action:'dash-slash',sourceId:p.id,x:p.x,y:p.y,fromX:p.x,fromY:p.y,angle:Math.atan2(aim.y,aim.x),radius:s.radius,color:0xd6e8b7});}
  if(s.kind==='elf-line'){const aim=aimOf(p);ctx.launchAimed(p,aim,s.range,e=>{ctx.damage(e,stats.power*s.mult,p);status(e,s,p,stats.power);ctx.fx({type:'shadow-vfx',action:'arrow-hit',angle:Math.atan2(aim.y,aim.x),x:e.x,y:e.y,radius:38,color:0xc8b3f3});},{piercing:true,speed:s.speed,width:s.width/2,style:{projectileType:'moon-arrow',skill:s.id,aoeWidth:s.width,color:0xc7a4ff}});}
- if(s.kind==='elf-eclipse'){const aim=aimOf(p),z={id:ctx.id(),owner:p.id,x:p.x+aim.x*s.range,y:p.y+aim.y*s.range,radius:s.radius,mult:s.mult,stun:s.stun,delay:s.delay,time:s.fieldDuration,interval:s.fieldInterval,fieldMult:s.fieldMult,clock:0};r.shadowZones||=[];r.shadowZones.push(z);ctx.fx({type:'shadow-vfx',action:'eclipse-warn',x:z.x,y:z.y,radius:z.radius,duration:s.delay,color:0xbeadea});}
+ if(s.kind==='elf-eclipse'){const aim=aimOf(p);beginMoonfall(r,p,s,{x:p.x+aim.x*s.range,y:p.y+aim.y*s.range},ctx);}
  if(s.kind==='assassin-double'||s.kind==='assassin-flurry'){r.combatActions||=[];const victims=s.kind==='assassin-double'?[null]:targets.filter(e=>!e.flying).slice(0,s.targets);let index=0;for(const e of victims)for(let n=0;n<s.hits;n++)r.combatActions.push({owner:p.id,target:e?.id,skill:s.id,rank,delay:index++*s.hitInterval,aimX:p.input?.aimX??p.face,aimY:p.input?.aimY||0});ctx.fx({type:'assassin-vfx',action:s.kind==='assassin-double'?'double':'flurry',sourceId:p.id,x:p.x,y:p.y,angle:Math.atan2(p.input?.aimY||0,p.input?.aimX??p.face),color:0xd8e8ae});}
  if(s.kind==='burst'){for(const e of targets)if(distance(p,e)<s.radius)hit(e);event(p.x,p.y-15,s.radius*2);}
  if(s.kind==='target')ctx.launch(p,target,()=>{hit(target);event(target.x,target.y-20,100);},{skill:s.id,color:0xb4eb70,fx:'poison',projectileType:'venom'});
@@ -117,18 +121,31 @@ export function cast(r,p,slot,ctx){
  }
  return true;
 }
+function guardianSlam(r,p,s,ctx){
+ const st=ctx.stats(p);triggerGuardianWave(r,p,ctx.stats,applyStatus);
+ for(const e of r.enemies)if(e.hp>0&&distance(p,e)<s.radius&&!e.flying){ctx.damage(e,st.power*s.mult+st.hp*(.08+((s.rank||1)-1)*.02)+st.armor*(.9+((s.rank||1)-1)*.2),p);status(e,s,p,st.power);}
+ ctx.fx({type:'aoe',skill:'shield-bash',action:'guardian-ground-impact',sourceId:p.id,x:p.x,y:p.y,radius:s.radius,size:s.radius*2,fx:s.fx,color:0xffdc94});
+}
+function releaseRally(r,p,s,ctx){
+ ctx.fx({type:'aura',skill:s.id,sourceId:p.id,x:p.x,y:p.y,radius:s.radius,size:s.radius*2,color:0xffdc94});
+ for(const ally of [...r.players,...r.troops])if(ally.hp>0&&distance(ally,p)<s.radius){const max=ally.hero?ctx.stats(ally).hp:ally.maxHp;if(ctx.heal)ctx.heal(ally,max*s.heal,max);else ally.hp=Math.min(max,ally.hp+max*s.heal);if(ally.hero)ally.buffs.push({time:s.duration,haste:.2+((s.rank||1)-1)*.04,aura:'rally'});}
+}
 export function tickSkillChannels(r,dt,ctx,active=true){
  const keep=[];for(const a of r.skillChannels||[]){
   const p=r.players.find(p=>p.id===a.owner);
-  if(!active||a.stage!==r.stage||!p||p.hp<=0||p.stun>0){if(p){p.martialLock=0;p.castAnim=0;}continue;}
+  if(!active||a.stage!==r.stage||!p||p.hp<=0||p.stun>0){if(p){p.martialLock=0;p.castAnim=0;p.guardianR=null;}continue;}
+  if(a.skill.id==='rally'){
+   a.elapsed=Math.min(3,(a.elapsed||0)+dt);p.guardianR={elapsed:a.elapsed};
+   if(a.elapsed>=1.75-1e-8&&!a.released){a.released=true;releaseRally(r,p,a.skill,ctx);}
+   if(a.elapsed>=2.75-1e-8&&!a.landed){a.landed=true;guardianSlam(r,p,skillAtRank(skillById('shield-bash'),p.skills['shield-bash']||1),ctx);}
+   if(a.elapsed<3-1e-8)keep.push(a);else p.guardianR=null;continue;
+  }
   a.delay-=dt;if(a.delay>1e-8){keep.push(a);continue;}
   const s=a.skill,c=a.center;
   if(s.id==='shield-bash'){
-   const st=ctx.stats(p);for(const e of r.enemies)if(e.hp>0&&distance(p,e)<s.radius&&!e.flying){ctx.damage(e,st.power*s.mult+st.hp*(.08+((s.rank||1)-1)*.02)+st.armor*(.9+((s.rank||1)-1)*.2),p);status(e,s,p,st.power);}
-   ctx.fx({type:'aoe',skill:s.id,sourceId:p.id,x:p.x,y:p.y,radius:s.radius,size:s.radius*2,fx:s.fx,color:0xffdc94});
+   guardianSlam(r,p,s,ctx);
   }else if(s.kind==='elf-eclipse'){
-   r.shadowZones||=[];r.shadowZones.push({id:ctx.id(),owner:p.id,...c,radius:s.radius,mult:s.mult,stun:s.stun,delay:s.delay,time:s.fieldDuration,interval:s.fieldInterval,fieldMult:s.fieldMult,clock:0});
-   ctx.fx({type:'shadow-vfx',action:'eclipse-warn',...c,radius:s.radius,duration:s.delay,color:0xbeadea});
+   beginMoonfall(r,p,s,c,ctx);
   }else{
    r.zones.push({id:ctx.id(),owner:p.id,...c,radius:s.radius,remaining:s.kind==='meteor'?s.delay+.1:s.duration,delay:s.kind==='meteor'?s.delay:0,interval:s.interval||1,clock:0,skill:s.id,rank:s.rank,fx:s.fx});
    if(s.kind==='meteor')ctx.fx({type:'meteor-fall',...c,radius:s.radius,duration:s.delay,color:0xffae74});
@@ -136,16 +153,20 @@ export function tickSkillChannels(r,dt,ctx,active=true){
  }r.skillChannels=keep;
 }
 export function tickZones(r,dt,ctx){
+ const spawned=[];
  for(const z of r.zones){
-  z.remaining-=dt;if(z.delay>0){z.delay-=dt;if(z.delay>0)continue;z.clock=0;}
+  z.remaining-=dt;if(z.delay>0){z.delay-=dt;if(z.delay>1e-8)continue;z.delay=0;z.clock=0;if(z.afterMeteor){z.clock=z.interval;ctx.fx({type:'aoe',skill:'flamefield',sourceId:z.owner,x:z.x,y:z.y,radius:z.radius,duration:z.remaining,previewDuration:z.remaining,fieldRemaining:z.remaining,fx:z.fx});}}
   z.clock-=dt;if(z.clock>1e-8)continue;z.clock=z.interval;
   const p=r.players.find(p=>p.id===z.owner);if(!p)continue;const s=skillAtRank(skillById(z.skill),z.rank),power=ctx.stats(p).power;
   if(s.kind==='arrow-volley'&&z.remaining<=1e-8)continue;
   for(const e of r.enemies)if(e.hp>0&&(canHitAir(e)||['ranger','pyromancer','stormcaller','tidecaller'].includes(p.classId))&&distance(e,z)<z.radius){ctx.damage(e,power*s.mult,p,'zone');status(e,{...s,statusDuration:1.2},p,power);if(z.poison)status(e,z.poison,p,power);}
   ctx.fx({type:s.kind==='meteor'?'meteor-impact':'aoe',skill:s.id,fx:z.fx,poisonEnchanted:!!z.poison,sourceId:p.id,x:z.x,y:z.y-10,size:z.radius*2,radius:z.radius,fieldRemaining:Math.max(.05,z.remaining),alpha:.6,color:p.classId==='pyromancer'?0xffad5d:p.classId==='stormcaller'?0x9ddfff:p.classId==='tidecaller'?0x9bdfec:0xd2e1a1});
-  if(s.kind==='meteor')z.remaining=0;
+  if(s.kind==='meteor'){
+   z.remaining=0;const fire=skillAtRank(skillById('flamefield'),p.skills.flamefield||1);
+   spawned.push({id:ctx.id(),owner:p.id,x:z.x,y:z.y,radius:fire.radius,remaining:fire.duration+.35,delay:.35,afterMeteor:true,interval:fire.interval,clock:fire.interval,skill:fire.id,rank:fire.rank,fx:fire.fx});
+  }
  }
- r.zones=r.zones.filter(z=>z.remaining>0);
+ r.zones=r.zones.filter(z=>z.remaining>0).concat(spawned);
 }
 export function tickStatuses(r,e,dt,ctx){
  e.stun=Math.max(0,(e.stun||0)-dt);e.slowTime=Math.max(0,(e.slowTime||0)-dt);if(e.slowTime<=0)e.slow=0;
