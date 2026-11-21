@@ -161,7 +161,11 @@ export function drawTerritory(c,scene,t){
 export function updateHydrologyFX(scene,time,views=getActiveViews(scene)){
  const g=scene.waterFX||scene.weather;
  if(!g||!views.length)return;
- if(scene.waterFX)scene.waterFX.clear();
+ // Dedicated water layer can keep its previous frame between updates.
+ if(scene.waterFX){
+  if(scene._waterFXLayer===g&&time-(scene._lastWaterFXTime??-Infinity)<200)return;
+  scene._waterFXLayer=g;scene._lastWaterFXTime=time;scene.waterFX.clear();
+ }
  const cam=scene.cameras?.main,zoom=Math.min(cam?.zoomX??cam?.zoom??1,cam?.zoomY??cam?.zoom??1);
  const r=scene.castleRect;
  const inCourt=(x,y)=>r&&x>=r.left-12&&x<=r.right+12&&y>=r.top-12&&y<=r.bottom+12;
@@ -178,13 +182,13 @@ export function updateHydrologyFX(scene,time,views=getActiveViews(scene)){
    if(!boxInAnyView(views,Math.min(a[0],b[0]),Math.min(a[1],b[1]),Math.max(a[0],b[0]),Math.max(a[1],b[1]),rw+80))continue;
    const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)||1;
    const ux=dx/len,uy=dy/len,nx=-uy,ny=ux;
-   const lanes=deep||abyss?4:3,streams=Math.max(2,Math.round(len/(zoom<.45?170:100)));
+   const lanes=deep||abyss?4:3,streams=Math.max(2,Math.round(len/(zoom<.45?340:260)));
    for(let l=0;l<lanes;l+=step){
     const flow=abyss?null:waterCurrent(w,k,l,time);
     for(let s=0;s<streams;s++){
      const phase=((abyss?time/speed:flow.distance/len)+s/streams+l*.27)%1;
      const taper=abyss?(1-((k-1+phase)/(w.points.length-1))*.82):1;
-     const lat=(((l/(lanes-1||1))-.5)*rw*.64*taper)+Math.sin(time/900+k+l)*3;
+     const lat=(((l/(lanes-1||1))-.5)*rw*.64*taper)+Math.sin(time/3200+k+l)*.4;
      const cx=a[0]+dx*phase+nx*lat,cy=a[1]+dy*phase+ny*lat;
      if(!inAnyView(views,cx,cy,80))continue;
      if(inCourt(cx,cy)||(!abyss&&onBridge(cx,cy)))continue;

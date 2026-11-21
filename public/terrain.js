@@ -409,10 +409,14 @@ export function updateScenery(s,time){
  const frameId=(s._sceneryFrame=(s._sceneryFrame||0)+1);
  if(zoom>=.42){
   updateAmbientLife(s,time,views);
+  const faunaDue=time-(s._lastFaunaTime??-Infinity)>=220;
+  if(faunaDue)s._lastFaunaTime=time;
   for(const a of s.fauna||[]){
    if(!inAnyView(views,a.x,a.y,110)){if(a.sprite.visible){a.sprite.setVisible(false);a.sprite.anims?.pause();}continue;}
    if(!a.sprite.visible){a.sprite.setVisible(true);a.sprite.anims?.resume();}
-   const t=time/6000+a.phase,x=a.x+Math.sin(t)*38,y=a.y+Math.cos(t*.7)*20,dx=x-a.sprite.x,dy=y-a.sprite.y,row=Math.abs(dx)>Math.abs(dy)?dx<0?2:3:dy<0?1:0;
+   if(!faunaDue)continue;
+   if(a.sprite.anims)a.sprite.anims.timeScale=.25;
+   const t=time/22000+a.phase,x=a.x+Math.sin(t)*38,y=a.y+Math.cos(t*.7)*20,dx=x-a.sprite.x,dy=y-a.sprite.y,row=Math.abs(dx)>Math.abs(dy)?dx<0?2:3:dy<0?1:0;
    if(a.sprite.depth!==Math.round(y))a.sprite.setDepth(Math.round(y));a.sprite.setPosition(x,y).play(`${a.id}:walk${row?':'+row:''}`,true);
   }
  }else{
@@ -422,7 +426,7 @@ export function updateScenery(s,time){
  }
  const sector=Math.floor(time/6000)%4,frac=(time%6000)/6000,blend=frac>.8?(frac-.8)/.2:0;
  const windAngle=(sector+blend*blend*(3-2*blend))*(Math.PI/2),wx=Math.cos(windAngle),wy=Math.sin(windAngle);
- if(zoom>=.42&&s.swayChunkGrid?.size&&time-(s._lastTreeSway??-Infinity)>=100){
+ if(zoom>=.42&&s.swayChunkGrid?.size&&time-(s._lastTreeSway??-Infinity)>=(budget.quality<1?600:450)){
   s._lastTreeSway=time;
   const swayStep=zoom<.68||budget.quality<1?2:1;
   for(let vi=0;vi<views.length;vi++){
@@ -433,7 +437,7 @@ export function updateScenery(s,time){
     bucket._f=frameId;
     for(let i=swayStep>1?frameId%swayStep:0;i<bucket.length;i+=swayStep){
      const item=bucket[i];if(!item.obj?.visible)continue;
-     const wave=Math.sin(time/480-(item.x*wx+item.y*wy)*.012+item.phase);
+     const wave=Math.sin(time/2600-(item.x*wx+item.y*wy)*.012+item.phase)*.12;
      item.obj.rotation=(wx*.85+.15*Math.sin(item.phase))*wave*item.amp+(s.ambientNudges?.get(s.ambientPropCoordinates?.get(item.x+':'+item.y))||0);
      item.obj.scaleY=item.baseScaleY*(1-wy*wave*item.amp*.45);
      item.obj.scaleX=item.baseScaleX*(1+Math.abs(wx)*wave*item.amp*.15);
@@ -441,7 +445,8 @@ export function updateScenery(s,time){
    }
   }
  }
- if(s.foliageFX){
+ if(s.foliageFX&&time-(s._lastFoliageTime??-Infinity)>=220){
+  s._lastFoliageTime=time;
   s.foliageFX.clear();
   if(zoom>=.65&&s.swayFlowerGrid?.size){
    for(let vi=0;vi<views.length;vi++){
@@ -452,7 +457,7 @@ export function updateScenery(s,time){
      bucket._f=frameId;
      for(let i=0;i<bucket.length;i++){
       const f=bucket[i];
-      const wave=Math.sin(time/420-(f.x*wx+f.y*wy)*.015+f.phase);
+      const wave=Math.sin(time/2400-(f.x*wx+f.y*wy)*.015+f.phase)*.12;
       const dx=wx*wave*3.5,dy=wy*wave*1.8;
       s.foliageFX.lineStyle(1.5,0x3c6b35,.85).lineBetween(f.x,f.y,f.x+dx,f.y-5+dy);
       s.foliageFX.fillStyle(f.color,.9).fillRect(f.x+dx-2,f.y-7+dy,4,4);
@@ -511,7 +516,13 @@ export function updateScenery(s,time){
    }
   }
  }
- if(!s.weather)return;s.weather.clear();updateEnvironmentFX(s,time,views);updateHydrologyFX(s,time,views);
+ updateHydrologyFX(s,time,views);
+ if(!s.weather)return;
+ // Keep the last weather frame rather than clearing it between cosmetic updates.
+ const weatherInterval=budget.quality<1?250:200;
+ if(s._weatherUpdateLayer===s.weather&&time-(s._lastWeatherUpdate??-Infinity)<weatherInterval)return;
+ s._weatherUpdateLayer=s.weather;s._lastWeatherUpdate=time;
+ s.weather.clear();updateEnvironmentFX(s,time,views);
  drawWeather(s,time,views);
 }
 export function drawMiniMap(s,state,map){

@@ -52,16 +52,16 @@ export const MONSTERS=[
 const infantry={hp:130,armor:2,power:16,range:54,speed:105,cooldown:.7};
 export const TROOPS=[
  {id:'forest-spirit',sprite:'forest-spirit',name:'Tinh linh cây',summoned:true,cost:0,hp:SHADOW.spirit.hp,power:28,armor:SHADOW.spirit.armor,speed:SHADOW.spirit.speed,range:SHADOW.spirit.range,cooldown:SHADOW.spirit.cooldown,description:'Đồng hành 60s · Rễ Trói / Lá Xoáy / Sinh Lực'},
- {id:'gem-skeleton',sprite:'skeleton',name:'Xương đồng minh',summoned:true,cost:0,...infantry,hp:Math.round(infantry.hp*GEM_RULES.dark.skeletonHP),armor:infantry.armor*GEM_RULES.dark.skeletonArmor,description:'Triệu hồi bởi Ngọc Hắc Ám; tồn tại 30 giây'},
- {id:'militia',sprite:'soldier-1',name:'Bộ binh',cost:60,hp:130,power:16,range:54,speed:105,cooldown:.7,armor:2,description:'Chặn quái gần nhà'},
- {id:'archer',sprite:'soldier-3',name:'Xạ thủ',cost:100,hp:90,power:19,range:220,speed:88,cooldown:.85,armor:0,description:'Bắn xa hỗ trợ'},
- {id:'guard',sprite:'soldier-6',name:'Lính khiên',cost:120,hp:250,power:14,range:55,speed:85,cooldown:.85,armor:6,description:'Nhiều máu, giữ tuyến'},
- {id:'elite',sprite:'soldier-9',name:'Cận vệ',cost:180,hp:195,power:32,range:66,speed:115,cooldown:.6,armor:4,description:'Sát thương cao'},
- {id:'lancer',sprite:'soldier-2',name:'Thương binh',cost:85,hp:150,power:24,range:88,speed:105,cooldown:.8,armor:2,description:'Cận chiến tầm dài'},
- {id:'scout',sprite:'soldier-5',name:'Trinh sát',cost:110,hp:100,power:17,range:190,speed:145,cooldown:.65,armor:1,description:'Cơ động, bắn quái bay'},
- {id:'battle-mage',sprite:'soldier-4',name:'Pháp binh',cost:155,hp:105,power:30,range:210,speed:90,cooldown:1.1,armor:1,description:'Đạn phép chống quái bay'},
- {id:'medic',sprite:'soldier-7',name:'Quân y',cost:140,hp:110,power:8,range:150,speed:95,cooldown:1.5,armor:1,healer:true,description:'Hồi máu đồng minh'},
- {id:'captain',sprite:'soldier-8',name:'Đội trưởng',cost:200,hp:210,power:24,range:65,speed:100,cooldown:.75,armor:4,description:'Tăng 10% Công lính gần'},
+ {id:'gem-skeleton',sprite:'skeleton',name:'Xương đồng minh',summoned:true,cost:0,...infantry,hp:Math.round(infantry.hp*GEM_RULES.dark.skeletonHP),armor:infantry.armor*GEM_RULES.dark.skeletonArmor,description:'Triệu hồi bởi Ngọc Hắc Ám; tồn tại 25 giây, không chiếm suất lính thuê.'},
+ {id:'militia',sprite:'soldier-1',name:'Bộ binh',cost:60,hp:130,power:16,range:54,speed:105,cooldown:.7,armor:2,description:'Cận chiến bảo vệ thành, tự tìm và chặn quái trong tầm. Không có kỹ năng chủ động.'},
+ {id:'archer',sprite:'soldier-3',name:'Xạ thủ',cost:100,hp:90,power:19,range:220,speed:88,cooldown:.85,armor:0,description:'Bắn tên từ xa, tự chọn mục tiêu trong tầm; hỗ trợ tuyến trước và đánh quái bay.'},
+ {id:'guard',sprite:'soldier-6',name:'Lính khiên',cost:120,hp:250,power:14,range:55,speed:85,cooldown:.85,armor:6,description:'Cận chiến chống chịu: Máu và Giáp cao, giữ tuyến trước. Không có kỹ năng chủ động.'},
+ {id:'elite',sprite:'soldier-9',name:'Cận vệ',cost:180,hp:195,power:32,range:66,speed:115,cooldown:.6,armor:4,description:'Cận chiến gây sát thương cao với nhịp đánh nhanh; tự truy đuổi quái gần thành.'},
+ {id:'lancer',sprite:'soldier-2',name:'Thương binh',cost:85,hp:150,power:24,range:88,speed:105,cooldown:.8,armor:2,description:'Đâm thương ở tầm 88px, có thể đánh từ sau lính tuyến đầu.'},
+ {id:'scout',sprite:'soldier-5',name:'Trinh sát',cost:110,hp:100,power:17,range:190,speed:145,cooldown:.65,armor:1,description:'Di chuyển nhanh, bắn xa 190px và có thể đánh quái bay.'},
+ {id:'battle-mage',sprite:'soldier-4',name:'Pháp binh',cost:155,hp:105,power:30,range:210,speed:90,cooldown:1.1,armor:1,description:'Bắn đạn phép ở tầm 210px; đánh được quái bay. Không có sát thương lan mặc định.'},
+ {id:'medic',sprite:'soldier-7',name:'Quân y',cost:140,hp:110,power:8,range:150,speed:95,cooldown:1.5,armor:1,healer:true,description:'Tự hồi 22 Máu cho một đồng minh bị thương trong 180px, hồi chiêu 2s. Khi không chữa trị, đánh thường trong tầm 150px.'},
+ {id:'captain',sprite:'soldier-8',name:'Đội trưởng',cost:200,hp:210,power:24,range:65,speed:100,cooldown:.75,armor:4,description:'Hào quang tăng 10% sát thương đánh thường của lính đồng minh trong 160px; nhiều Đội trưởng không cộng dồn.'},
 ];
 const definitions=[
  ['Đồng Cỏ Biên Giới','Ba hướng tiến quân và khu săn thú. Làm quen với chiến trường.',0x6f863f,0x9c8054,['tree1','tree2','bush_simple1_1','rock1_1'],[480,100],[[[480,615],[480,400],[480,160]]]],

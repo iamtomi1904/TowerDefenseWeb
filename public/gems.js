@@ -9,6 +9,7 @@ export const GEM_RULES={
  armor:{bossBase:2,bossPerStage:1,normal:1.2,insane:1.55}
 };
 export const GEMS=[
+ {id:'earth',name:'Ngọc Đất',color:0xd5b878,glyph:'⬟',power:0,hp:200,armor:12,text:'Thạch Giáp: tăng 200/270/350 Máu tối đa và 12/16/21 Giáp theo bậc I/II/III. Thiên về chống chịu, bảo vệ tuyến đầu.'},
  {id:'thunder',name:'Ngọc Sấm',color:0xe7cb67,glyph:'ϟ',power:8,haste:.14,text:'Tích 1→4 tầng Dẫn Điện (3,5s). 22% (35% ở 4 tầng) phóng Sét Chuỗi nảy 2→5 mục tiêu gây 25–45% Công và choáng 0,4s (Boss giảm 25% tốc đánh). Cộng hưởng Lôi Sư: nảy ≥2 mục tiêu tăng thêm +1 đếm Điện Tích.'},
  {id:'ice',name:'Ngọc Băng',color:0x91e5ff,glyph:'❄',power:6,armor:5,hp:100,text:'Làm chậm 20–30% chạy/tốc đánh và giảm 10–14% sát thương quái trong 3s. Đòn thường tích xác suất đóng băng 10→30% trong 0,9s. Cộng hưởng Du Pháp: tăng hồi máu Mạch Nước lên 5,5%.'},
  {id:'fire',name:'Ngọc Hỏa',color:0xff8b44,glyph:'♨',power:16,text:'30% gây Thiêu Đốt 2–2,5% HP tối đa/s (Boss 1,2%). Mỗi đòn thường thứ 4 hoặc kỹ năng lên mục tiêu đang cháy kích nổ 30–60% Công lan 75px. Cộng hưởng Hỏa Sư: Tàn Hỏa kích nổ nhiệt ngay.'},

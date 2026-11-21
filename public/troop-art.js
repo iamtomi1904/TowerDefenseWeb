@@ -26,7 +26,7 @@ export function playTroopActor(s,u,obj,requested){
  // The cleaned atlas can be resized; use its actual frame height for body scale.
  const tx=cleanEffectTexture(s,'troop-v2:'+id,{columns:6,rows:6,matteFloor:16,maxSize:1024}),image=s.textures.get(tx).getSourceImage();
  const layout=TROOP_LAYOUT[id];
- sprite.setOrigin(layout.originX,layout.originY).setScale(obj.size*layout.originalRatio/(image.height/6*layout.bodyRatio));
+ sprite.setOrigin(layout.originX,layout.originY).setScale(obj.size*1.1*layout.originalRatio/(image.height/6*layout.bodyRatio));
  if(obj.attackRestart&&action==='attack'){sprite.play(key,false);obj.attackRestart=false;}
  else if(['idle','walk'].includes(action)||sprite.anims.currentAnim?.key!==key)sprite.play(key,true);
  registerActorBody(s,u,obj);

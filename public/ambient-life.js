@@ -102,14 +102,17 @@ export function installAmbientLife(scene,map,catalog){
  scene.ambientEffects=scene.add.graphics().setDepth(2750);scene.mapObjects.push(scene.ambientEffects);
 }
 export function updateAmbientLife(scene,time,views=getActiveViews(scene)){
- if(!scene.ambientLife)return;const g=scene.ambientEffects;g.clear();scene.ambientNudges.clear();
+ if(!scene.ambientLife)return;
+ if(time-(scene._lastAmbientTime??-Infinity)<220)return;
+ scene._lastAmbientTime=time;
+ const g=scene.ambientEffects;g.clear();scene.ambientNudges.clear();
  if(!views.length)return;
  for(const {item,sprite}of scene.ambientLife){
   if(!item.isFlock&&!boxInAnyView(views,item.minX,item.minY,item.maxX,item.maxY,0)){
    if(sprite.visible){sprite.setVisible(false);sprite.anims?.pause();}
    continue;
   }
-  const p=ambientPose(item,time),visible=inAnyView(views,p.x,p.y,85);
+  const p=ambientPose(item,time*.25),visible=inAnyView(views,p.x,p.y,85);
   const show=visible&&(!scene.ambientFilter||scene.ambientFilter(item.kind));
   if(sprite.visible!==show){sprite.setVisible(show);if(show)sprite.anims?.resume();else sprite.anims?.pause();}
   if(!show)continue;

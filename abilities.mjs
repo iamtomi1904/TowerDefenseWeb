@@ -81,7 +81,7 @@ export function cast(r,p,slot,ctx){
  const hit=e=>{if(!airCapable&&!canHitAir(e))return;const tankBonus=s.id==='shield-bash'?stats.hp*(.08+((s.rank||1)-1)*.02)+stats.armor*(.9+((s.rank||1)-1)*.2):0;ctx.damage(e,stats.power*s.mult+tankBonus,p);status(e,s,p,stats.power);};
  const event=(x,y,size,extra={})=>ctx.fx({type:['shield','haste','fury','heal','rally'].includes(s.kind)?'aura':'aoe',skill:s.id,angle:s.id==='cleave'?p.castAngle:undefined,sourceId:p.id,gem:p.gemEquipped?p.gem:null,fx:s.fx,x,y,size,radius:size/2,color:p.classId==='pyromancer'?0xffa354:p.classId==='stormcaller'?0x9adcff:p.classId==='tidecaller'?0x88e3ec:p.classId==='berserker'?0xf79470:0xcfe59d,...extra});
  const target=targets[0],center=s.self||!target?p:{x:target.x,y:target.y};
- if(s.kind==='stealth'){const aim=aimOf(p),from={x:p.x,y:p.y};ctx.move(p,p.x+aim.x*s.dashRange,p.y+aim.y*s.dashRange,s.dashRange);ctx.fx({type:'shadow-vfx',action:'blink',x:p.x,y:p.y,fromX:from.x,fromY:from.y,sourceId:p.id,angle:Math.atan2(aim.y,aim.x),radius:35,color:0xb0c296});p.buffs.push({time:s.duration,stealth:s.crit||2,speed:s.speed+((s.rank||1)-1)*.03});ctx.fx({type:'assassin-vfx',action:'veil',sourceId:p.id,x:p.x,y:p.y,color:0xa7b88a});}
+ if(s.kind==='stealth'){const aim=aimOf(p),from={x:p.x,y:p.y};ctx.move(p,p.x+aim.x*s.dashRange,p.y+aim.y*s.dashRange,s.dashRange);ctx.fx({type:'shadow-vfx',action:'blink',x:p.x,y:p.y,fromX:from.x,fromY:from.y,sourceId:p.id,angle:Math.atan2(aim.y,aim.x),radius:35,color:0xb0c296});p.buffs.push({sourceName:p.name||p.hero,skillName:s.name,time:s.duration,stealth:s.crit||2,speed:s.speed+((s.rank||1)-1)*.03});ctx.fx({type:'assassin-vfx',action:'veil',sourceId:p.id,x:p.x,y:p.y,color:0xa7b88a});}
  if(s.kind==='spirit')summonSpirit(r,p,ctx);
  if(s.kind==='assassin-dash'){const aim=aimOf(p);p.dashing=true;p.castAnim=s.travelTime;p.castCount=(p.castCount||0)+1;r.shadowDashes||=[];r.shadowDashes.push({owner:p.id,dx:aim.x,dy:aim.y,range:s.range,radius:s.radius,mult:s.mult,duration:s.travelTime,remaining:s.travelTime,hits:[]});ctx.fx({type:'shadow-vfx',action:'dash-slash',sourceId:p.id,x:p.x,y:p.y,fromX:p.x,fromY:p.y,angle:Math.atan2(aim.y,aim.x),radius:s.radius,color:0xd6e8b7});}
  if(s.kind==='elf-line'){const aim=aimOf(p);ctx.launchAimed(p,aim,s.range,e=>{ctx.damage(e,stats.power*s.mult,p);status(e,s,p,stats.power);ctx.fx({type:'shadow-vfx',action:'arrow-hit',angle:Math.atan2(aim.y,aim.x),x:e.x,y:e.y,radius:38,color:0xc8b3f3});},{piercing:true,speed:s.speed,width:s.width/2,style:{projectileType:'moon-arrow',skill:s.id,aoeWidth:s.width,color:0xc7a4ff}});}
@@ -113,11 +113,11 @@ export function cast(r,p,slot,ctx){
   const zone={id:ctx.id(),owner:p.id,x:center.x,y:center.y,radius:s.radius,remaining:s.kind==='meteor'?s.delay+.1:s.duration,delay:s.kind==='meteor'?s.delay:0,interval:s.interval||1,clock:0,skill:s.id,rank,fx:s.fx};r.zones.push(zone);
   if(s.kind==='meteor')ctx.fx({type:'meteor-fall',x:zone.x,y:zone.y,radius:zone.radius,duration:s.delay,color:0xffae74});else event(zone.x,zone.y,s.radius*2,{alpha:.65,fieldRemaining:s.duration});
  }
- if(s.kind==='shield'){p.shield=stats.hp*s.shield;p.buffs.push({time:s.duration,shield:true,armor:6+((s.rank||1)-1)*1.5});event(p.x,p.y-20,130,{color:0xffdc94});}
- if(s.kind==='haste'||s.kind==='fury'){p.buffs.push({time:s.duration,haste:s.haste,speed:s.speed||0,lifesteal:s.lifesteal||0});event(p.x,p.y-20,130);}
+ if(s.kind==='shield'){p.shield=stats.hp*s.shield;p.buffs.push({sourceName:p.name||p.hero,skillName:s.name,time:s.duration,shield:true,armor:6+((s.rank||1)-1)*1.5});event(p.x,p.y-20,130,{color:0xffdc94});}
+ if(s.kind==='haste'||s.kind==='fury'){p.buffs.push({sourceName:p.name||p.hero,skillName:s.name,time:s.duration,haste:s.haste,speed:s.speed||0,lifesteal:s.lifesteal||0});event(p.x,p.y-20,130);}
  if(s.kind==='heal'||s.kind==='rally'){
   if(s.kind==='rally')event(p.x,p.y,s.radius*2,{color:0xffdc94});
-  for(const ally of [...r.players,...r.troops])if(ally.hp>0&&distance(ally,p)<s.radius){const max=ally.hero?ctx.stats(ally).hp:ally.maxHp;if(ctx.heal)ctx.heal(ally,max*s.heal,max);else ally.hp=Math.min(max,ally.hp+max*s.heal);if(s.kind==='rally'&&ally.hero)ally.buffs.push({time:s.duration,haste:.2+((s.rank||1)-1)*.04,aura:'rally'});event(ally.x,ally.y-20,100);}
+  for(const ally of [...r.players,...r.troops])if(ally.hp>0&&distance(ally,p)<s.radius){const max=ally.hero?ctx.stats(ally).hp:ally.maxHp;if(ctx.heal)ctx.heal(ally,max*s.heal,max);else ally.hp=Math.min(max,ally.hp+max*s.heal);if(s.kind==='rally'&&ally.hero)ally.buffs.push({sourceName:(p.name||p.hero)+' · '+s.name,skillName:s.name,time:s.duration,haste:.2+((s.rank||1)-1)*.04,aura:'rally'});event(ally.x,ally.y-20,100);}
  }
  return true;
 }
@@ -128,7 +128,7 @@ function guardianSlam(r,p,s,ctx){
 }
 function releaseRally(r,p,s,ctx){
  ctx.fx({type:'aura',skill:s.id,sourceId:p.id,x:p.x,y:p.y,radius:s.radius,size:s.radius*2,color:0xffdc94});
- for(const ally of [...r.players,...r.troops])if(ally.hp>0&&distance(ally,p)<s.radius){const max=ally.hero?ctx.stats(ally).hp:ally.maxHp;if(ctx.heal)ctx.heal(ally,max*s.heal,max);else ally.hp=Math.min(max,ally.hp+max*s.heal);if(ally.hero)ally.buffs.push({time:s.duration,haste:.2+((s.rank||1)-1)*.04,aura:'rally'});}
+ for(const ally of [...r.players,...r.troops])if(ally.hp>0&&distance(ally,p)<s.radius){const max=ally.hero?ctx.stats(ally).hp:ally.maxHp;if(ctx.heal)ctx.heal(ally,max*s.heal,max);else ally.hp=Math.min(max,ally.hp+max*s.heal);if(ally.hero)ally.buffs.push({sourceName:(p.name||p.hero)+' · '+s.name,skillName:s.name,time:s.duration,haste:.2+((s.rank||1)-1)*.04,aura:'rally'});}
 }
 export function tickSkillChannels(r,dt,ctx,active=true){
  const keep=[];for(const a of r.skillChannels||[]){

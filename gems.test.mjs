@@ -36,12 +36,12 @@ test('Option A free equip, 3-tier gem upgrades, sell refund and new campaign emp
  assert.ok(!setup().p.gem);
 });
 
-test('six gems offer real stats and never change base melee range',()=>{
+test('gems offer real stats and never change base melee range',()=>{
  for(const g of GEMS){
   const {p}=setup();
   const before=stats(p);
   equip(p,g.id);
-  assert.ok(stats(p).power>before.power);
+  if(g.id==='earth'){assert.equal(stats(p).power,before.power);assert.equal(stats(p).hp-before.hp,200);assert.equal(stats(p).armor-before.armor,12);p.gemTier=3;assert.equal(stats(p).hp-before.hp,350);assert.equal(stats(p).armor-before.armor,21);}else assert.ok(stats(p).power>before.power);
   assert.equal(stats(p).range,before.range);
  }
 });
