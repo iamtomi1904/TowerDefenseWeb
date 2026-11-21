@@ -18,14 +18,14 @@ test('Q has 20% more reach, three distinct hits, and only triple-hit targets are
  assert.ok(hits.filter(id=>id==='b').length<3);assert.equal(b.windAirTime,undefined);
  assert.deepEqual(r.events.filter(e=>e.type==='tide-wave').map(e=>e.wave),[1,2,3]);
 });
-test('E heals ten small once-per-second ticks, excludes dead/outside units, protection never stacks',()=>{
+test('E heals six small once-per-second ticks, excludes dead/outside units, protection never stacks',()=>{
  const {p,r,ctx}=setup(),s=skillAtRank(skillById('healing-tide'));
- assert.equal(s.radius,520);assert.equal(s.duration,10);assert.equal(s.heal,.02);
+ assert.equal(s.radius,520);assert.equal(s.duration,6);assert.equal(s.heal,.02);
  const ally={id:'ally',hp:30,maxHp:100,x:519,y:0},outside={id:'outside',hp:30,maxHp:100,x:521,y:0},dead={id:'dead',hp:0,maxHp:100,x:0,y:0};r.troops.push(ally,outside,dead);
  castTide(r,p,s,ctx);tickTide(r,.5,ctx,true);assert.equal(p.hp,30);assert.equal(tideReduction(r,p),.15);assert.equal(tideReduction(r,outside),0);
  const duplicate={...r.tideFields[0]};r.tideFields.push(duplicate);assert.equal(tideReduction(r,p),.15);r.tideFields.pop();
  for(let i=0;i<190;i++)tickTide(r,.05,ctx,true);
- assert.equal(p.hp,50);assert.equal(ally.hp,50);assert.equal(outside.hp,30);assert.equal(dead.hp,0);assert.equal(r.tideFields.length,0);assert.equal(tideReduction(r,p),0);
+ assert.equal(p.hp,42);assert.equal(ally.hp,42);assert.equal(outside.hp,30);assert.equal(dead.hp,0);assert.equal(r.tideFields.length,0);assert.equal(tideReduction(r,p),0);
 });
 test('R uses cursor distance, clamps maximum range, works without enemies, and stage changes clear fields',()=>{
  const {p,r,ctx}=setup(),s=skillAtRank(skillById('blizzard'));

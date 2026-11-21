@@ -23,7 +23,7 @@ export function gearEmissionMask(id,frame,x,y,r,g,b){
  return false;
 }
 function textureFor(scene,sprite,id){
- const key='gear-emission:'+id+':'+sprite.texture.key;if(scene.textures.exists(key))return key;
+ const key='gear-emission:'+id+':'+sprite.texture.key;if(scene.textures.exists(key)){const tx=scene.textures.get(key);if(!tx.has(0)){const im=tx.getSourceImage();for(let n=0;n<36;n++){const x=Math.round(n%6*im.width/6),y=Math.round(Math.floor(n/6)*im.height/6);tx.add(n,0,x,y,Math.round((n%6+1)*im.width/6)-x,Math.round((Math.floor(n/6)+1)*im.height/6)-y);}}return key;}
  if(typeof document==='undefined'||!scene.textures.addCanvas)return null;
  const source=sprite.texture.getSourceImage(),canvas=document.createElement('canvas');canvas.width=source.width;canvas.height=source.height;
  const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(source,0,0);const pixels=ctx.getImageData(0,0,canvas.width,canvas.height),d=pixels.data;

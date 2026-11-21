@@ -1,3 +1,4 @@
+import {effectInView,setRenderDormant} from './render-budget.js';
 import {cleanEffectTexture} from './effect-alpha.js';
 import {MOONFALL_LAYOUT} from './moonfall-layout.js';
 export function prepareMoonfallArt(scene){
@@ -37,6 +38,6 @@ export function addMoonImpact(scene,e){
  scene.moonImpacts||=[];if(scene.moonImpacts.length>=12){const old=scene.moonImpacts.shift();old.blast.destroy();old.cracks.destroy();}
  scene.moonImpacts.push({e,age:0,duration:e.duration||.95,blast:scene.add.image(e.x,e.y,'moonfall:impact').setOrigin(.5,.74).setDepth(2705),cracks:scene.add.image(e.x,e.y,'moonfall:cracks').setDepth(4)});
 }
-export function updateMoonImpacts(scene,dt){scene.moonImpacts=(scene.moonImpacts||[]).filter(v=>{v.age+=dt;const t=Math.min(1,v.age/v.duration),scale=.8+Math.min(1,t*5)*.35,r=v.e.radius;
+export function updateMoonImpacts(scene,dt){scene.moonImpacts=(scene.moonImpacts||[]).filter(v=>{v.age+=dt;setRenderDormant(v,!effectInView(scene,v));if(v.renderDormant&&v.age<v.duration)return true;const t=Math.min(1,v.age/v.duration),scale=.8+Math.min(1,t*5)*.35,r=v.e.radius;
  v.blast.setDisplaySize(r*2.5*scale,r*1.7*scale).setAlpha(Math.max(0,1-t*t));v.cracks.setDisplaySize(r*2.15,r*1.4).setAlpha(Math.min(1,t*8)*(1-t));if(t>=1){v.blast.destroy();v.cracks.destroy();return false;}return true;});}
 export function clearMoonImpacts(scene){for(const v of scene.moonImpacts||[]){v.blast.destroy();v.cracks.destroy();}scene.moonImpacts=[];}

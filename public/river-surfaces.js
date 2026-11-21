@@ -31,7 +31,7 @@ export function drawRiverSurface(c,scene,w,map){
  }
  c.restore();c.restore();
 }
-export function updateRiverSurfaceFX(g,w,time,viewsOrCam,hidden=()=>false){
+export function updateRiverSurfaceFX(g,w,time,viewsOrCam,hidden=()=>false,quality=1){
  const views=Array.isArray(viewsOrCam)?viewsOrCam:viewsOrCam?[viewsOrCam]:[];
  if(!views.length)return;
  const pad=(w.width||70)+40;
@@ -41,7 +41,7 @@ export function updateRiverSurfaceFX(g,w,time,viewsOrCam,hidden=()=>false){
   const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)||1,ux=dx/len,uy=dy/len,nx=-uy,ny=ux;
   const count=Math.max(2,Math.ceil(len/85));
   const flow=waterCurrent({...w,flowSpeed:w.surface==='lava'?22:12},k,1,time);
-  for(let i=0;i<count;i++){
+  for(let i=0;i<count;i+=quality<1?2:1){
    const u=(flow.distance/len+i/count)%1;
    const off=Math.sin(i*2.399+k)*w.width*.28,x=a[0]+dx*u+nx*off,y=a[1]+dy*u+ny*off;
    if(!inAnyView(views,x,y,30)||hidden(x,y))continue;

@@ -1,0 +1,97 @@
+/* Defense interface: scoped to this mode; no game artwork or simulation changes. */
+body.defense-page{color-scheme:light;background:radial-gradient(ellipse at 18% 0%,#fff9eb 0%,transparent 52%),radial-gradient(ellipse at 85% 8%,#e0f2e9 0%,transparent 45%),var(--bg);color:var(--text);font-family:'Segoe UI',sans-serif}
+.defense-page a{color:#176148;text-underline-offset:4px}
+.defense-page button,.defense-page input,.defense-page select{font:inherit}
+.defense-page button{transition:background-color .15s,border-color .15s;color:#0f4532;border:1px solid #c4b596;background:#e2f0e9;border-radius:5px;box-shadow:none}
+.defense-page button:hover:not(:disabled){background-color:#d2e8dc;border-color:#9e6d16}
+.defense-page button:focus-visible,.defense-page a:focus-visible,.defense-page input:focus-visible,.defense-page select:focus-visible{outline:2px solid #9e6d16;outline-offset:4px}
+.defense-page button:disabled{cursor:not-allowed}
+.defense-header{max-width:none;padding:20px max(28px,calc((100vw - 1320px)/2));background:#fffdf9;border-bottom:1px solid #dcd2be;backdrop-filter:none;gap:35px}
+.defense-header .brand{color:#0f4532;gap:13px;flex-shrink:0}
+.defense-header .brand-mark{background:#176148;border-color:#c4b596;box-shadow:none;width:36px;height:41px;font-size:23px}
+.defense-header .brand small{color:#56695e;letter-spacing:2px;font-size:8px}
+.defense-header nav{display:flex;align-items:center;gap:30px;margin-left:auto}
+.defense-header nav a{font-size:12px;color:#56695e;text-decoration:none;padding:8px 0}
+.defense-header nav a[aria-current]{color:#176148;border-bottom:1px solid #c4b596}
+.defense-header #connection{letter-spacing:1px;font-size:9px;white-space:nowrap;padding:8px 10px;border:1px solid #c4b596;border-radius:4px;color:#176148;background:#e2f0e9}
+.defense-page main{max-width:1320px;margin:42px auto 0;padding:0 28px;gap:30px;grid-template-columns:minmax(0,1.65fr) minmax(310px,1fr)}
+.defense-page h1,.defense-page h2,.defense-page h3{font-family:Georgia,'Times New Roman',serif;font-weight:500;color:#192a21}
+.defense-page h2{font-size:27px;letter-spacing:-.5px}
+.defense-page .eyebrow{color:#9e6d16;letter-spacing:2px;font-size:9px;font-weight:600}
+.defense-page .panel{border-radius:7px;background:#fffdf9;border-color:#dcd2be;box-shadow:none}
+.defense-hero{align-self:stretch;position:relative;isolation:isolate;min-height:540px;padding:38px 0 0;overflow:hidden}
+.hero-copy{position:relative;z-index:2;max-width:440px;pointer-events:none}
+.hero-copy a{pointer-events:auto}
+.hero-copy .eyebrow{display:flex;align-items:center;gap:10px}
+.hero-copy .eyebrow i{width:6px;height:6px;background:#176148;transform:rotate(45deg)}
+.defense-hero h1{font-size:clamp(48px,5.4vw,76px);line-height:1.07;letter-spacing:-2.5px;margin:25px 0 21px}
+.defense-hero h1 em{color:#176148}
+.hero-copy p{font-size:13px;line-height:1.9;max-width:340px;color:#56695e}
+.hero-link{display:inline-flex;gap:24px;align-items:center;margin-top:10px;color:#176148!important;text-decoration:none;font-size:11px;border-bottom:1px solid #c4b596;padding-bottom:9px}
+.defense-vista{position:absolute;right:-10px;bottom:66px;width:340px;height:350px;z-index:-1;display:flex;align-items:center;justify-content:center}
+.defense-vista img{width:94%;height:auto;image-rendering:pixelated;filter:drop-shadow(0 20px 12px #234b2222)}
+.vista-orbit{position:absolute;inset:0 0 0;border:1px solid #c4b59666;border-radius:50%;z-index:-1;background:radial-gradient(ellipse,#e2f0e955,transparent 68%)}
+.vista-caption{position:absolute;right:6px;bottom:-20px;font:8px/1.7 'Segoe UI',sans-serif;letter-spacing:2px;color:#9e6d16;text-align:right}
+.vista-caption small{font-size:10px;letter-spacing:0;color:#56695e;margin:0}
+.campaign-facts{position:absolute;bottom:0;left:0;right:0;border-top:1px solid #dcd2be;display:flex;gap:34px;padding:18px 0 2px;font-size:10px;color:#56695e}
+.campaign-facts span{display:flex;align-items:center;gap:10px}.campaign-facts b{font:23px Georgia,serif;color:#176148}
+.campaign-entry{padding:28px!important;align-self:start}
+.entry-heading{margin-bottom:25px}.entry-heading h2{font-size:27px;margin:11px 0 6px}.entry-heading p{font-size:11px;margin:0;color:#56695e}
+.campaign-entry label{color:#56695e;font-size:9px;letter-spacing:1.5px;font-weight:600}
+.campaign-entry input,.campaign-entry select{background:#fffdf9;border:1px solid #c4b596;border-radius:4px;color:#192a21;padding:12px 13px;font-size:12px;width:100%;margin-top:9px;min-height:43px}
+.campaign-entry .difficulty-picker{margin:18px 0}.campaign-entry .difficulty-picker small{font-size:10px;color:#56695e;min-height:16px;line-height:1.6}
+.campaign-entry #solo,.campaign-entry #create{width:100%;display:flex;justify-content:space-between;align-items:center;min-height:45px;padding:12px 15px;margin:10px 0;font-size:12px;letter-spacing:.2px}
+.campaign-entry #solo{background:#176148;color:#fffdf9;border-color:#176148;font-weight:700}.campaign-entry #solo:hover:not(:disabled){background:#0f4532}.campaign-entry #solo:disabled{opacity:.6}
+.campaign-entry #create{background:#f5efe0;border-color:#c4b596}.campaign-entry #create span{font-size:10px;color:#56695e}
+.entry-divider{display:flex;align-items:center;gap:12px;margin:24px 0 15px}.entry-divider:before,.entry-divider:after{content:'';height:1px;flex:1;background:#dcd2be}.entry-divider span{font-size:8px;letter-spacing:1.6px;color:#56695e}
+.campaign-entry .join{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.campaign-entry .join input{margin:0;text-transform:uppercase;letter-spacing:2px;font-size:10px}.campaign-entry .join button{padding:10px 14px;font-size:11px;white-space:nowrap;background:#e2f0e9}
+.campaign-entry .entry-note{font-size:10px;color:#56695e;line-height:1.8;margin-top:17px}.campaign-entry #error:empty{display:none}
+.defense-page .defense-guide{background:none;border:0;border-top:1px solid #dcd2be;padding:29px 0 0;border-radius:0;margin-top:13px}
+.defense-page .section-head h2{margin:8px 0 0}.defense-page .section-head>a{font-size:11px}
+.defense-page .update-cards{gap:16px;margin:24px 0 18px}.defense-page .update-cards article{padding:22px;background:#fffdf9;border:1px solid #dcd2be;border-radius:5px}
+.defense-page .update-cards strong{font:18px Georgia,serif;color:#0f4532;margin-bottom:13px}.defense-page .update-cards p{font-size:12px;color:#56695e;line-height:1.9}.defense-page .update-cards a{font-size:10px;color:#176148;font-weight:500}
+.defense-page .defense-guide>.hint{padding:13px 16px;background:#f5efe0;border-left:2px solid #176148;color:#56695e;font-size:10px}
+.defense-page .campaign,.defense-page .bottom{padding-top:27px;border-top:1px solid #dcd2be;margin-top:6px;scroll-margin-top:24px}
+.defense-page .muted{font-size:11px;color:#56695e}.defense-page #map-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:13px;margin-top:25px}
+.defense-page .map-card{background:#fffdf9;border:1px solid #dcd2be;border-radius:5px;padding:11px;min-width:0;box-shadow:none}.defense-page .map-card svg{width:100%;height:95px;display:block;border:1px solid #c4b596;background:#243726;border-radius:3px;opacity:.85}
+.defense-page .map-card h3{font-size:15px;line-height:1.4;margin:13px 0 6px}.defense-page .map-card p{font-size:10px;line-height:1.7;margin:0}.defense-page .map-card small{font-size:9px;color:#56695e}.defense-page .map-tag{position:static;display:block;background:none;padding:0 0 9px;color:#9e6d16;font:9px monospace;letter-spacing:1px}
+.defense-page .map-card.current{border-color:#176148}.defense-page .record{background:#fffdf9;border-color:#dcd2be;font-size:11px;color:#56695e}.defense-page #history{margin-top:18px}.defense-page #refresh{font-size:10px;letter-spacing:1px}
+.defense-footer{max-width:1264px;margin:42px auto 0;padding:25px 0 30px;border-top:1px solid #dcd2be;text-align:left;background:none;font-size:9px;line-height:2;color:#56695e;letter-spacing:.7px}.defense-footer a{font-size:10px;color:#176148;text-decoration:none}
+/* In-game chrome stays anchored outside the center of the battlefield. */
+body.defense-page.in-battle #arena{background:#0c1714}
+body.defense-page.in-battle #arena>.hud{top:0;right:196px;left:16px;width:auto;min-height:48px;gap:12px;padding:11px 16px;background:#11231eef;border:1px solid #65734a;border-top:0;border-radius:0 0 6px 6px;align-items:center;justify-content:flex-start;font-size:11px;color:#adbc9e;text-shadow:none;flex-wrap:wrap}
+body.defense-page.in-battle #arena>.toolbar:not([hidden])+.hud{top:0}
+body.defense-page.in-battle #arena>.hud b{color:#e5d6a3}.defense-page #map-name{color:#e3e5ce;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}.defense-page #gold{color:#e2c47a;font-size:14px}
+body.defense-page.in-battle #arena>.toolbar{position:absolute;top:66px;left:18px;right:auto;z-index:32;min-height:0;padding:9px 12px 9px 44px;max-width:calc(100% - 220px);background:#15261eef;border:1px solid #65734a;border-radius:5px;font-size:11px;color:#d2d7b8;gap:10px}
+.defense-page #leave-battle{left:8px;top:7px;height:28px;border-color:#526441;background:#203526}
+body.defense-page.in-battle #battle-wave-notice{top:88px;border-color:#9e935c;background:#12221ef5;border-radius:5px;padding:18px 24px;box-shadow:0 10px 28px #020b0855}
+.defense-page #combat-dock{bottom:24px;width:280px;padding:12px 14px 23px;background:#12231ef5;border:1px solid #7e8050;border-radius:8px;box-shadow:0 8px 24px #020b0866}
+.defense-page #combat-health{height:12px;border:1px solid #546640;background:#09170e}.defense-page #combat-health i{background:#9cac65}.defense-page #combat-health span{font-size:9px;line-height:10px}
+.defense-page #combat-dock .energy-track{height:6px;border:0}.defense-page #combat-dock #energy-label{font-size:8px;line-height:7px}.defense-page #combat-dock .energy-line{margin:5px 0 15px;min-height:7px}
+.defense-page #combat-dock #hotbar{gap:10px}.defense-page #combat-dock .hotkey{height:62px;border:1px solid #828557;border-radius:4px}.defense-page #combat-dock .hotkey>b{border-color:#9e9864;color:#e7d7a3;border-radius:3px;padding:1px 5px}.defense-page #combat-dock .hotkey small{font-size:16px}.defense-page #combat-dock .hotkey>span.hotbar-rank{color:#9eaf8c;font-size:8px;letter-spacing:2px}
+.defense-page #toggle-window{right:22px;bottom:25px;border-radius:6px;width:52px;height:52px;background:#172c20;border-color:#a4a16c}.defense-page #toggle-window kbd{border-color:#869059;color:#e4d9b0;border-radius:3px}
+body.defense-page.in-battle .controls{left:18px;bottom:10px;margin:0;padding:5px 8px;background:#0d1c15dc;border-radius:3px;font-size:8px;max-width:calc(50% - 170px);text-align:left;line-height:1.7;color:#9dad91}
+.defense-page #battle-performance{bottom:61px;left:18px;padding:5px 8px;font-size:10px;background:#0d1c15e8;border-color:#405739;color:#bdcba6;border-radius:3px}
+.defense-page #hero-window,.defense-page #castle-shop{top:166px;right:20px;width:360px;max-width:calc(100% - 40px);max-height:calc(100dvh - 265px);padding:0 18px 20px;background:#13261ff7;border:1px solid #8d8d58;border-radius:7px;box-shadow:0 12px 40px #020a0755;scrollbar-width:thin;scrollbar-color:#62704b #14251b;color:#e2e4cc}
+.defense-page #window-handle{margin:0 -18px 18px;padding:14px 17px;background:#203627;border-bottom:1px solid #536341;color:#d8c891;letter-spacing:1px}.defense-page #window-handle b{font-size:10px;font-weight:600}.defense-page #close-window{border:0;background:transparent}
+.defense-page #compact-hero{gap:14px}.defense-page #compact-hero>img{border:1px solid #697345;border-radius:4px;width:58px;height:68px}.defense-page #compact-hero strong{font:18px Georgia,serif;color:#e0d3a7}.defense-page #compact-hero small{font-size:10px;color:#9bad90}
+.defense-page #compact-stats{padding:12px 0;border-bottom:1px solid #3b5136}.defense-page #compact-stats>span{color:#bdc8a5;font-size:11px}.defense-page #hero-window .side-tabs{display:flex;gap:8px;padding-bottom:15px;border-bottom:1px solid #3b5136}.defense-page #hero-window .side-tabs button{display:flex;justify-content:center;align-items:center;gap:8px;flex:1;height:40px;background:#12211a;border:1px solid #405639;color:#abbc99}.defense-page #hero-window .side-tabs button.active{border-color:#b0a36c;background:#3a462b;color:#e7dbad}.defense-page #hero-window .side-tabs svg{width:18px;height:18px}.defense-page .tab-caption{font-size:10px;letter-spacing:.3px}
+.defense-page #hero-window .inventory-label,.defense-page #hero-window .eyebrow{color:#b9a672;line-height:1.7;letter-spacing:1.2px}.defense-page #gem-slots{gap:8px}.defense-page .gem-slot{border-radius:4px;background:#0f1e17;border-color:#4b603f}.defense-page #gem-detail{font-size:11px;color:#a8b99c;line-height:1.8}
+.defense-page #hero-window .skill-card button{border-radius:5px;border-color:#687a4b;height:82px}.defense-page #hero-window .skill-card{padding-bottom:22px}.defense-page .rank-dots{font-size:10px;bottom:2px;color:#c6b67c}
+.defense-page #castle-shop{padding:17px 18px 20px;width:390px;top:158px}.defense-page #castle-shop header{padding:0 0 13px;margin:0 0 15px;max-width:none;background:none;border:0;border-bottom:1px solid #4b5b3b;backdrop-filter:none;gap:12px;font-size:12px}.defense-page #castle-shop h3{font:18px Georgia,serif;margin-top:22px;color:#dfd1a1}.defense-page #castle-shop .hint{color:#9fb193;font-size:11px;line-height:1.8}.defense-page #castle-budget{color:#d4b977;font-size:12px}
+.defense-page #castle-shop #shop{gap:9px}.defense-page #castle-shop #shop button{height:72px;background-color:#0d2017;border-color:#4e6540;border-radius:5px}.defense-page #castle-shop .troop-icon::before{width:64px;height:64px}.defense-page .gem-shop-card{border-color:#405b39;border-radius:4px;background:#10231a}.defense-page .gem-shop-card small{color:#9daf95}.defense-page .gem-price{color:#d8c17d}.defense-page #combat-tooltip{background:#10231bf7;border-color:#7d8054;border-radius:5px;box-shadow:0 8px 24px #020b0866}
+@media(min-width:1450px){.defense-vista{right:0;width:370px;height:365px}.hero-copy p{max-width:350px}}
+@media(max-width:1100px){.defense-page main{gap:24px;grid-template-columns:minmax(0,1.25fr) minmax(300px,1fr)}.defense-vista{right:-30px;width:265px;height:290px;bottom:76px;opacity:.85}.defense-hero h1{font-size:58px}.hero-copy p{max-width:290px}.campaign-facts{gap:22px}.defense-header nav{gap:20px}.defense-page #map-grid{grid-template-columns:repeat(3,minmax(0,1fr))}body.defense-page.in-battle #arena>.hud{gap:7px 12px;font-size:9px}.defense-page #map-name{max-width:130px;font-size:10px}body.defense-page.in-battle .controls{display:none}.defense-page #battle-performance{bottom:22px}}
+@media(max-width:760px){.defense-header{padding:16px 20px;flex-wrap:wrap;gap:15px}.defense-header .brand span{font-size:15px}.defense-header nav{order:3;width:100%;margin:0;gap:28px}.defense-header #connection{margin-left:auto;font-size:8px;padding:7px}.defense-page main{display:grid;grid-template-columns:1fr;padding:0 20px;margin-top:20px;gap:26px}.defense-hero{min-height:440px;padding-top:22px}.defense-hero h1{font-size:60px}.defense-vista{width:245px;height:245px;right:-18px;bottom:66px;opacity:.75}.hero-copy p{max-width:265px;font-size:12px}.hero-copy .eyebrow{font-size:8px;letter-spacing:1.3px}.campaign-facts{gap:28px;padding-top:16px}.campaign-facts b{font-size:21px}.campaign-entry{padding:24px!important}.defense-page .section-head{align-items:flex-start;gap:14px;flex-wrap:wrap}.defense-page .section-head h2{font-size:25px}.defense-page .update-cards{grid-template-columns:1fr}.defense-page #map-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.defense-footer{margin:28px 20px;padding-top:20px}.defense-page .defense-guide{margin-top:0}.defense-page #combat-dock{bottom:20px;width:226px;padding:9px 10px 20px}.defense-page #combat-dock .hotkey{height:52px}.defense-page #combat-dock #hotbar{gap:8px}.defense-page #toggle-window{right:12px;bottom:22px;width:43px;height:43px}.defense-page #battle-performance{left:10px;bottom:138px;font-size:9px;padding:4px 6px}body.defense-page.in-battle #arena>.hud{left:7px;right:188px;padding:8px 9px;gap:5px 10px;font-size:8px}body.defense-page.in-battle #arena>.hud>span:last-child{display:none}.defense-page #map-name{max-width:100px;font-size:9px}.defense-page #gold{font-size:11px}.defense-page #hero-window,.defense-page #castle-shop{top:155px;right:10px;width:330px;max-width:calc(100% - 20px);max-height:calc(100dvh - 310px);padding-left:15px;padding-right:15px}.defense-page #window-handle{margin-left:-15px;margin-right:-15px}body.defense-page.in-battle #battle-wave-notice{top:110px;width:280px}body.defense-page.in-battle #arena>.toolbar{top:78px;left:8px;max-width:calc(100% - 20px);font-size:10px}}
+@media(max-width:430px){.defense-vista{right:-32px;width:205px;height:230px;opacity:.6}.defense-hero h1{font-size:55px}.hero-copy p{max-width:240px}.campaign-facts{gap:20px;font-size:9px}.campaign-facts span{gap:7px}.defense-header .brand small{font-size:7px;letter-spacing:1px}.defense-header #connection{max-width:120px;white-space:normal;text-align:center}.defense-page #map-grid{gap:10px}}
+@media(max-height:550px){.defense-page #hero-window,.defense-page #castle-shop{top:66px;max-height:calc(100dvh - 90px)}.defense-page #combat-dock{bottom:12px;width:220px;padding:8px 10px 17px}.defense-page #combat-dock .hotkey{height:44px}.defense-page #combat-dock .energy-line{margin-bottom:9px}.defense-page #battle-performance{bottom:18px}body.defense-page.in-battle #battle-wave-notice{top:64px;padding:12px}}
+@media(prefers-reduced-motion:reduce){.defense-page *{scroll-behavior:auto;transition:none!important}}
+
+.defense-page #toggle-castle{position:absolute;right:86px;bottom:25px;z-index:25;height:52px;padding:10px 15px;border-color:#677c4a;border-radius:6px;background:#172c20;color:#d5c998;font-size:11px;letter-spacing:.3px}
+.defense-page.battle-loading #toggle-castle{display:none}
+@media(max-width:760px){.defense-page #toggle-castle{right:12px;bottom:76px;width:95px;height:36px;padding:6px;font-size:9px}}
+@media(max-height:550px){.defense-page #toggle-castle{bottom:20px;right:83px;height:42px}}
+
+.defense-page .castle-glyph{display:none}
+@media(max-width:430px){.defense-vista{width:110px;height:110px;right:0;bottom:66px;opacity:1}.vista-caption{display:none}}
+@media(max-width:760px){.defense-page #toggle-castle{width:43px;height:43px}.defense-page #toggle-castle .castle-glyph{display:block;font:23px Georgia,serif}.defense-page #toggle-castle .castle-label{display:none}}

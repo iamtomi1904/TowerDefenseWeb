@@ -6,7 +6,7 @@ export function knightForm(u){return u.hero==='knight-2'?(u.holyMounted?'holy-mo
 export function preloadKnightRefresh(s){for(const id of Object.values(KNIGHT_ATLASES))s.load.image('knight-v2:'+id,'/assets/knights-v2/'+id+'.png');}
 export function createKnightRefresh(s){
  for(const id of Object.values(KNIGHT_ATLASES)){
-  const key='knight-v2:'+id,tx=s.textures.get(key),image=tx.getSourceImage(),w=image.width/6,h=image.height/6;
+  const key='knight-v2:'+id;if(!s.textures.exists(key))continue;const tx=s.textures.get(key),image=tx.getSourceImage(),w=image.width/6,h=image.height/6;
   for(let i=0;i<36;i++){const x=Math.round(i%6*w),y=Math.round(Math.floor(i/6)*h);tx.add(i,0,x,y,Math.round((i%6+1)*w)-x,Math.round((Math.floor(i/6)+1)*h)-y);}
   for(const [row,action]of KNIGHT_ACTIONS.entries())s.anims.create({key:key+':'+action,frames:Array.from({length:6},(_,i)=>({key,frame:row*6+i})),frameRate:action==='attack'?12:8,repeat:['idle','walk'].includes(action)?-1:0});
  }

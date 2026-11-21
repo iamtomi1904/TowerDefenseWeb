@@ -106,14 +106,14 @@ export function updateAmbientLife(scene,time,views=getActiveViews(scene)){
  if(!views.length)return;
  for(const {item,sprite}of scene.ambientLife){
   if(!item.isFlock&&!boxInAnyView(views,item.minX,item.minY,item.maxX,item.maxY,0)){
-   if(sprite.visible)sprite.setVisible(false);
+   if(sprite.visible){sprite.setVisible(false);sprite.anims?.pause();}
    continue;
   }
   const p=ambientPose(item,time),visible=inAnyView(views,p.x,p.y,85);
   const show=visible&&(!scene.ambientFilter||scene.ambientFilter(item.kind));
-  if(sprite.visible!==show)sprite.setVisible(show);
+  if(sprite.visible!==show){sprite.setVisible(show);if(show)sprite.anims?.resume();else sprite.anims?.pause();}
   if(!show)continue;
-  sprite.setPosition(p.x,p.y).setFrame(p.frame).setAlpha(p.alpha).setFlipX(p.flip).setRotation(p.rotation||0).setScale(p.scale||1).setDepth(waterKinds.has(item.kind)?-93:item.kind==='flock'?2600:p.groundY+2);
+  sprite.setPosition(p.x,p.y).setFrame(p.frame).setAlpha(p.alpha).setFlipX(p.flip).setRotation(p.rotation||0).setScale(p.scale||1);const depth=waterKinds.has(item.kind)?-93:item.kind==='flock'?2600:Math.round(p.groundY)+2;if(sprite.depth!==depth)sprite.setDepth(depth);
   const hit=p.interaction;if(hit?.propId){scene.ambientNudges.set(hit.propId,hit.strength);g.fillStyle(0x80994c,.6).fillRect(hit.x-8,hit.y+10+(time/70)%22,3,2);}
   if(hit?.splash)g.lineStyle(1,0xd5eee0,(1-hit.progress)*.55).strokeEllipse(hit.x,hit.y,8+hit.progress*14,3+hit.progress*5);
   if(item.kind==='fish'&&Math.sin(time/800+item.phase)>.9)g.lineStyle(1,0xbadfd4,.25).strokeEllipse(p.x,p.y,9,3);

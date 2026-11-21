@@ -1,3 +1,5 @@
+import {canStand,move} from './public/shared-movement.js';
+export {canStand} from './public/shared-movement.js';
 import {propBlocks} from './public/prop-footprints.js';
 import {tickMartial} from './martial-actions.mjs';
 import {tickTide,tideReduction} from './tide-actions.mjs';
@@ -39,7 +41,7 @@ export function stats(p){
  const h=heroById(p.hero),c=CLASSES[h.classId],lv=Math.max(0,(p.level||1)-1),hpLv=h.classId==='guardian'?40:['berserker','ravager','vanguard'].includes(h.classId)?36:h.classId==='tidecaller'?34:['ranger','darkelf'].includes(h.classId)?22:32,powLv=h.classId==='guardian'?2:h.classId==='assassin'?4.5:['ranger','darkelf','pyromancer'].includes(h.classId)?4:h.classId==='stormcaller'?3.5:h.classId==='duelist'?3.2:3,armLv=h.classId==='guardian'?Math.floor(lv*.75):h.classId==='paladin'?Math.floor(lv/2.5):['ranger','darkelf'].includes(h.classId)?Math.floor(lv/12):['pyromancer','stormcaller'].includes(h.classId)?Math.floor(lv/4.5):h.classId==='ravager'?Math.floor(lv/3.8):Math.floor(lv/3),hasteLv=h.classId==='windblade'?lv*.02:['ranger','darkelf'].includes(h.classId)?lv*.015:0,spdLv=['ranger','darkelf'].includes(h.classId)?lv*2.5:0;
  const maxHp=Math.round((h.hp+lv*hpLv+p.upHP*40+gemStats(p).hp)*(p.classId==='vanguard'&&p.vanguardTime>0?VANGUARD.giant.hp:p.classId==='paladin'?(p.holyMounted?PALADIN.mountedHP:PALADIN.hp):1));
  const hpPct=p.hp>0?p.hp/Math.max(1,maxHp):1;p._hpPct=hpPct;
- const warMult=p.hero==='warrior-1'?(p.warStacks||0)*(p.mastery>=2?.1:.05):0;
+ const warMult=p.hero==='warrior-1'?(p.warStacks||0)*(p.mastery>=2?.08:.04):0;
  const rageLow50=p.hero==='warrior-2'&&p.hp>0&&hpPct<.5,rageLow15=rageLow50&&p.mastery>=2&&hpPct<.15;
  const ragePow=rageLow15?.7:rageLow50?.35:0,rageHaste=rageLow15?.7:rageLow50?.35:0,rageSpd=rageLow15?.3:0;
  const vanStacks=p.hero==='warrior-3'&&p.hp>0?Math.min(4,Math.floor(Math.max(0,1-hpPct)/.15)):0;
@@ -96,23 +98,8 @@ export function nextStage(r){
  for(const [i,t]of r.troops.entries()){t.x=b.x+(i%5-2)*34;t.y=b.y+130+Math.floor(i/5)*24;t.hp=t.maxHp;}
  return true;
 }
-export function canStand(map,x,y,radius=12){
- if(x<18||x>(map.width||WORLD.width)-18||y<35||y>(map.height||WORLD.height)-18)return false;
- if(BIOMES[biomeAt(map,{x,y})?.type]?.blocked)return false;
- // Only the house footprint is solid, leaving its southern gate accessible.
- if(x>map.base.x-145-radius&&x<map.base.x+145+radius&&y>map.base.y-205-radius&&y<map.base.y+45+radius)return false;
- if((map.fortifications||[]).some(o=>Math.hypot(x-o.x,y-o.y)<o.radius+radius))return false;
- return !map.props.some(o=>propBlocks(o,x,y,radius));
-}
-function move(u,tx,ty,speed,dt,map){
- const dx=tx-u.x,dy=ty-u.y,d=Math.hypot(dx,dy);if(d<.1)return;
- speed*=terrainModifiers(map,u).speed;const step=Math.min(d,speed*dt),nx=u.x+dx/d*step,ny=u.y+dy/d*step;u.face=dx<-.1?-1:dx>.1?1:u.face;
- u.direction=Math.abs(dx)>Math.abs(dy)?dx<0?2:3:dy<0?1:0;
- if(canStand(map,nx,ny)){u.x=nx;u.y=ny;return;}
- if(canStand(map,nx,u.y))u.x=nx;
- if(canStand(map,u.x,ny))u.y=ny;
-}
-const moveAI=(u,x,y,speed,dt,map)=>{
+const moveAI=(u,x,y,speed,dt,map)=>{const fromX=u.x,fromY=u.y;moveAIRaw(u,x,y,speed,dt,map);u.moving=Math.hypot(u.x-fromX,u.y-fromY)>.01;};
+const moveAIRaw=(u,x,y,speed,dt,map)=>{
  if(u.flying){const dx=x-u.x,dy=y-u.y,d=Math.hypot(dx,dy)||1,step=Math.min(d,speed*terrainModifiers(map,u).speed*dt);u.x=clamp(u.x+dx/d*step,20,(map.width||WORLD.width)-20);u.y=clamp(u.y+dy/d*step,30,(map.height||WORLD.height)-20);u.face=dx<0?-1:1;u.direction=Math.abs(dx)>Math.abs(dy)?dx<0?2:3:dy<0?1:0;return;}
  navigate(u,x,y,speed,dt,map,move,canStand);
 };
@@ -140,7 +127,7 @@ function strikeDamage(r,attacker,target,power){
  if(target.reward!==undefined)fallenBasicHit(r,attacker,target,power,{status:applyStatus,fx:event=>r.events.push({id:randomUUID(),...event}),damage:(e,n,p)=>{if(e.hp<=0)return;let damage=gemArmorDamage(p,e,n);const absorbed=Math.min(e.shield||0,damage);e.shield=Math.max(0,(e.shield||0)-absorbed);damage-=absorbed;e.hp=Math.max(0,e.hp-damage);kill(r,e,p);}});
  if(attacker.special==='drain'){healing(r,attacker,actual*.35*(1-(attacker.gemHealCut||0)),attacker.maxHp,target);r.events.push({id:randomUUID(),type:'drain',x:target.x,y:target.y-20,tx:attacker.x,ty:attacker.y-20,color:0xd96a93});}
  if(attacker.special==='venom'&&target.hero){target.poisonTime=3;target.poisonClock=1;}
- if(attacker.hero){const poison=attacker.buffs?.find(b=>b.poisonArrows&&b.time>0);if(poison)applyStatus(target,{poison:poison.poison,slow:poison.poisonSlow,statusDuration:poison.poisonDuration},attacker,power);if(target.reward!==undefined)gemHit(r,attacker,target,actual,'basic',{damage:(e,n,p)=>{e.hp=Math.max(0,e.hp-gemArmorDamage(p,e,n));kill(r,e,p);}},r.random||Math.random);attacker.energy=Math.min(stats(attacker).maxEnergy,attacker.energy+2);const berserkerDark=attacker.hero==='warrior-2'&&equippedGem(attacker)?.id==='dark'&&attacker.hp>0&&attacker.hp<stats(attacker).hp*.4?GC.dark.berserkerBonusLifesteal:0;const warSteal=attacker.hero==='warrior-1'?(attacker.warStacks||0)*.03:0;const rageSteal=attacker.hero==='warrior-2'&&attacker.hp>0&&(attacker._hpPct??1)<.5?(attacker.mastery>=2&&(attacker._hpPct??1)<.15?.3:.15):0;const steal=gemStats(attacker).lifesteal+berserkerDark+warSteal+rageSteal+buff(attacker,'lifesteal')+(attacker.classId==='vanguard'?.1:0);if(steal){const healed=healing(r,attacker,actual*steal,stats(attacker).hp,target);if(attacker.classId==='vanguard'&&healed>0)r.events.push({id:randomUUID(),type:'vanguard-vfx',action:'drain',x:target.x,y:target.y,tx:attacker.x,ty:attacker.y-20});}
+ if(attacker.hero){const poison=attacker.buffs?.find(b=>b.poisonArrows&&b.time>0);if(poison)applyStatus(target,{poison:poison.poison,slow:poison.poisonSlow,statusDuration:poison.poisonDuration},attacker,power);if(target.reward!==undefined)gemHit(r,attacker,target,actual,'basic',{damage:(e,n,p)=>{e.hp=Math.max(0,e.hp-gemArmorDamage(p,e,n));kill(r,e,p);}},r.random||Math.random);attacker.energy=Math.min(stats(attacker).maxEnergy,attacker.energy+2);const berserkerDark=attacker.hero==='warrior-2'&&equippedGem(attacker)?.id==='dark'&&attacker.hp>0&&attacker.hp<stats(attacker).hp*.4?GC.dark.berserkerBonusLifesteal:0;const warSteal=attacker.hero==='warrior-1'?(attacker.warStacks||0)*.02:0;const rageSteal=attacker.hero==='warrior-2'&&attacker.hp>0&&(attacker._hpPct??1)<.5?(attacker.mastery>=2&&(attacker._hpPct??1)<.15?.3:.15):0;const steal=gemStats(attacker).lifesteal+berserkerDark+warSteal+rageSteal+buff(attacker,'lifesteal')+(attacker.classId==='vanguard'?.1:0);if(steal){const healed=healing(r,attacker,actual*steal,stats(attacker).hp,target);if(attacker.classId==='vanguard'&&healed>0)r.events.push({id:randomUUID(),type:'vanguard-vfx',action:'drain',x:target.x,y:target.y,tx:attacker.x,ty:attacker.y-20});}
   windBasicHit(r,attacker,target,power,{fx:event=>r.events.push({id:randomUUID(),...event}),damage:(e,n,p)=>{e.hp=Math.max(0,e.hp-gemArmorDamage(p,e,n));kill(r,e,p);}});if(target.reward!==undefined)passiveHit(r,attacker,target,power,stats,applyStatus,kill,'basic');
  }
 }
@@ -167,7 +154,7 @@ export function spawnEnemy(r,random=Math.random,portal=true){
  r.enemies.push(e);if(portal)r.events.push({id:randomUUID(),type:'enemy-summon',x:e.x,y:e.y,family:enemyFamily(e),boss:e.boss,sourceId:e.id});return e;
 }
 export function tick(r,dt=.05,random=Math.random){
- r.events=[];r.random=random;r.elapsed+=dt;const map=MAPS[r.stage-1];
+ r.tickId=(r.tickId||0)+1;r.events=[];for(const u of r.enemies)u.moving=false;for(const u of r.troops)u.moving=false;r.random=random;r.elapsed+=dt;const map=MAPS[r.stage-1];
  const ctx={stats,id:randomUUID,fx:event=>r.events.push({id:randomUUID(),...event}),damage:(e,n,p)=>{if(e.hp<=0)return;if(e.neutral){e.aggro=8;e.threat={x:p.x,y:p.y};}const absorbed=Math.min(e.shield||0,n);e.shield=Math.max(0,(e.shield||0)-absorbed);e.hp=Math.max(0,e.hp-(n-absorbed));},move:(p,x,y,max)=>{const from={x:p.x,y:p.y};for(let step=0;step<max;step+=8){const d=distance(p,{x,y});if(d<.01)break;const length=Math.min(8,max-step,d),nx=p.x+(x-p.x)/d*length,ny=p.y+(y-p.y)/d*length;if(!canStand(map,nx,ny))break;p.x=nx;p.y=ny;}p.face=p.x<from.x?-1:1;}};
  const rawDamage=ctx.damage,finishDamage=(e,n,p)=>{if(e.hp<=0)return;rawDamage(e,n,p);kill(r,e,p);};ctx.damage=(e,n,p,kind='skill',options={})=>{if(e.hp<=0)return;const dmgIn=p?.hero==='warrior-2'&&kind==='skill'?n*1.2:n;const actual=gemArmorDamage(p,e,dmgIn,options),before=e.hp;rawDamage(e,actual,p);if(kind!=='summon'&&kind!=='dot'&&gemStats(p).lifesteal)healing(r,p,Math.min(before,actual)*gemStats(p).lifesteal,stats(p).hp,e);if(kind!=='dot')gemHit(r,p,e,actual,kind,{damage:(a,d,owner)=>finishDamage(a,gemArmorDamage(owner,a,d),owner)},random);if(p?.hero&&e.reward!==undefined&&kind==='skill')passiveHit(r,p,e,actual,stats,applyStatus,kill,'skill');kill(r,e,kind==='summon'?{owner:p.id}:p);};
  ctx.moveUnit=(u,x,y,speed,dt)=>moveAI(u,x,y,speed*(u.bossSlow>0?(u.bossSlowFactor??.5):1),dt,map);ctx.launchAimed=(p,aim,range,hit,options)=>launchAimed(r,p,aim,range,hit,(x,y)=>canStand(map,x,y,2),options);
@@ -223,11 +210,18 @@ export function tick(r,dt=.05,random=Math.random){
  tickVanguardActions(r,dt,ctx);tickShadow(r,dt,ctx);tickAssassinActions(r,dt,ctx);tickPoisonPools(r,dt,{damage:finishDamage});tickZones(r,dt,ctx);tickHostileZones(r,dt,{fx:ctx.fx,stats,canStand:(x,y)=>canStand(map,x,y)});
  r.spawnCd-=dt;
  if(r.phase==='battle'&&r.spawn>0&&r.spawnCd<=0){spawnEnemy(r,random);r.spawn--;r.spawnCd=Math.max(.35,1.05-r.stage*.045);}
+ const GRID_CELL=128;
+ const buildGrid=items=>{const g=new Map();for(const u of items){if(!u||u.hp<=0)continue;const cx=Math.floor(u.x/GRID_CELL),cy=Math.floor(u.y/GRID_CELL),k=(cx+512)*4096+(cy+512);let b=g.get(k);if(!b){b=[];g.set(k,b);}b.push(u);}return g;};
+ const queryGrid=(g,x,y,rad)=>{const res=[],minX=Math.floor((x-rad)/GRID_CELL),maxX=Math.floor((x+rad)/GRID_CELL),minY=Math.floor((y-rad)/GRID_CELL),maxY=Math.floor((y+rad)/GRID_CELL);for(let cx=minX;cx<=maxX;cx++)for(let cy=minY;cy<=maxY;cy++){const b=g.get((cx+512)*4096+(cy+512));if(b)for(const u of b)res.push(u);}return res;};
+ const enemyGrid=buildGrid(r.enemies);
+ const allyList=[...r.players,...r.troops];
+ const allyGrid=buildGrid(allyList);
  for(const t of r.troops){
   if(t.type==='forest-spirit'&&t.hp>0){tickSpirit(r,t,dt,ctx);continue;}
   t.bossSlow=Math.max(0,(t.bossSlow||0)-dt);t.cd=Math.max(0,t.cd-dt*terrainModifiers(map,t).attackSpeed*(1+(t.fallenAura?.haste||0)));t.anim=Math.max(0,t.anim-dt);if(t.hp<=0)continue;const def=TROOPS.find(d=>d.id===t.type);
-  const target=r.enemies.filter(e=>e.hp>0&&canHitAir(e,def.range)&&!e.neutral&&distance(e,map.base)<420).sort((a,b)=>distance(t,a)-distance(t,b))[0];
-  if(def.healer){const patient=[...r.players,...r.troops].filter(a=>a.hp>0&&a.hp<(a.hero?stats(a).hp:a.maxHp)&&distance(t,a)<180).sort((a,b)=>a.hp-b.hp)[0];if(patient&&t.cd<=0){t.cd=2;healing(r,patient,22,patient.hero?stats(patient).hp:patient.maxHp);r.events.push({id:randomUUID(),type:'aura',x:patient.x,y:patient.y-20,radius:45,size:90,color:0x9deab4,fx:'water-spell'});continue;}}
+  const nearEnemies=queryGrid(enemyGrid,t.x,t.y,Math.max(420,def.range+120));
+  const target=nearEnemies.filter(e=>e.hp>0&&canHitAir(e,def.range)&&!e.neutral&&distance(e,map.base)<420).sort((a,b)=>distance(t,a)-distance(t,b))[0];
+  if(def.healer){const patient=queryGrid(allyGrid,t.x,t.y,180).filter(a=>a.hp>0&&a.hp<(a.hero?stats(a).hp:a.maxHp)&&distance(t,a)<180).sort((a,b)=>a.hp-b.hp)[0];if(patient&&t.cd<=0){t.cd=2;healing(r,patient,22,patient.hero?stats(patient).hp:patient.maxHp);r.events.push({id:randomUUID(),type:'aura',x:patient.x,y:patient.y-20,radius:45,size:90,color:0x9deab4,fx:'water-spell'});continue;}}
   if(target){if(distance(t,target)>def.range-5)moveAI(t,target.x,target.y,def.speed*(t.bossSlow>0?(t.bossSlowFactor??.5):1),dt,map);else if(t.cd<=0){t.cd=def.cooldown;const boost=r.troops.some(a=>a.type==='captain'&&a.hp>0&&distance(t,a)<160)?1.1:1;strike(r,t,target,(t.power??def.power)*boost,0x9ce6d6,def.range);kill(r,target,t);}}
   else {const slot=r.troops.indexOf(t);moveAI(t,map.base.x+(slot%5-2)*34,map.base.y+130+Math.floor(slot/5)*24,def.speed*(t.bossSlow>0?(t.bossSlowFactor??.5):1),dt,map);}
  }
@@ -235,11 +229,12 @@ export function tick(r,dt=.05,random=Math.random){
   if(e.hp<=0||r.phase==='prepare'&&!e.neutral)continue;tickGemTarget(r,e,dt,{damage:finishDamage});tickStatuses(r,e,dt,{...ctx,damage:finishDamage});if(e.hp<=0)continue;e.environment=terrainModifiers(map,e);e.cd-=dt*(1-(e.gemSlow||0))*e.environment.attackSpeed;e.anim=Math.max(0,e.anim-dt);if(e.stun>0||e.gemStun>0||e.windAirTime>0){e.skillPose=null;continue;}
   if(e.neutral){if(e.forestLeader){const threatened=r.players.some(p=>p.hp>0&&!buff(p,'stealth')&&distance(p,e)<(e.aggro>0?(e.leash||FOREST_LEADER_RULES.leash):FOREST_LEADER_RULES.aggro));if(threatened&&distance(e,e.home)<(e.leash||FOREST_LEADER_RULES.leash)){bossTick(r,e,dt,{fx:ctx.fx,stats,canStand:(x,y)=>canStand(map,x,y)});if(e.bossCast||e.skillPose?.time>0){e.anim=.3;continue;}}else{e.bossCast=null;e.skillPose=null;}}const threat=r.players.filter(p=>p.hp>0&&!buff(p,'stealth')&&distance(p,e)<(e.forestLeader&&e.aggro>0?e.leash:200)).sort((a,b)=>distance(a,e)-distance(b,e))[0];e.aggro=Math.max(0,(e.aggro||0)-dt);if(e.animal){if((e.aggro>0||threat&&distance(threat,e)<90)&&threat){const dx=e.x-threat.x,dy=e.y-threat.y,d=Math.hypot(dx,dy)||1;moveAI(e,clamp(e.x+dx/d*80,40,(map.width||WORLD.width)-40),clamp(e.y+dy/d*80,50,(map.height||WORLD.height)-40),e.speed*(1-Math.max(e.slow||0,e.gemSlow||0)),dt,map);}else if(distance(e,e.home)>45)moveAI(e,e.home.x,e.home.y,e.speed*.5,dt,map);}else if(threat&&(e.aggro>0||distance(threat,e)<110)&&distance(e,e.home)<(e.forestLeader?e.leash:280)){if(distance(e,threat)>e.range)moveAI(e,threat.x,threat.y,e.speed*(1-Math.max(e.slow||0,e.gemSlow||0)),dt,map);else if(e.cd<=0){e.cd=e.cooldown;strike(r,e,threat,Math.max(2,e.power-stats(threat).armor)*(1-(e.gemDamageReduce||0)),0xf0bd83,e.range);}}else if(distance(e,e.home)>15){moveAI(e,e.home.x,e.home.y,e.speed*(1-Math.max(e.slow||0,e.gemSlow||0)),dt,map);e.hp=Math.min(e.maxHp,e.hp+dt*6*(1-(e.gemHealCut||0)));}continue;}
   bossTick(r,e,dt,{fx:ctx.fx,summon:ctx.summon,stats,canStand:(x,y)=>canStand(map,x,y)});if(e.bossCast||e.skillPose?.time>0){e.anim=.2;continue;}
-  if(e.healer){e.healCd-=dt;if(e.healCd<=0){e.healCd=4;for(const other of r.enemies)if(other.hp>0&&distance(e,other)<150)healing(r,other,25*(1-(other.gemHealCut||0)),other.maxHp);r.events.push({id:randomUUID(),type:'heal',x:e.x,y:e.y,color:0x95e49a});}}
-  const targets=[...r.players,...r.troops].filter(p=>p.hp>0&&!(p.hero&&buff(p,'stealth'))&&distance(p,e)<(e.range>100?e.range+20:135));
+  if(e.healer){e.healCd-=dt;if(e.healCd<=0){e.healCd=4;for(const other of queryGrid(enemyGrid,e.x,e.y,150))if(other.hp>0&&distance(e,other)<150)healing(r,other,25*(1-(other.gemHealCut||0)),other.maxHp);r.events.push({id:randomUUID(),type:'heal',x:e.x,y:e.y,color:0x95e49a});}}
+  const scanRad=e.range>100?e.range+20:135;
+  const targets=queryGrid(allyGrid,e.x,e.y,scanRad).filter(p=>p.hp>0&&!(p.hero&&buff(p,'stealth'))&&distance(p,e)<scanRad);
   const target=targets.sort((a,b)=>distance(e,a)-distance(e,b))[0];
   if(e.flying)e.altitude=e.range>100?40:distance(e,target||{x:map.base.x,y:map.base.y+110})<85?9:36;
-  if(e.windup){e.windup.remaining-=dt;if(e.windup.remaining<=0){const victim=[...r.players,...r.troops].find(t=>t.id===e.windup.target);if(victim?.hp>0&&distance(victim,e)<e.range+45){const armor=victim.hero?stats(victim).armor:(victim.armor??TROOPS.find(t=>t.id===victim.type)?.armor??0);strike(r,e,victim,Math.max(2,e.power-armor)*(victim.guard?.3:1)*(1-(e.gemDamageReduce||0)),0xf18f76,e.range);r.events.push({id:randomUUID(),type:'impact',family:enemyFamily(e),element:e.attackFx,fx:e.attackFx==='earth'?'ground-spikes':'poison',x:victim.x,y:victim.y,radius:e.special==='slam'?95:45,color:e.special==='drain'?0xdc86ae:0xd8bb89});}e.windup=null;}continue;}
+  if(e.windup){e.windup.remaining-=dt;if(e.windup.remaining<=0){const victim=allyList.find(t=>t.id===e.windup.target);if(victim?.hp>0&&distance(victim,e)<e.range+45){const armor=victim.hero?stats(victim).armor:(victim.armor??TROOPS.find(t=>t.id===victim.type)?.armor??0);strike(r,e,victim,Math.max(2,e.power-armor)*(victim.guard?.3:1)*(1-(e.gemDamageReduce||0)),0xf18f76,e.range);r.events.push({id:randomUUID(),type:'impact',family:enemyFamily(e),element:e.attackFx,fx:e.attackFx==='earth'?'ground-spikes':'poison',x:victim.x,y:victim.y,radius:e.special==='slam'?95:45,color:e.special==='drain'?0xdc86ae:0xd8bb89});}e.windup=null;}continue;}
   if(e.special==='charge'&&target&&distance(e,target)>50&&distance(e,target)<240&&e.cd<=0){e.charge=1;e.cd=6;r.events.push({id:randomUUID(),type:'warning',x:target.x,y:target.y,radius:45,duration:.6,color:0xe9b782});}
   if(e.charge>0)e.charge=Math.max(0,e.charge-dt);
   if(target){
@@ -264,7 +259,7 @@ export function tick(r,dt=.05,random=Math.random){
  }
  if(!combatActive){r.pendingMelee=[];r.combatActions=[];r.shadowDashes=[];for(const p of r.players)p.dashing=false;}if(['defeat','victory'].includes(r.phase)){r.poisonPools=[];r.fireCarpets=[];r.projectiles=[];for(const e of r.enemies)e.gemEffects={};}
 }
-export function snapshot(r){return {type:'state',code:r.code,difficulty:r.difficulty||'easy',phase:r.phase,stage:r.stage,wave:r.wave,gate:r.gate,maxGate:r.maxGate,kills:r.kills,timer:Math.max(0,Math.ceil(r.timer)),remaining:r.spawn+r.enemies.filter(e=>!e.neutral).length,host:r.players[0]?.id,hostId:r.players[0]?.id,chat:(r.chat||[]).slice(-35),lockedSlots:r.lockedSlots||{},launching:!!r.launching,troops:r.troops,loot:r.loot,shadowZones:r.shadowZones||[],poisonPools:(r.poisonPools||[]).map(({touched,...pool})=>pool),fireCarpets:r.fireCarpets||[],hostileZones:r.hostileZones,zones:r.zones,windFields:r.windFields||[],events:r.events,enemies:r.enemies,players:r.players.map(({token,input,...p})=>({...p,heroLocked:!!p.locked,stats:stats(p)}))};}
+export function snapshot(r){const roundPos=u=>({...u,x:Math.round(u.x*10)/10,y:Math.round(u.y*10)/10,hp:Math.round(u.hp)});return {type:'state',seq:r.tickId||0,tickMs:50,tick:r.tickId||0,serverTime:(r.elapsed||0)*1000,code:r.code,difficulty:r.difficulty||'easy',phase:r.phase,stage:r.stage,wave:r.wave,gate:Math.round(r.gate),maxGate:r.maxGate,kills:r.kills,timer:Math.max(0,Math.ceil(r.timer)),remaining:r.spawn+r.enemies.filter(e=>!e.neutral).length,host:r.players[0]?.id,hostId:r.players[0]?.id,chat:(r.chat||[]).slice(-35),lockedSlots:r.lockedSlots||{},launching:!!r.launching,troops:r.troops.map(roundPos),loot:r.loot,shadowZones:r.shadowZones||[],poisonPools:(r.poisonPools||[]).map(({touched,...pool})=>pool),fireCarpets:r.fireCarpets||[],hostileZones:r.hostileZones,zones:r.zones,windFields:r.windFields||[],events:r.events,enemies:r.enemies.map(roundPos),players:r.players.map(({token,input,...p})=>({...roundPos(p),heroLocked:!!p.locked,stats:stats(p)}))};}
 
 
 

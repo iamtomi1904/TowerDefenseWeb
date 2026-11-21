@@ -30,7 +30,7 @@ export function archerChargeFrame(u,obj,now){
 }
 export function createHeroRefreshAnimations(scene){
  for(const id of Object.keys(REFRESH_HEROES)){
-  const key='refresh:'+id,texture=scene.textures.get(key),source=texture.getSourceImage(),w=source.width/6,h=source.height/6;
+  const key='refresh:'+id;if(!scene.textures.exists(key))continue;const texture=scene.textures.get(key),source=texture.getSourceImage(),w=source.width/6,h=source.height/6;
   for(let n=0;n<36;n++){const x=Math.round(n%6*w),y=Math.round(Math.floor(n/6)*h);texture.add(n,0,x,y,Math.round((n%6+1)*w)-x,Math.round((Math.floor(n/6)+1)*h)-y);}
   for(const [row,action]of REFRESH_ACTIONS.entries())scene.anims.create({key:key+':'+action,frames:Array.from({length:6},(_,i)=>({key,frame:row*6+i})),frameRate:action==='attack'?12:8,repeat:['idle','walk'].includes(action)?-1:0});
  }

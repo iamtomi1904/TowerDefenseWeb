@@ -1,3 +1,4 @@
+import {acquireSkillImage,releaseSkillImage} from './skill-image-pool.js';
 import {preloadPassiveActionFX,createPassiveActionFX,updatePassiveActionFX} from './passive-action-fx.js';
 import {preloadPassiveActivations,createPassiveActivation,updatePassiveActivation} from './passive-activation-art.js';
 import {cleanEffectTexture} from './effect-alpha.js';
@@ -22,7 +23,7 @@ export function createPaintedSkill(s,v){
  if(v.e.type==='passive-vfx')return createPassiveActivation(s,v.e);
  if(actionKind(v.e))return createActionSkill(s,v.e);
  const p=profile(v.e);if(!p)return null;const frame=paintedFrame(s,p.key,p.row,0);if(frame===null)return null;
- const image=s.add.image(v.e.x,v.e.y,textureKey(s,p.key),frame).setDepth(p.ground?24:2501);
+ const image=acquireSkillImage(s,v.e.x,v.e.y,textureKey(s,p.key),frame).setDepth(p.ground?24:2501);
  if(p.slam)image.setOrigin(.5,.72);
  return {...p,image,parts:[]};
 }
@@ -39,7 +40,7 @@ export function updatePaintedSkill(s,v,t){
  if(p.beam){const dx=e.tx-e.x,dy=e.ty-e.y;width=Math.hypot(dx,dy)*1.25;height=Math.min(95,Math.max(48,width*.26));xx=(e.x+e.tx)/2;yy=(e.y+e.ty)/2;rotation=Math.atan2(dy,dx);}
  p.image.setFrame(paintedFrame(s,p.key,p.row,frame)).setPosition(xx,yy).setDisplaySize(Math.max(1,width),Math.max(1,height)).setRotation(rotation).setAlpha(Math.min(1,(1-t)*7)*(e.type==='wind-vfx'?.72:.95));return true;
 }
-export function destroyPaintedSkill(v){if(!v)return;v.painted?.image.destroy();for(const image of v.painted?.parts||[])image.destroy();v.painted=null;}
+export function destroyPaintedSkill(v){if(!v)return;releaseSkillImage(v.painted?.image);for(const image of v.painted?.parts||[])releaseSkillImage(image);v.painted=null;}
 function clearBodies(obj){for(const image of obj.paintedBodies?.values()||[])image.destroy();obj.paintedBodies?.clear();}
 export function updatePaintedBody(s,u,obj,time){
  if(!s.textures?.exists('painted-motes')||!s.textures?.exists('painted-martial'))return false;

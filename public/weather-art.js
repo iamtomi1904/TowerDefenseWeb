@@ -1,3 +1,4 @@
+import {weatherParticlePlan} from './scenery-budget.js';
 import {weatherGraphics,getActiveViews} from './weather-visibility.js';
 import {STORM_TYPES,drawStorms} from './weather-storms.js';
 export const WEATHER_TYPES={wind:'Gió',clouds:'Mây trôi',fog:'Sương mù',rain:'Mưa',snow:'Tuyết',leaves:'Lá bay',sand:'Bụi cát',embers:'Tàn lửa',ash:'Tro tím',motes:'Hạt sáng',...STORM_TYPES};
@@ -42,21 +43,25 @@ export function drawWeather(scene,time,views=getActiveViews(scene)){
  if(!g)return;
  if(a)a.clear();
  if(!views.length){if(scene._atmosTile)scene._atmosTile.setVisible(false);return;}
- const layers=new Set(scene.weatherLayers??weatherForMap({id:scene.weatherStage}));
+ const layerIds=scene.weatherLayers??weatherForMap({id:scene.weatherStage}),layerKey=layerIds.join('|');
+ let cache=scene._weatherPlanCache;if(!cache||cache.layerKey!==layerKey)cache=scene._weatherPlanCache={layerKey,layers:new Set(layerIds)};
+ const layers=cache.layers;
  const mapW=scene.mapWidth||views[0].right,mapH=scene.mapHeight||views[0].bottom;
  const inMap=(px,py,pad=4)=>px>=pad&&px<=mapW-pad&&py>=pad&&py<=mapH-pad;
  const t=time/1000,stage=scene.weatherStage;
  const sw=scene.scale?.width||1280,sh=scene.scale?.height||720;
- // Share screen-space particle budget across active co-op viewports so multi-screen never doubles CPU/GPU load.
- const totalDensity=Math.min(85,Math.max(40,Math.ceil((sw*sh)/14000)));
- const density=Math.max(24,Math.ceil(totalDensity/views.length));
+ const particleKinds=cache.kinds??(cache.kinds=[...layers].filter(kind=>!['fog','clouds'].includes(kind)&&!(kind in STORM_TYPES)));
+ const quality=scene.sceneryBudget?.quality??1,planKey=views.length+':'+sw+':'+sh+':'+quality;
+ if(cache.planKey!==planKey){cache.planKey=planKey;cache.plan=weatherParticlePlan(particleKinds,views.length,sw,sh,quality);}
+ const plan=cache.plan;
  for(let vi=0;vi<views.length;vi++){
   const v=views[vi],vx=v.x,vy=v.y,vw=v.width,vh=v.height;
   for(const kind of layers){
    const index=Object.keys(WEATHER_TYPES).indexOf(kind);
    if(['fog','clouds'].includes(kind)||kind in STORM_TYPES)continue;
-   const count=kind==='rain'?Math.round(density*1.5):kind==='wind'?Math.ceil(density/7):kind==='snow'?density:Math.ceil(density*.5);
-   for(let i=0;i<count;i++){
+   const {count,desired}=plan.get(vi+':'+kind);
+   for(let slot=0;slot<count;slot++){
+    const i=Math.floor(slot*desired/count);
     const seed=i*2.399+index*17+vi*31,speed=.65+(i%13)/15;
     const depth=.55+(i%3)*.3,gust=layers.has('wind')?Math.sin(t*.7+Math.floor(i/12)*.8):0;
     const rising=kind==='embers'||kind==='ash';

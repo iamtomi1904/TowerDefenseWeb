@@ -34,7 +34,7 @@ export function castHoly(r,p,s,ctx){p.castAnim=.55;p.castCount=(p.castCount||0)+
   }
   p.buffs=(p.buffs||[]).filter(b=>!b.holyQ);p.buffs.push({holyQ:true,time:C.q.duration,armor:C.q.armor});
  }
- if(s.kind==='holy-aura'){p.holyAuraTime=C.aura.duration+(s.rank-1);fx('aura',C.aura.radius);}
+ if(s.kind==='holy-aura'){p.holyAuraTime=C.aura.duration+(s.rank-1)*C.aura.durationStep;fx('aura',C.aura.radius);}
  if(s.kind==='holy-form'){const ratio=p.hp/ctx.stats(p).hp;p.holyMounted=true;p.holyFormCooldown=s.cooldown;p.cooldowns[s.id]=0;p.hp=ctx.stats(p).hp*ratio;fx('ascend',110);}
 }
 export function tickPaladins(r,dt,ctx,active=true){for(const u of [...r.players,...r.troops])u.holyAura=null;

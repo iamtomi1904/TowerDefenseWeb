@@ -6,6 +6,8 @@ export function effectAlpha(alpha,edgeDistance,matteFloor=16,gutter=5){
  return Math.round(255*body*edge*edge*(3-2*edge));
 }
 export function cleanEffectTexture(scene,key,{columns=6,rows=6,matteFloor=16,pixelMask=null,maxSize=Infinity}={}){
+ const prepared=scene.optimizedAssets?.[key];
+ if(prepared&&!pixelMask&&prepared.columns===columns&&prepared.rows===rows&&prepared.matteFloor===matteFloor&&prepared.maxSize===maxSize)return key;
  const clean=key+':clean-alpha-v1';
  if(scene.textures.exists(clean))return clean;
  if(typeof document==='undefined'||!scene.textures.addCanvas)return key;

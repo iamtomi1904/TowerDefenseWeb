@@ -1,3 +1,4 @@
+import {effectInView,setRenderDormant} from './render-budget.js';
 import {drawSignatureSlash} from './slash-art.js';
 import {ensureKnightQTexture} from './knight-q-art.js';
 import {PALADIN} from './paladin-config.js';
@@ -48,7 +49,7 @@ export function addHolyStrike(scene,e){scene.holyStrikes||=[];if(scene.holyStrik
   if(tex){v.image=scene.add.image(e.x,e.y-18,tex).setDepth(2703);}
  }
  scene.holyStrikes.push(v);}
-export function updateHolyStrikes(scene,dt){scene.holyStrikes=(scene.holyStrikes||[]).filter(v=>{v.age+=dt;const t=Math.min(1,v.age/v.duration),f=1-t,{e,g}=v,r=e.radius||(e.mounted?PALADIN.aura.mountedRadius:PALADIN.aura.radius)||70,a=e.angle||0,x=e.x,y=e.y-12;g.clear();if(v.isAura){drawHolyAuraBurst(g,e.x,e.y,r,t,!!e.mounted);}else if(e.action==='q3-charge'){
+export function updateHolyStrikes(scene,dt){scene.holyStrikes=(scene.holyStrikes||[]).filter(v=>{v.age+=dt;setRenderDormant(v,!effectInView(scene,v));if(v.renderDormant&&v.age<v.duration)return true;const t=Math.min(1,v.age/v.duration),f=1-t,{e,g}=v,r=e.radius||(e.mounted?PALADIN.aura.mountedRadius:PALADIN.aura.radius)||70,a=e.angle||0,x=e.x,y=e.y-12;g.clear();if(v.isAura){drawHolyAuraBurst(g,e.x,e.y,r,t,!!e.mounted);}else if(e.action==='q3-charge'){
  const owner=scene.actorObjects?.get(e.sourceId),cx=owner?.sprite?.active?owner.sprite.x:x,cy=owner?.sprite?.active?owner.groundY-16:y;
  g.lineStyle(4,0xffffff,.3+t*.6).strokeCircle(cx,cy,95*(1-t*.65));
  g.lineStyle(3,0xffe89e,.35+t*.65).strokeCircle(cx,cy,62*(1-t*.55));

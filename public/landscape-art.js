@@ -169,9 +169,9 @@ export function updateHydrologyFX(scene,time,views=getActiveViews(scene)){
   const dx=x-b.x,dy=y-b.y,ca=Math.cos(b.angle),sa=Math.sin(b.angle);
   return Math.abs(dx*ca+dy*sa)<Math.min(920,b.length)*.5&&Math.abs(-dx*sa+dy*ca)<b.width*.34;
  });
- const step=zoom<.45?2:1;
+ const step=zoom<.45||(scene.sceneryBudget?.quality??1)<1?2:1;
  for(const w of scene.hydrology||[]){
-  if(w.surface){updateRiverSurfaceFX(g,w,time,views,(x,y)=>inCourt(x,y)||onBridge(x,y));continue;}
+  if(w.surface){updateRiverSurfaceFX(g,w,time,views,(x,y)=>inCourt(x,y)||onBridge(x,y),scene.sceneryBudget?.quality??1);continue;}
   const abyss=w.type==='abyss',deep=w.type==='deep',rw=w.width||70,speed=abyss?1400:deep?3200:2000;
   for(let k=1;k<w.points.length;k++){
    const a=w.points[k-1],b=w.points[k];

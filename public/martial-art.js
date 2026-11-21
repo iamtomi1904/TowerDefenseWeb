@@ -1,3 +1,4 @@
+import {prewarmElementAnimations} from './element-animation.js';
 import {preloadWindupActors,playWindupActor} from './windup-actors.js';
 import {playGuardianAction} from './guardian-actions-art.js';
 import {preloadRitualCasting,playRitualCast} from './ritual-casting-art.js';
@@ -13,10 +14,12 @@ import {preloadSlashArt} from './slash-art.js';
 export function preloadMartialArt(s){preloadWindupActors(s);preloadRitualCasting(s);preloadPassiveActions(s);preloadTroopArt(s);preloadAscended(s);preloadClassProgression(s);preloadPaintedSkills(s);preloadKnightRefresh(s);s.load.image("elemental-refresh","/assets/combat/elemental-refresh.png");preloadHeroRefresh(s);preloadRavagerArt(s);preloadSlashArt(s);s.load.image('katana-forms','/assets/blademaster/katana-forms.png');}
 export function createMartialAnimations(s){
  if(s.martialArtReady)return;
+ prewarmElementAnimations(s);
  createTroopAnimations(s);
  createKnightRefresh(s);
  createHeroRefreshAnimations(s);
  createRavagerAnimations(s);
+ if(!s.textures.exists('katana-forms')){s.martialArtReady=true;return;}
  const texture=s.textures.get('katana-forms'),image=texture.getSourceImage(),w=image.width/6,h=image.height/6;
  for(let i=0;i<36;i++){const x=Math.round(i%6*w),y=Math.round(Math.floor(i/6)*h);texture.add(i,0,x,y,Math.round((i%6+1)*w)-x,Math.round((Math.floor(i/6)+1)*h)-y);}
  for(const [form,row]of [['single',0],['dual',3]])for(const [action,offset]of [['idle',0],['walk',1],['attack',2]])s.anims.create({key:'katana:'+form+':'+action,frames:Array.from({length:6},(_,i)=>({key:'katana-forms',frame:(row+offset)*6+i})),frameRate:action==='attack'?12:8,repeat:action==='attack'?0:-1});

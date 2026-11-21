@@ -1,11 +1,16 @@
+import {acquireSkillImage} from './skill-image-pool.js';
+import {SECONDARY_ROLES,secondaryVisible} from './render-budget.js';
 import {elementAnimationFrame,arcticAnimationFrame,arcticDimensions,preloadElementAnimations,arcticShardTexture,arcticGustTexture,arcticRoundFrame} from './element-animation.js';
 import {cleanEffectTexture} from './effect-alpha.js';
 import {ACTION_LAYOUT} from './action-fx-layout.js';
 export const ACTION_FX=['water-ring','water-foam','blizzard-sweep','snow-flake','lightning-bolt','fire-tuft','lava-pool','storm-ground','frost-ground','storm-wisp','spell-circle','ice-tornado','volley-arrow','volley-impact','poison-vapor','archer-q'];
 const TAU=Math.PI*2,fract=n=>n-Math.floor(n),clamp=n=>Math.max(0,Math.min(1,n));
 export const RAIN_ARROW_COUNT=1000;
+export function rainImpactPoolCount(e){return Math.min(RAIN_ARROW_COUNT,Math.max(96,Math.ceil(RAIN_ARROW_COUNT*.34/Math.max(.1,(e.fieldRemaining||5)-.17))+4));}
+export function rainImpactArrowIndex(e,age,slot){const step=Math.max(.1,(e.fieldRemaining||5)-.17)/(RAIN_ARROW_COUNT-1);return Math.max(0,Math.floor((age-.325)/step))+slot;}
 const key=id=>'action-fx:'+id;
-function texture(s,id){return cleanEffectTexture(s,key(id),{columns:1,rows:1,matteFloor:22,maxSize:512});}
+const textureCaches=new WeakMap();
+function texture(s,id){let cache=textureCaches.get(s);if(!cache){cache=new Map();textureCaches.set(s,cache);}if(!cache.has(id))cache.set(id,cleanEffectTexture(s,key(id),{columns:1,rows:1,matteFloor:22,maxSize:512}));return cache.get(id);}
 export function preloadActionSkills(s){preloadElementAnimations(s);for(const id of ACTION_FX)s.load.image(key(id),'/assets/combat/'+(id==='poison-vapor'?'gear-glows':'action-v1')+'/'+(id==='lightning-bolt'?'lightning-bolt-v2':id)+'.png');}
 export function createArcherQProjectile(s,e){
  if(e.skill!=='multishot'||!s.textures?.exists(key('archer-q')))return null;
@@ -17,7 +22,7 @@ export function actionKind(e){return e.type==='tide-wave'?'wave':e.type==='aoe'&
 export function createActionSkill(s,e){
  const kind=actionKind(e);if(!kind||!ACTION_FX.every(id=>s.textures?.exists(key(id))))return null;
  const nodes=[];
- function add(id,role,count,depth=2501){for(let i=0;i<count;i++)nodes.push({id,role,i,image:s.add.image(e.x,e.y,texture(s,id)).setDepth(depth)});}
+ function add(id,role,count,depth=2501){const layout=ACTION_LAYOUT[id],tx=texture(s,id);for(let i=0;i<count;i++){const image=acquireSkillImage(s,e.x,e.y,tx).setDepth(depth).setOrigin(layout.cx,layout.cy);if(e.poisonEnchanted&&role==='rain-arrow')image.setTint?.(0xb5ff7b);nodes.push({id,role,i,image,layout,wscale:1/layout.width,hscale:1/layout.height,spawn:role==='rain-arrow'?i/(RAIN_ARROW_COUNT-1)*Math.max(.1,(e.fieldRemaining||5)-.17)-.48:0});}}
  if(kind==='wave'){add('water-ring','crest',2);add('water-foam','foam',16);}
  if(kind==='snow'){add('spell-circle','ritual',1,24);add('ice-tornado','arctic-canopy',1);add('ice-tornado','ice-tornado',5);add('snow-flake','ice-fragment',28);add('frost-ground','frost-zone',1,23);add('blizzard-sweep','gust',8);add('snow-flake','snow',144);add('snow-flake','streak',72);add('snow-flake','frost',4,24);}
  if(kind==='storm'){add('spell-circle','ritual',1,24);add('storm-ground','storm-zone',1,23);add('storm-wisp','storm-cloud',3,2498);add('storm-wisp','storm-wind',3,2499);}
@@ -26,8 +31,8 @@ export function createActionSkill(s,e){
  if(kind==='q-release')add('archer-q','q-release',3);
  if(kind==='q-hit'){add('volley-impact','q-hit',1);if(e.poisonEnchanted)add('poison-vapor','q-poison',2);}
  if(kind==='fire'){add('lava-pool','lava',1,23);add('fire-tuft','flame',6,25);add('fire-tuft','ember',8);}
- if(kind==='rain'){add('volley-arrow','rain-arrow',RAIN_ARROW_COUNT);add('volley-impact','rain-impact',RAIN_ARROW_COUNT,25);if(e.poisonEnchanted)add('poison-vapor','rain-poison',24,26);}
- return {isolatedKind:kind,nodes,image:nodes[0].image,parts:nodes.slice(1).map(n=>n.image)};
+ if(kind==='rain'){add('volley-arrow','rain-arrow',RAIN_ARROW_COUNT);add('volley-impact','rain-impact',rainImpactPoolCount(e),25);if(e.poisonEnchanted)add('poison-vapor','rain-poison',24,26);}
+ return {isolatedKind:kind,nodes,secondaryCount:nodes.filter(n=>SECONDARY_ROLES.has(n.role)).length,image:nodes[0].image,parts:nodes.slice(1).map(n=>n.image)};
 }
 export function stormBoundPoint(e,x,y,extent=0){const limit=Math.max(0,(e.radius||205)-extent-4),dx=x-e.x,dy=y-e.y,d=Math.hypot(dx,dy),scale=d>limit?limit/d:1;return {x:e.x+dx*scale,y:e.y+dy*scale};}
 export function snowMotion(e,age,i){
@@ -43,8 +48,15 @@ export function arrowRainMotion(e,age,i){
 export function updateActionSkill(s,v,t){
  const p=v.painted;if(!p?.isolatedKind)return false;
  const e=v.e,r=e.radius||v.radius||150,age=v.age,fade=clamp((1-t)*7),birth=clamp(age*7);
+ let secondaryIndex=0;
  for(const n of p.nodes){
-  const {image,role,i}=n,layout=ACTION_LAYOUT[n.id],wscale=1/layout.width,hscale=1/layout.height;image.setOrigin(layout.cx,layout.cy);
+  const {image,role,i,layout,wscale,hscale}=n;
+  if(SECONDARY_ROLES.has(role)){
+   const hidden=!secondaryVisible(secondaryIndex++,s.secondaryFXRatio??1);
+   if(hidden!==!!n.budgetHidden){image.setVisible?.(!hidden);n.budgetHidden=hidden;}
+   if(hidden)continue;
+  }
+  if(role==='rain-arrow'){if(age<n.spawn){if(!n.hidden){image.setAlpha(0);n.hidden=true;}continue;}if(n.planted){if(n.lastFade!==fade){image.setAlpha(fade*.72*.94);n.lastFade=fade;}continue;}}
   if(role==='q-release'){
    const a=(e.angle||0)+(i-1)*.15,d=14+clamp(age/.22)*20;
    image.setPosition(e.x+Math.cos(a)*d,e.y+Math.sin(a)*d).setDisplaySize(40*wscale,11*hscale).setRotation(a).setAlpha(clamp(1-age/.28)*.58);image.setTint?.(e.poisonEnchanted?0xb8ff83:0xffefd0);
@@ -58,12 +70,11 @@ export function updateActionSkill(s,v,t){
    image.setTint?.(flash?0xdaf1ff:0x8293bd);image.setBlendMode?.(flash?'ADD':'NORMAL');
   }else if(role==='rain-arrow'){
    const pos=arrowRainMotion(e,age,i),land=pos.landed,opacity=pos.local<0?0:land?.72:clamp(pos.local*18);
-   if(pos.local<0){image.setAlpha(0);continue;}
    image.setOrigin(layout.cx,layout.foot).setPosition(pos.drawX,pos.drawY).setDisplaySize((land?2.5:4)/layout.width,(land?11:26+i%3*2.5)/layout.height).setRotation(land?-.12+Math.sin(i)*.12:pos.angle).setAlpha(fade*opacity*.94).setDepth(land?27:2501+pos.y*.001);
-   if(e.poisonEnchanted)image.setTint?.(0xb5ff7b);else image.clearTint?.();
+   if(land){n.planted=true;n.lastFade=fade;}
   }else if(role==='rain-impact'){
-   const pos=arrowRainMotion(e,age,i),impact=pos.impact,size=8+impact*14;
-   if(impact<=0||impact>=1){image.setAlpha(0);continue;}
+   const arrow=rainImpactArrowIndex(e,age,i),pos=arrow<RAIN_ARROW_COUNT?arrowRainMotion(e,age,arrow):null,impact=pos?.impact||0,size=8+impact*14;
+   if(impact<=0||impact>=1){if(!n.hidden){image.setAlpha(0);n.hidden=true;}continue;}n.hidden=false;
    image.setOrigin(layout.cx,layout.foot).setPosition(pos.x,pos.y).setDisplaySize(size*wscale,size*.46*hscale).setRotation(0).setAlpha(birth*fade*Math.sin(impact*Math.PI)*.86);
    image.setTint?.(e.poisonEnchanted?0xb4ff77:0xffe9b4);
   }else if(role==='rain-poison'){

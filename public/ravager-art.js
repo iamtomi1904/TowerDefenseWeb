@@ -63,6 +63,7 @@ export function updateRavagerBladeGlow(scene,u,obj){
 }
 export function preloadRavagerArt(scene){scene.load.image('ravager-redesign','/assets/ravager/hero-v2.png');}
 export function createRavagerAnimations(scene){
+ if(!scene.textures.exists('ravager-redesign'))return;
  const texture=scene.textures.get('ravager-redesign'),source=texture.getSourceImage(),w=source.width/6,h=source.height/6;
  for(let n=0;n<36;n++){
   const x=Math.round(n%6*w),y=Math.round(Math.floor(n/6)*h);

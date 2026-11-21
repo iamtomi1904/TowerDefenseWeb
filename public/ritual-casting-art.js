@@ -1,3 +1,4 @@
+import {effectInView,setRenderDormant} from './render-budget.js';
 import {RITUAL_ACTOR_ROWS,KATANA_SUMMON_LAYOUT} from './ritual-casting-layout.js';
 import {prepareMoonfallArt} from './moonfall-art.js';
 export function preloadRitualCasting(scene){scene.load.image('ritual-actors-raw','/assets/casting/ritual-actors-v1.png');scene.load.image('katana-summon-raw','/assets/casting/katana-summon-v1.png');}
@@ -46,7 +47,7 @@ export function handleRitualEvent(scene,e){
  const images=e.action==='sword-descend'?[scene.add.image(e.x,e.y,'katana-summon:blade').setOrigin(.5,1).setDepth(2708),scene.add.image(e.x,e.y,'katana-summon:circle').setDepth(4)]:[scene.add.image(e.x,e.y,'katana-summon:impact').setOrigin(.5,.76).setDepth(2709)];
  scene.ritualFX.push({e,images,age:0,duration:e.duration||(e.action==='sword-descend'?.45:.75)});return true;
 }
-export function updateRitualFX(scene,dt){scene.ritualFX=(scene.ritualFX||[]).filter(v=>{v.age+=dt;const t=Math.min(1,v.age/v.duration),r=v.e.radius||195;
+export function updateRitualFX(scene,dt){scene.ritualFX=(scene.ritualFX||[]).filter(v=>{v.age+=dt;setRenderDormant(v,!effectInView(scene,v));if(v.renderDormant&&v.age<v.duration)return true;const t=Math.min(1,v.age/v.duration),r=v.e.radius||195;
  if(v.e.action==='sword-descend'){v.images[0].setPosition(v.e.x,v.e.y-260*(1-t*t)).setDisplaySize(98,260).setAlpha(.65+Math.min(1,t*5)*.35);v.images[1].setDisplaySize(r*2.05,r*1.1).setAlpha(.6);}
  else v.images[0].setDisplaySize(r*(2.15+Math.min(1,t*5)*.3),r*(1.55+Math.min(1,t*5)*.2)).setAlpha(1-t*t);
  if(t>=1){v.images.forEach(i=>i.destroy());return false;}return true;});}

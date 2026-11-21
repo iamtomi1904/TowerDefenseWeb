@@ -414,7 +414,7 @@ export function updateEnvironmentFX(scene,time,views=getActiveViews(scene)){
  if(!g||!views.length)return;
  const cam=scene.cameras?.main,zoom=Math.min(cam?.zoomX??cam?.zoom??1,cam?.zoomY??cam?.zoom??1);
  if(zoom<.38)return;
- const step=zoom<.62?2:1;
+ const step=zoom<.62||(scene.sceneryBudget?.quality??1)<1?2:1;
  for(const z of scene.environment||[]){
   if(!boxInAnyView(views,z.x-(z.rx||180),z.y-(z.ry||120),z.x+(z.rx||180),z.y+(z.ry||120),80))continue;
   if(z.type==='ice'){

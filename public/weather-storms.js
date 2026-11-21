@@ -99,7 +99,7 @@ export function drawStorms(scene,time,layers,views=getActiveViews(scene)){
  const canBake=!!(scene.textures?.createCanvas&&scene.add?.sprite);
  let used=0;
  for(const [n,kind] of kinds.entries()){
-  let visible=0;const limit=kinds.length>1?1:2;
+  let visible=0;const limit=kinds.length>1||(scene.sceneryBudget?.quality??1)<1?1:2;
   const sheetKey=canBake?ensureStormSheet(scene,kind):null;
   const isSquall=kind==='blizzard'||kind==='sandstorm';
   for(let row=0;row<rows&&visible<limit;row++)for(let col=0;col<columns&&visible<limit;col++){

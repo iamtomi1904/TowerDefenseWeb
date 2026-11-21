@@ -1,3 +1,4 @@
+import {effectInView,setRenderDormant} from './render-budget.js';
 import {drawEnemySpell,drawSummonPortal} from './enemy-spell-art.js';
 import {bossImpactAccent} from './boss-impact-art.js';
 function polygon(g,points,color,alpha){g.fillStyle(color,alpha);g.beginPath();points.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath();g.fillPath();g.lineStyle(2,color,Math.min(1,alpha*4));g.strokePath();}
@@ -15,7 +16,7 @@ export function addBossVFX(s,e){
  s.bossVFX.push({e,g,label,age:0,duration:warning?e.duration||1.2:e.type==='enemy-summon'?1.6:1.15,warning});
 }
 export function updateBossVFX(s,dt){
- const alive=[];for(const v of s.bossVFX||[]){v.age+=dt;const t=Math.min(1,v.age/v.duration),e=v.e,g=v.g;g.clear();
+ const alive=[];for(const v of s.bossVFX||[]){v.age+=dt;setRenderDormant(v,!effectInView(s,v));if(v.renderDormant&&v.age<v.duration){alive.push(v);continue;}const t=Math.min(1,v.age/v.duration),e=v.e,g=v.g;g.clear();
   if(e.type==='enemy-summon')drawSummonPortal(g,e,t);
   else if(v.warning){bossShape(g,e,.06+t*.12);if(e.shape==='circle'||e.shape==='multi')for(const p of e.points||[e])g.lineStyle(1,0xffedb9,.5).strokeCircle(p.x,p.y,e.radius*(1-t));drawEnemySpell(g,e,t,true);}
   else {bossImpactAccent(g,e,t);drawEnemySpell(g,e,t);}
