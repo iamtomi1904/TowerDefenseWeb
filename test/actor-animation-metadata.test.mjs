@@ -6,3 +6,9 @@ test('all catalog actors resolve leap, cast and hurt even when base atlas lacks 
 test('missing cast uses idle metadata; existing directional actions retain row and geometry',()=>{
  const idle={rows:1,frames:6},hurt={rows:4,frames:4};const info={actions:{idle,hurt}};assert.deepEqual(resolveActorAnimation(info,'cast',3),{name:'idle',metadata:idle,row:0});assert.equal(resolveActorAnimation(info,'hurt',3).row,3);assert.equal(resolveActorAnimation({},'jump'),null);
 });
+
+test('null or missing action metadata cannot crash row resolution',()=>{
+ assert.equal(resolveActorAnimation({actions:{jump:undefined,idle:null}},'jump'),null);
+ const result=resolveActorAnimation({actions:{jump:null,attack:{frames:6}}},'jump',2);assert.equal(result.name,'attack');assert.equal(result.row,0);
+ assert.equal(resolveActorAnimation(undefined,'jump'),null);
+});
