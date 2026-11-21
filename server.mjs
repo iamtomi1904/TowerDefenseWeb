@@ -1,3 +1,4 @@
+import {collectSnapshotEvents,shouldSendSnapshot,flushSnapshotEvents} from './public/snapshot-wire.js';
 import {disconnectPlayer,resumePlayer,expireDisconnected} from './reconnect-state.mjs';
 import {createFixedStepper,advanceRooms} from './fixed-step-loop.mjs';
 import {sendSnapshot} from './snapshot-transport.mjs';
@@ -189,7 +190,7 @@ const wss=new WebSocketServer({noServer:true,maxPayload:2048,perMessageDeflate:{
 function sendRaw(ws,raw){if(ws.readyState===WebSocket.OPEN&&ws.bufferedAmount<1_000_000)ws.send(raw);}
 function send(ws,m){if(ws.readyState===WebSocket.OPEN&&ws.bufferedAmount<1_000_000)ws.send(JSON.stringify(m));}
 function broadcastRoom(r){
- const state=snapshot(r),raw=JSON.stringify(state);
+ const state=snapshot(r);state.events=flushSnapshotEvents(r);state.snapshotHz=10;const raw=JSON.stringify(state);
  for(const ws of wss.clients)if(ws.room===r)sendSnapshot(ws,state,raw);
 }
 function pushRoomChat(r,text,sender='',color='',sys=true){
@@ -366,8 +367,8 @@ setInterval(()=>{
 const fixedStepper=createFixedStepper({now:performance.now()});
 function gameLoop(){
  const started=performance.now();
- const steps=fixedStepper.advance(started,(dt,index)=>advanceRooms(rooms,dt,index,{tick,record}));
- if(steps)for(const r of rooms.values())if(r.phase!=='lobby')broadcastRoom(r);
+ const steps=fixedStepper.advance(started,(dt,index)=>advanceRooms(rooms,dt,index,{tick:(room,delta)=>{tick(room,delta);collectSnapshotEvents(room);},record}));
+ if(steps)for(const r of rooms.values())if(r.phase!=='lobby'&&shouldSendSnapshot(r))broadcastRoom(r);
  serverTickMs=performance.now()-started;
  setTimeout(gameLoop,fixedStepper.delay(performance.now()));
 }

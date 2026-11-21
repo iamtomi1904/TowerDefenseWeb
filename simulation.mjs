@@ -1,3 +1,4 @@
+import {compactUnit,compactNumbers} from './public/snapshot-wire.js';
 import {canStand,move} from './public/shared-movement.js';
 export {canStand} from './public/shared-movement.js';
 import {propBlocks} from './public/prop-footprints.js';
@@ -259,7 +260,7 @@ export function tick(r,dt=.05,random=Math.random){
  }
  if(!combatActive){r.pendingMelee=[];r.combatActions=[];r.shadowDashes=[];for(const p of r.players)p.dashing=false;}if(['defeat','victory'].includes(r.phase)){r.poisonPools=[];r.fireCarpets=[];r.projectiles=[];for(const e of r.enemies)e.gemEffects={};}
 }
-export function snapshot(r){const roundPos=u=>({...u,x:Math.round(u.x*10)/10,y:Math.round(u.y*10)/10,hp:Math.round(u.hp)});return {type:'state',seq:r.tickId||0,tickMs:50,tick:r.tickId||0,serverTime:(r.elapsed||0)*1000,code:r.code,difficulty:r.difficulty||'easy',phase:r.phase,stage:r.stage,wave:r.wave,gate:Math.round(r.gate),maxGate:r.maxGate,kills:r.kills,timer:Math.max(0,Math.ceil(r.timer)),remaining:r.spawn+r.enemies.filter(e=>!e.neutral).length,host:r.players[0]?.id,hostId:r.players[0]?.id,chat:(r.chat||[]).slice(-35),lockedSlots:r.lockedSlots||{},launching:!!r.launching,troops:r.troops.map(roundPos),loot:r.loot,shadowZones:r.shadowZones||[],poisonPools:(r.poisonPools||[]).map(({touched,...pool})=>pool),fireCarpets:r.fireCarpets||[],hostileZones:r.hostileZones,zones:r.zones,windFields:r.windFields||[],events:r.events,enemies:r.enemies.map(roundPos),players:r.players.map(({token,input,...p})=>({...roundPos(p),heroLocked:!!p.locked,stats:stats(p)}))};}
+export function snapshot(r){const roundPos=u=>({...u,x:Math.round(u.x*10)/10,y:Math.round(u.y*10)/10,hp:Math.round(u.hp)});return compactNumbers({type:'state',seq:r.tickId||0,tickMs:50,tick:r.tickId||0,serverTime:(r.elapsed||0)*1000,code:r.code,difficulty:r.difficulty||'easy',phase:r.phase,stage:r.stage,wave:r.wave,gate:Math.round(r.gate),maxGate:r.maxGate,kills:r.kills,timer:Math.max(0,Math.ceil(r.timer)),remaining:r.spawn+r.enemies.filter(e=>!e.neutral).length,host:r.players[0]?.id,hostId:r.players[0]?.id,chat:(r.chat||[]).slice(-35),lockedSlots:r.lockedSlots||{},launching:!!r.launching,troops:r.troops.map(compactUnit),loot:r.loot,shadowZones:r.shadowZones||[],poisonPools:(r.poisonPools||[]).map(({touched,...pool})=>pool),fireCarpets:r.fireCarpets||[],hostileZones:r.hostileZones,zones:r.zones,windFields:r.windFields||[],events:r.events,enemies:r.enemies.map(compactUnit),players:r.players.map(({token,input,...p})=>({...roundPos(p),heroLocked:!!p.locked,stats:stats(p)}))});}
 
 
 

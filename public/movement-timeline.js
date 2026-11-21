@@ -1,15 +1,16 @@
 import {move} from './shared-movement.js';
 export class MovementTimeline{
  constructor(){this.reset();}
- reset(){this.samples=new Map();this.latest=0;this.received=0;this.stage=null;this.offset=Infinity;this.cursor=-Infinity;}
+ reset(){this.samples=new Map();this.latest=0;this.received=0;this.stage=null;this.offset=Infinity;this.cursor=-Infinity;this.delay=100;}
  push(state,now){
   if(this.stage!==state.stage){this.reset();this.stage=state.stage;}
+  this.delay=state.snapshotHz?Math.max(100,1500/state.snapshotHz):100;
   const at=state.serverTime??(state.tick||0)*50;if(at<this.latest)return;
   this.latest=at;this.received=now;const offset=now-at;if(!Number.isFinite(this.offset)||offset<this.offset||offset-this.offset>1000)this.offset=offset;else this.offset+=(offset-this.offset)*.01;const live=new Set();
   for(const u of [...state.players,...state.enemies,...state.troops]){live.add(u.id);let list=this.samples.get(u.id)||[];if(list.length&&Math.hypot(u.x-list.at(-1).x,u.y-list.at(-1).y)>150)list=[];if(list.at(-1)?.at===at)list.pop();list.push({at,x:u.x,y:u.y});if(list.length>8)list.shift();this.samples.set(u.id,list);}
   for(const id of this.samples.keys())if(!live.has(id))this.samples.delete(id);
  }
- target(u,now){if(u.dashing||u.guardianR||u.martialLeap||u.holyLeapTime>0||u.hp<=0){this.samples.set(u.id,[{at:this.latest,x:u.x,y:u.y}]);return u;}const list=this.samples.get(u.id);if(!list?.length)return u;const time=Math.min(this.latest,Math.max(this.cursor,now-this.offset-100));this.cursor=time;let a=list[0];for(const b of list){if(b.at>=time){const t=Math.max(0,Math.min(1,(time-a.at)/(b.at-a.at||1)));return {x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t};}a=b;}return a;}
+ target(u,now){if(u.dashing||u.guardianR||u.martialLeap||u.holyLeapTime>0||u.hp<=0){this.samples.set(u.id,[{at:this.latest,x:u.x,y:u.y}]);return u;}const list=this.samples.get(u.id);if(!list?.length)return u;const time=Math.min(this.latest,Math.max(this.cursor,now-this.offset-this.delay));this.cursor=time;let a=list[0];for(const b of list){if(b.at>=time){const t=Math.max(0,Math.min(1,(time-a.at)/(b.at-a.at||1)));return {x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t};}a=b;}return a;}
 }
 export function predictLocal(obj,u,input,dt,map,now,received,serverTime=0){
  const special=u.hp<=0||u.stun>0||u.gemStun>0||u.windAirTime>0||u.dashing||u.guardianR||u.martialLeap||u.holyLeapTime>0||u.vanguardPose==='flurry'||u.martialLock>0&&!['dual-storm','bloodstorm'].includes(u.martialPose);
