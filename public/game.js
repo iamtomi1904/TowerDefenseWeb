@@ -81,7 +81,7 @@ socket.onopen=()=>{
   join(code?{code,stage,replaceSession:true}:mode==='coop'?{stage,replaceSession:true}:{solo:true,stage,replaceSession:true});
  }
 };
-socket.onclose=event=>{if(event.code===4001){location.replace('/login.html?next=/defense.html');return;}for(const k in held)held[k]=false;$('connection').textContent='● MẤT KẾT NỐI';for(const id of ['solo','create','join','start','next'])if($(id))$(id).disabled=true;notify('Mất kết nối. Đang tự kết nối lại, giữ trận tối đa 60 giây.');if(state)$('status').textContent='Đang kết nối lại…';};
+socket.onclose=event=>{if(event.code===4002){$('status').textContent='Không thể vào lại phòng: '+event.reason;notify('Phòng đã hết thời gian giữ chỗ. Hãy về sảnh tạo phòng mới.');$('again').hidden=false;return;}if(event.code===4001){location.replace('/login.html?next=/defense.html');return;}for(const k in held)held[k]=false;$('connection').textContent='● MẤT KẾT NỐI';for(const id of ['solo','create','join','start','next'])if($(id))$(id).disabled=true;notify('Mất kết nối. Đang tự kết nối lại, giữ trận tối đa 60 giây.');if(state)$('status').textContent='Đang kết nối lại…';};
 socket.onerror=()=>notify('Không kết nối được server.');
 function join(extra){$('error').textContent='';writeLocal('gct-name',$('name').value);send({type:'join',waitForAssets:true,name:$('name').value,hero,difficulty:$('difficulty').value,...extra});}
 function openLobbyRoom(mode,code=''){
@@ -150,7 +150,7 @@ function updateUI(m,p){
 }
 socket.onmessage=async({data})=>{
  const m=JSON.parse(data);if(m.type==='pong'){scene?.fpsHUD?.receive(m,performance.now());return;}if(m.error){notify(m.error);return;}
- if(m.type==='joined'&&m.resumed){myId=m.id;movementTimeline.reset();$('connection').textContent='● ĐÃ KHÔI PHỤC KẾT NỐI';notify('Đã kết nối lại trận.');return;}
+ if(m.type==='joined'&&m.resumed){myId=m.id;lastUIUpdate=-Infinity;movementTimeline.reset();for(const id of ['solo','create','join','start','next'])if($(id))$(id).disabled=false;$('connection').textContent='● ĐÃ KHÔI PHỤC KẾT NỐI';notify('Đã kết nối lại trận.');return;}
  if(m.type==='joined'){beginBattleLoading();document.body.classList.add('in-battle');myId=m.id;$('lobby').hidden=true;if($('selection'))$('selection').hidden=true;$('arena').hidden=false;$('room').textContent=m.code;$('arena').scrollIntoView({block:'start'});try{await catalogReady;await bakedPropsReady;optimizedAssets=await optimizedReady;assetHeroes=m.assetHeroes||null;initialMapStage=m.stage||state?.stage||1;if(!game)boot();}catch(e){notify('Không khởi tạo được hình ảnh: '+e.message);failBattleLoading('Không khởi tạo được hình ảnh. Hãy tải lại để thử lại.');}return;}
  if(m.type!=='state')return;battleDiagnostics.state(m);const old=state;state=m;const p=m.players.find(p=>p.id===myId);if(!p)return;const receivedAt=performance.now();stateReceivedAt=receivedAt;movementTimeline.push(m,receivedAt);if(receivedAt-lastUIUpdate>=200||old?.phase!==m.phase||old?.stage!==m.stage){lastUIUpdate=receivedAt;updateUI(m,p);}
  if(scene){if(currentMap!==m.stage)switchMap(scene,m.stage);for(const event of m.events)renderEvent(scene,event,seenEvents);}

@@ -342,7 +342,7 @@ wss.on('connection',(ws,req,session)=>{
   const r=ws.room;if(!r)return;
   const p=r.players.find(p=>p.id===ws.id);
   console.info('battle-disconnected',{code:r.code,id:ws.id,closeCode:code,buffered:ws.bufferedAmount,tickMs:serverTickMs,loopMs:serverLoopMs});
-  if(p&&r.phase!=='lobby'){disconnectPlayer(r,ws.id);saveProgress(p);return;}
+  if(p&&(r.phase!=='lobby'||!r.launching&&code!==1000)){disconnectPlayer(r,ws.id);saveProgress(p);return;}
   if(p){
    saveProgress(p);
    if(r.phase==='lobby'&&!r.launching)pushRoomChat(r,`${p.name} đã rời phòng chờ.`);
