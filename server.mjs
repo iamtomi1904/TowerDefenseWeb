@@ -1,3 +1,4 @@
+import {disconnectPlayer,resumePlayer,expireDisconnected} from './reconnect-state.mjs';
 import {createFixedStepper,advanceRooms} from './fixed-step-loop.mjs';
 import {sendSnapshot} from './snapshot-transport.mjs';
 import {performance,monitorEventLoopDelay} from 'node:perf_hooks';
@@ -205,14 +206,24 @@ function pushRoomChat(r,text,sender='',color='',sys=true){
 function syncRoomDb(r){store.saveRoom(r).catch(()=>{});}
 server.on('upgrade',(req,socket,head)=>{(async()=>{if(!sameOrigin(req)){socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n');return;}const session=await auth.findSession(req);if(!session){socket.end('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n');return;}wss.handleUpgrade(req,socket,head,ws=>wss.emit('connection',ws,req,session));})().catch(()=>socket.destroy());});
 wss.on('connection',(ws,req,session)=>{
+ ws.lastTransportPong=Date.now();ws.on('pong',()=>ws.lastTransportPong=Date.now());
  ws.session=session;
  ws.id=randomUUID();ws.count=0;ws.buyAt=0;ws.purchases=new Set();
  ws.on('message',async raw=>{try{
   if(Date.now()>=ws.session.expiresAt){ws.close(4001,'Phiên đăng nhập đã hết hạn');return;}
   if(++ws.count>80)return;
   const m=JSON.parse(raw);if(!m||typeof m!=='object')return;
+  if(m.type==='client-diagnostic'){
+   if(Date.now()-(ws.diagnosticAt||0)<5000)return;ws.diagnosticAt=Date.now();
+   console.warn('battle-client-diagnostic',{room:ws.room?.code,id:ws.id,kind:String(m.kind||'').slice(0,40),message:String(m.message||'').slice(0,300),stack:String(m.stack||'').slice(0,1800),frameAge:m.frameAge,stateAge:m.stateAge,serverTickMs,serverLoopMs});return;
+  }
   if(m.type==='ping'){
    const now=Date.now();if(Number.isSafeInteger(m.id)&&m.id>0&&now-(ws.pingAt??0)>=1500){ws.pingAt=now;send(ws,{type:'pong',id:m.id,serverTickMs:Math.round(serverTickMs*10)/10,serverLoopMs:Math.round(serverLoopMs)});}return;
+  }
+  if(m.type==='resume'&&!ws.room){
+   const room=rooms.get(String(m.code||'').toUpperCase()),player=resumePlayer(room,m.id,ws.session.user.id);
+   if(!player){send(ws,{type:'resume-failed',error:'Slot đã hết hạn hoặc không thuộc tài khoản này.'});return;}
+   ws.id=player.id;ws.room=room;console.info('battle-resumed',{code:room.code,id:player.id});send(ws,{type:'joined',resumed:true,id:player.id,code:room.code,stage:room.stage});broadcastRoom(room);return;
   }
   if(m.type==='join'&&!ws.room){
    if(ws.joining)return;ws.joining=true;let fullProfile;try{fullProfile=await store.getFullProfile(ws.session.user.id);}finally{ws.joining=false;}
@@ -332,9 +343,11 @@ wss.on('connection',(ws,req,session)=>{
   if(m.type==='use-item'){const error=useConsumable(r,p,m.item,stats);if(error)send(ws,{error});}
   if(m.type==='buy'&&Date.now()-ws.buyAt>200){if(m.requestId&&ws.purchases.has(m.requestId))return;if(m.requestId){ws.purchases.add(m.requestId);if(ws.purchases.size>256)ws.purchases.delete(ws.purchases.values().next().value);}ws.buyAt=Date.now();const error=buy(r,p,m.choice);if(error)send(ws,{error});}
  }catch{send(ws,{error:'Yêu cầu không hợp lệ.'});}});
- ws.on('close',()=>{
+ ws.on('close',(code)=>{
   const r=ws.room;if(!r)return;
   const p=r.players.find(p=>p.id===ws.id);
+  console.info('battle-disconnected',{code:r.code,id:ws.id,closeCode:code,buffered:ws.bufferedAmount,tickMs:serverTickMs,loopMs:serverLoopMs});
+  if(p&&r.phase!=='lobby'){disconnectPlayer(r,ws.id);saveProgress(p);return;}
   if(p){
    saveProgress(p);
    if(r.phase==='lobby'&&!r.launching)pushRoomChat(r,`${p.name} đã rời phòng chờ.`);
@@ -352,7 +365,8 @@ wss.on('connection',(ws,req,session)=>{
 });
 setInterval(()=>{
  const now=Date.now();
- for(const ws of wss.clients){ws.count=0;if(now>=ws.session.expiresAt)ws.close(4001,'Phiên đăng nhập đã hết hạn');}
+ for(const ws of wss.clients){ws.count=0;if(now-(ws.lastTransportPong||now)>30000){ws.terminate();continue;}if(now-(ws.lastTransportPing||0)>10000&&ws.readyState===WebSocket.OPEN){ws.lastTransportPing=now;ws.ping();}if(now>=ws.session.expiresAt)ws.close(4001,'Phiên đăng nhập đã hết hạn');}
+ for(const r of rooms.values())for(const p of expireDisconnected(r))saveProgress(p);
  for(const [code,r]of rooms)if(!r.players.length&&now>=(r.keepUntil||0)){rooms.delete(code);store.deleteRoom(code).catch(()=>{});}
 },1000).unref();
 const fixedStepper=createFixedStepper({now:performance.now()});

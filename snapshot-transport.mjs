@@ -8,7 +8,8 @@ export function sendSnapshot(ws,state,encoded=JSON.stringify(state)){
   if(events.size>2048){ws.close(1013,'Client is too slow');return;}
   state={...state,events:[...events.values()]};encoded=JSON.stringify(state);ws.pendingSnapshot=null;
  }
- if(ws.snapshotSending||ws.bufferedAmount>32768){ws.pendingSnapshot=state;return;}
+ if(ws.snapshotSending||ws.bufferedAmount>32768){ws.snapshotBlockedAt??=Date.now();if(Date.now()-ws.snapshotBlockedAt>10000){console.warn('battle-snapshot-backpressure',{id:ws.id,buffered:ws.bufferedAmount});ws.close(1013,'Snapshot delivery stalled');return;}ws.pendingSnapshot=state;return;}
+ ws.snapshotBlockedAt=null;
  ws.snapshotSending=true;
  const local=['127.0.0.1','::1','::ffff:127.0.0.1'].includes(ws._socket?.remoteAddress);
  ws.send(encoded,{compress:!local},error=>{

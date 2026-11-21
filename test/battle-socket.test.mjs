@@ -1,0 +1,7 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createBattleSocket} from '../public/battle-socket.js';
+test('client reconnects with same identity and forwards state through stable facade',()=>{
+ const old={WebSocket:globalThis.WebSocket,window:globalThis.window,setTimeout:globalThis.setTimeout,clearTimeout:globalThis.clearTimeout,setInterval:globalThis.setInterval,clearInterval:globalThis.clearInterval};const sockets=[],timers=[];
+ try{globalThis.WebSocket=class {constructor(){this.readyState=1;this.sent=[];sockets.push(this);}send(v){this.sent.push(JSON.parse(v));}close(){this.readyState=3;}};globalThis.window={addEventListener(){}};globalThis.setTimeout=fn=>{timers.push(fn);return timers.length;};globalThis.clearTimeout=()=>{};globalThis.setInterval=()=>1;globalThis.clearInterval=()=>{};
+ const api=createBattleSocket('ws://test');let opens=0,received=0;api.onopen=()=>opens++;api.onmessage=()=>received++;sockets[0].onopen({});sockets[0].onmessage({data:JSON.stringify({type:'joined',id:'p',code:'ABC123'})});sockets[0].onclose({code:1006});timers.shift()();sockets[1].onopen({});assert.equal(opens,1);assert.deepEqual(sockets[1].sent[0],{type:'resume',id:'p',code:'ABC123'});sockets[1].onmessage({data:JSON.stringify({type:'state'})});assert.equal(received,2);api.send(JSON.stringify({type:'input'}));assert.equal(sockets[1].sent[1].type,'input');
+ }finally{Object.assign(globalThis,old);}
+});
