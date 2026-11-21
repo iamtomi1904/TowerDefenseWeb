@@ -8,7 +8,7 @@ setInterval(()=>{serverLoopMs=Number.isFinite(loopDelay.max)?Math.max(0,loopDela
 import http from 'node:http';
 import {readFileSync,existsSync,readdirSync,createReadStream,statSync} from 'node:fs';
 import {resolve,extname,sep} from 'node:path';
-import {gzipSync,brotliCompressSync} from 'node:zlib';
+import {createStaticAssetCache} from './static-assets.mjs';
 import {createStorage} from './storage.mjs';
 import {createAuth,sameOrigin,json} from './auth.mjs';
 import {WebSocketServer,WebSocket} from 'ws';
@@ -23,7 +23,7 @@ const store=await createStorage(root);
 const rooms=new Map();
 const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.json':'application/json; charset=utf-8'};
 const COMPRESSIBLE_EXTS=new Set(['.html','.js','.css','.json','.svg']);
-const staticCache=new Map();
+const staticCache=createStaticAssetCache();
 function saveProgress(p){store.saveProfile({...p}).catch(e=>console.error('Không lưu được hồ sơ:',e.code||e.name));}
 function record(r){const stage=r.stage,phase=r.phase;r.recorded=true;const copy={...r,players:r.players.map(p=>({...p}))};store.record(copy).catch(e=>{console.error('Không lưu được trận:',e.code||e.name);if(r.stage===stage&&r.phase===phase)r.recorded=false;});}
 async function readJsonBody(req){
@@ -173,17 +173,11 @@ const server=http.createServer(async(req,res)=>{
    res.setHeader('ETag',etag);
    if(req.headers['if-none-match']===etag){res.writeHead(304).end();return;}
   }
-  let entry=staticCache.get(file);
-  if(!entry||entry.mtimeMs!==st.mtimeMs){
-   const raw=readFileSync(file);
-   entry={mtimeMs:st.mtimeMs,raw,gz:null,br:null};
-   if(COMPRESSIBLE_EXTS.has(ext)&&raw.length>=1024){
-    entry.gz=gzipSync(raw,{level:6});
-    entry.br=brotliCompressSync(raw);
-   }
-   if(staticCache.size>400)staticCache.delete(staticCache.keys().next().value);
-   staticCache.set(file,entry);
+  if(!COMPRESSIBLE_EXTS.has(ext)){
+   res.setHeader('Content-Type',mime[ext]||'application/octet-stream');res.setHeader('Content-Length',st.size);
+   const stream=createReadStream(file);stream.on('error',()=>res.destroy());res.on('close',()=>stream.destroy());stream.pipe(res);return;
   }
+  const entry=await staticCache.get(file,st.mtimeMs,true);
   res.setHeader('Content-Type',mime[ext]||'application/octet-stream');
   const ae=String(req.headers['accept-encoding']||'');
   if(entry.br&&ae.includes('br')){res.setHeader('Content-Encoding','br');res.setHeader('Vary','Accept-Encoding');res.end(entry.br);return;}

@@ -1,8 +1,10 @@
+import {createSQLiteWorker} from './storage-worker-client.mjs';
+export async function createStorage(root){return process.env.DATABASE_URL?createStorageDirect(root):createSQLiteWorker(root);}
 import {mkdirSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {DatabaseSync} from 'node:sqlite';
 import {randomUUID} from 'node:crypto';
-export async function createStorage(root){
+export async function createStorageDirect(root){
  const postgres=!!process.env.DATABASE_URL;let pool,sqlite;if(process.env.NODE_ENV==='production'&&!process.env.PUBLIC_ORIGIN?.startsWith('https://'))throw Error('Production cần PUBLIC_ORIGIN là địa chỉ HTTPS.');
  if(postgres){const {Pool}=await import('pg');pool=new Pool({connectionString:process.env.DATABASE_URL,max:10,connectionTimeoutMillis:10000,idleTimeoutMillis:30000});pool.on('error',()=>console.error('Kết nối PostgreSQL bị gián đoạn.'));}
  else {if(process.env.NODE_ENV==='production')throw Error('Production cần DATABASE_URL PostgreSQL.');const dir=process.env.GAME_DATA_DIR||resolve(root,'data');mkdirSync(dir,{recursive:true});sqlite=new DatabaseSync(resolve(dir,'game.sqlite'));sqlite.exec('PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;');}
