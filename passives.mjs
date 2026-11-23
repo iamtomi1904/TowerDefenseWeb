@@ -9,7 +9,8 @@ export function passivePose(r,p,kind,target=p){
 }
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 export function healing(r,u,amount,maxHp,drainFrom){
- const actual=Math.min(amount,Math.max(0,maxHp-u.hp));if(actual<=0||u.hp<=0)return 0;u.hp+=actual;
+ const poisonCut=(u.poisonTime>0||u.statuses?.poison?.time>0)?.6:1;
+ const actual=Math.min(amount*poisonCut,Math.max(0,maxHp-u.hp));if(actual<=0||u.hp<=0)return 0;u.hp+=actual;
  r.events.push({id:randomUUID(),type:'healing',targetId:u.id,x:u.x,y:u.y-25,amount:Math.round(actual),drainFrom:drainFrom?{x:drainFrom.x,y:drainFrom.y-20}:null,color:0x64ed8e});return actual;
 }
 export function triggerGuardianWave(r,p,stats,applyStatus){
@@ -69,7 +70,7 @@ export function passiveCast(r,p,slot,stats,applyStatus){
  const h=p.hero;
  if(h==='knight-1'&&(slot==='Q'||slot==='E'))triggerGuardianWave(r,p,stats,applyStatus);
  if(h==='warrior-2'){
-  const s=stats(p),free=p.mastery>=2&&p.hp<s.hp*.15;
+  const s=stats(p),free=p.mastery>=2&&!!p.ravagerFuryActive;
   if(!free&&p.hp>1)p.hp=Math.max(1,p.hp-s.hp*.1);
  }
  if(h==='samurai-commander'&&slot==='E'&&p.mastery>=2){p.duelSwapTime=3;p.cd=0;}
@@ -249,7 +250,7 @@ export function passiveHit(r,p,target,power,stats,applyStatus,kill,kind='basic')
     passiveFX(r,p,target);
     p.focusShotCount-=3;
     const behind=r.enemies.find(e=>e!==target&&e.hp>0&&dist(target,e)<=140);
-    if(behind){r.events.push({id:randomUUID(),type:'passive-action-fx',level:p.level||1,face:p.face||1,action:'piercing-arrow',sourceId:p.id,targetId:behind.id,x:p.x,y:p.y-24,tx:behind.x,ty:behind.y-24,duration:.55});behind.hp=Math.max(0,behind.hp-gemArmorDamage(p,behind,power*.5));kill(r,behind,p);}
+    if(behind){r.events.push({id:randomUUID(),type:'passive-action-fx',level:p.level||1,face:p.face||1,action:'piercing-arrow',sourceId:p.id,targetId:behind.id,x:p.x,y:p.y-24,tx:behind.x,ty:behind.y-24,duration:.55});const pDmg=power*.5;behind.hp=Math.max(0,behind.hp-gemArmorDamage(p,behind,pDmg));if(behind.statuses?.poison?.time>0&&behind.hp>0){behind.hp=Math.max(0,behind.hp-pDmg*.05);behind.statuses.poison.damage+=stats(p).power*.01;}kill(r,behind,p);}
    }
    if(p.mastery>=2){
     passivePose(r,p,'ranger',target);

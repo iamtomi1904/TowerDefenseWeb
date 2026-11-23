@@ -35,7 +35,7 @@ function hurtPlayers(r,boss,cast,spec,ctx,multiplier=1){
  for(const u of [...r.players,...r.troops]){
   if(u.hp<=0||!insideBossShape(u,cast))continue;
   const armor=u.hero?(ctx.stats?ctx.stats(u).armor:0):(u.armor??2),raw=Math.max(1,boss.power*terrainModifiers(MAPS[r.stage-1]||{},boss).power*spec.mult*multiplier*armorMultiplier(armor))*(u.guard?.3:1)*(1-(u.holyAura?.reduction||0))*(1-vanguardReduction(u))*(1-windReduction(u))*(1-tideReduction(r,u)),absMount=Math.min(u.holyMountShield||0,raw),absorbed=Math.min(u.shield||0,raw-absMount),damage=raw-absMount-absorbed;
-  u.holyMountShield=Math.max(0,(u.holyMountShield||0)-absMount);u.shield=Math.max(0,(u.shield||0)-absorbed);drained+=Math.min(u.hp,damage);u.hp=Math.max(0,u.hp-damage);
+  u.holyMountShield=Math.max(0,(u.holyMountShield||0)-absMount);u.shield=Math.max(0,(u.shield||0)-absorbed);drained+=Math.min(u.hp,damage);u.hp=Math.max(0,u.hp-damage);if(u.hero==='warrior-2'&&u.ravagerFuryActive&&!u.ravagerFurySaved&&u.hp<=0){u.hp=1;u.ravagerFurySaved=true;}
   if(spec.poison&&u.hero){u.poisonTime=spec.poison;u.poisonClock=1;}
   if(spec.dot&&u.hero){u.bossBurn=3;u.bossBurnDamage=spec.dot;u.bossBurnClock=1;}
   if(spec.slow){u.bossSlow=(spec.slowTime||2)*(u.classId==='vanguard'&&u.vanguardTime>0?1-VANGUARD.giant.controlResist:1);u.bossSlowFactor=1-spec.slow;u.slowType=spec.slowType||'physical';}

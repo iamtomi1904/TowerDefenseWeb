@@ -12,7 +12,7 @@ export function gemArmorDamage(p,e,n,options={}){
  const g=equippedGem(p),tier=gemTier(p);
  if(p.hero==='knight-2'){const base=p.holyMounted?.45:.25;n*=1+(enemyFamily(e)==='undead'?base*2:base);}
  if(p.hero==='samurai-archer'&&(p.focusStacks||0)>0)n*=1+(p.focusStacks||0)*.03;
- if(p.hero==='warrior-2'&&p.mastery>=2&&p._hpPct!==undefined&&p._hpPct<.4)n*=1+(.4-p._hpPct)*50*.005*(p.buffs?.some(b=>b.bloodRage&&b.time>0)?1.5:1);
+ if(p.hero==='warrior-2'&&p.mastery>=2&&p._hpPct!==undefined&&p._hpPct<.4)n*=1+(.4-p._hpPct)*.5*(p.buffs?.some(b=>b.bloodRage&&b.time>0)?1.5:1);
  const poisonedFallen=g?.id==='poison'&&(e.gemEffects?.poison?.stacks||0)>0;
  if(p.classId==='fallen'&&(e.statuses?.bleed?.time>0||Object.values(e.fallenMarks||{}).some(m=>m.time>0)||poisonedFallen))n*=1+(p.fallenMounted?FALLEN.mountedWoundedBonus:FALLEN.woundedBonus);
  if(p.fallenAura?.woundedBonus&&e.statuses?.bleed?.time>0)n*=1+p.fallenAura.woundedBonus;
@@ -25,7 +25,7 @@ export function gemArmorDamage(p,e,n,options={}){
  if(p.classId==='fallen')armor=Math.max(0,armor-(p.fallenMounted?FALLEN.mountedPenetration:FALLEN.penetration));
  if(p.hero==='goblin-assassin'&&p.mastery>=2&&e.statuses?.bleed?.time>0)armor*=.6;
  if(p.hero==='samurai-commander'&&p.mastery>=2&&(p.duelStacks||0)>=20)armor*=.7;
- if(p.hero==='warrior-2'&&p.mastery>=2&&p._hpPct!==undefined&&p._hpPct<.15)armor*=.6;
+ if(p.hero==='warrior-2'&&p.ravagerFuryActive)armor*=.6;
  armor*=1-(options.penetration||0);
  const pen=g?.id==='dark'?C.dark.penetrationByTier[tier-1]:0;
  const effectiveArmor=armor*(1-pen);
