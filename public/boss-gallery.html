@@ -1,6 +1,530 @@
-<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Boss chiến dịch</title><link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1"><style>body{background:#10211e;color:#ead8ad;font:16px system-ui;margin:30px auto;max-width:1200px;padding:0 20px}a{color:#edcc7c}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}article{background:#20372f;border:1px solid #647456;border-radius:12px;padding:18px}canvas{width:100%;height:210px;image-rendering:pixelated;background:radial-gradient(ellipse,#4c5140,transparent 70%)}h2{font-size:19px}p,li{line-height:1.6}small{color:#aabdb2}</style><h1>Thủ lĩnh của 10 chiến trường</h1><p>Sáu dòng boss: rồng, undead, rắn, sói, harpy và quái đá. Boss đợt cuối có 1–5 kỹ năng theo mốc. Hai đợt đầu ít hơn một kỹ năng, tối thiểu một. Báo trước 1,2 giây; dưới 40% máu boss ra chiêu nhanh hơn.</p><p><a href="/defense.html">Chơi giữ thành</a> · <a href="/boss-lab.html">Thử kỹ năng boss</a> · <a href="/bestiary.html">Bách khoa quái vật</a> · <a href="/">Trang chủ</a></p><main></main><script type="module">
-import {BOSSES} from './bosses.js';import {BOSS_SKILLS,bossSkillCount} from './boss-skills.js';import {monsterPreview} from './monster-preview.js';
-const catalog=await (await fetch('/catalog-v4.json')).json();
-for(const [i,b]of BOSSES.entries()){const card=document.createElement('article'),canvas=document.createElement('canvas');canvas.width=320;canvas.height=210;canvas.setAttribute('aria-label',b.name);const n=bossSkillCount(i+1);card.innerHTML='<small>MỐC '+String(i+1).padStart(2,'0')+' · '+n+' KỸ NĂNG</small><h2>'+b.name+'</h2>';card.append(canvas);const ul=document.createElement('ul');for(const id of b.skills.slice(0,n)){const s=BOSS_SKILLS[id],li=document.createElement('li');li.textContent=s.name+' — '+(s.summon?'gọi '+s.count+' viện binh':s.heal?'hồi máu và tạo giáp':s.shield?'tạo giáp':s.frenzy?'cuồng nộ tăng tốc':s.meteor?'thiên thạch rơi':s.poison?'gây độc':s.slow?'gây sát thương và làm chậm':s.drain?'hút máu':s.duration?'vùng sát thương duy trì':s.dash?'lao tới vị trí đánh dấu':s.knockback?'đẩy lùi':s.shape==='cone'?'đòn hình quạt':s.shape==='ring'?'đòn vành khuyên':'sát thương vùng');ul.append(li);}card.append(ul);document.querySelector('main').append(card);monsterPreview(canvas,b.actor,catalog,{size:150});}
-</script></html>
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Boss 10 Vùng Đất · Chi Tiết Chỉ Số &amp; Kỹ Năng</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1">
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#f8f4ea;
+  --panel:#fffdf9;
+  --soft:#f3ecdc;
+  --ink:#192a21;
+  --muted:#56695e;
+  --emerald:#176148;
+  --emerald-soft:#e3efe9;
+  --gold:#9a6b16;
+  --gold-soft:#f6ead0;
+  --danger:#8f3a1c;
+  --danger-soft:#fae8e1;
+  --border:#c4b596;
+  --line:#dfd5c0;
+}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font:14.5px/1.55 "Segoe UI",system-ui,sans-serif;
+}
+main{
+  max-width:1240px;
+  margin:auto;
+  padding:22px 20px 36px;
+}
+a{color:var(--emerald);font-weight:700;text-decoration:none}
+a:hover{text-decoration:underline}
+.eyebrow{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--emerald);
+}
+h1{
+  font:800 28px Georgia,serif;
+  margin:4px 0 6px;
+  color:var(--ink);
+}
+.lead{
+  color:var(--muted);
+  margin:0 0 14px;
+}
+.mech-banner{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:10px;
+  background:var(--emerald-soft);
+  border:1px solid #b5d3c5;
+  border-radius:12px;
+  padding:12px 14px;
+  margin-bottom:14px;
+}
+.mech-item strong{
+  display:block;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  color:var(--emerald);
+}
+.mech-item span{
+  font-size:13px;
+  color:var(--ink);
+  font-weight:600;
+}
+.controls{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:10px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px 14px;
+  margin-bottom:18px;
+  box-shadow:0 4px 14px rgba(25,42,33,.05);
+}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{
+  font-size:11.5px;
+  font-weight:800;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.ctrl select,.ctrl input{
+  width:100%;
+  background:#fff;
+  color:var(--ink);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:8px 10px;
+  font:inherit;
+  font-weight:600;
+  outline:none;
+}
+.boss-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(540px,1fr));
+  gap:16px;
+}
+@media(max-width:620px){
+  .boss-grid{grid-template-columns:1fr}
+}
+.boss-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px;
+  box-shadow:0 4px 16px rgba(25,42,33,.05);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.boss-top{
+  display:grid;
+  grid-template-columns:180px minmax(0,1fr);
+  gap:14px;
+  align-items:center;
+}
+@media(max-width:540px){
+  .boss-top{grid-template-columns:1fr}
+}
+.boss-canvas-wrap{
+  background:radial-gradient(circle at 50% 60%,#334a3f 0%,#182821 100%);
+  border:1px solid #355242;
+  border-radius:12px;
+  padding:8px;
+  display:grid;
+  place-items:center;
+}
+.boss-canvas-wrap canvas{
+  width:160px;
+  height:140px;
+  image-rendering:pixelated;
+}
+.boss-meta-top{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:4px;
+}
+.badge{
+  font-size:11px;
+  font-weight:800;
+  padding:2px 8px;
+  border-radius:999px;
+  background:var(--gold-soft);
+  color:#7c540e;
+  border:1px solid #dfc083;
+}
+.badge.air{
+  background:#e1eef6;
+  color:#154e73;
+  border-color:#9fc6de;
+}
+.badge.ground{
+  background:var(--emerald-soft);
+  color:var(--emerald);
+  border-color:#b5d3c5;
+}
+.boss-name{
+  margin:2px 0 4px;
+  font:800 21px Georgia,serif;
+  color:var(--ink);
+}
+.boss-loc{
+  font-size:13px;
+  color:var(--muted);
+  font-weight:600;
+  margin-bottom:8px;
+}
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+}
+.stat-box{
+  background:var(--soft);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:5px 8px;
+}
+.stat-box span{
+  display:block;
+  font-size:11px;
+  color:var(--muted);
+  font-weight:700;
+}
+.stat-box strong{
+  font-size:13.5px;
+  color:var(--ink);
+}
+.skills-title{
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:var(--muted);
+  border-top:1px solid var(--line);
+  padding-top:10px;
+}
+.skill-list{
+  display:grid;
+  gap:8px;
+}
+.boss-skill-item{
+  background:#fff;
+  border:1px solid var(--line);
+  border-left:4px solid var(--danger);
+  border-radius:10px;
+  padding:9px 11px;
+  display:grid;
+  gap:5px;
+}
+.bs-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.bs-name{
+  font-weight:800;
+  font-size:14.5px;
+  color:var(--ink);
+}
+.bs-shape{
+  font-size:11.5px;
+  font-weight:700;
+  background:var(--danger-soft);
+  color:var(--danger);
+  border:1px solid #ebc3b5;
+  border-radius:6px;
+  padding:1px 7px;
+}
+.bs-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+}
+.bs-chip{
+  background:var(--soft);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:2px 7px;
+  font-size:11.5px;
+  font-weight:700;
+  color:var(--ink);
+}
+.bs-desc{
+  margin:0;
+  font-size:13px;
+  color:var(--ink);
+}
+.empty-msg{
+  background:var(--panel);
+  border:1px dashed var(--border);
+  border-radius:12px;
+  padding:28px;
+  text-align:center;
+  color:var(--muted);
+  font-weight:700;
+}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Bách Khoa Toàn Thư · Thủ Lĩnh Chiến Trường</div>
+  <h1>Boss 10 Vùng Đất — Chỉ Số &amp; Chi Tiết Kỹ Năng</h1>
+  <p class="lead">Thông số máu, công, giáp, tốc độ và phân tích chi tiết 1–5 kỹ năng của toàn bộ 10 Boss giữ mốc. <a href="/boss-lab.html">Thử kỹ năng Boss trực tiếp →</a> · <a href="/bestiary.html">Bách khoa quái vật</a></p>
 
+  <section class="mech-banner" aria-label="Cơ chế chung của Boss">
+    <div class="mech-item"><strong>Báo trước (Telegraph)</strong><span>1,2 giây vùng cảnh báo trước khi chiêu nổ</span></div>
+    <div class="mech-item"><strong>Hồi chiêu kỹ năng</strong><span>8s bình thường · rút còn 5s khi dưới 40% HP</span></div>
+    <div class="mech-item"><strong>Tầm kích hoạt chiêu</strong><span>520 px · Nhắm vào Hero/Lính gần nhất</span></div>
+    <div class="mech-item"><strong>Đợt xuất hiện</strong><span>Đợt 1–2 ít hơn 1 kỹ năng (tối thiểu 1) · Đợt 3 mở đủ</span></div>
+  </section>
+
+  <section class="controls" aria-label="Bộ lọc Boss">
+    <div class="ctrl">
+      <label for="f-diff">Độ khó</label>
+      <select id="f-diff"></select>
+    </div>
+    <div class="ctrl">
+      <label for="f-wave">Đợt xuất hiện</label>
+      <select id="f-wave">
+        <option value="3" selected>Đợt 3 (Boss Chính · Đủ kỹ năng)</option>
+        <option value="1">Đợt 1 (Tiên phong · -1 kỹ năng)</option>
+        <option value="2">Đợt 2 (Tiên phong · -1 kỹ năng)</option>
+      </select>
+    </div>
+    <div class="ctrl">
+      <label for="f-family">Hệ Boss</label>
+      <select id="f-family">
+        <option value="all">Tất cả 6 hệ Boss</option>
+        <option value="dragon">Rồng (Bay)</option>
+        <option value="harpy">Harpy (Bay)</option>
+        <option value="undead">Tử Linh / Undead (Mặt đất)</option>
+        <option value="serpent">Xà Vương (Mặt đất)</option>
+        <option value="wolf">Lang Vương (Mặt đất)</option>
+        <option value="stone">Cự Thạch (Mặt đất)</option>
+      </select>
+    </div>
+    <div class="ctrl">
+      <label for="f-search">Tìm tên Boss hoặc Kỹ năng</label>
+      <input id="f-search" type="search" placeholder="VD: Hỏa Long, Thiên thạch, Lồng xương...">
+    </div>
+  </section>
+
+  <div id="boss-list" class="boss-grid"></div>
+</main>
+
+<script type="module">
+import {BOSSES} from './bosses.js';
+import {BOSS_SKILLS,bossSkillCount} from './boss-skills.js';
+import {MAPS,MONSTERS} from './content.js';
+import {DIFFICULTIES,difficultyOf} from './difficulty.js';
+import {GEM_RULES} from './gems.js';
+import {monsterPreview} from './monster-preview.js';
+
+const FAMILY_LABELS = {
+  dragon: 'Hệ Rồng',
+  harpy: 'Hệ Harpy',
+  undead: 'Hệ Tử Linh',
+  serpent: 'Hệ Xà',
+  wolf: 'Hệ Sói',
+  stone: 'Hệ Thạch'
+};
+
+const diffSelect = document.getElementById('f-diff');
+const waveSelect = document.getElementById('f-wave');
+const famSelect = document.getElementById('f-family');
+const searchInput = document.getElementById('f-search');
+const listEl = document.getElementById('boss-list');
+
+for (const [id, d] of Object.entries(DIFFICULTIES)) {
+  const opt = document.createElement('option');
+  opt.value = id;
+  opt.textContent = `${d.name} (HP ×${d.health} · Công ×${d.damage})`;
+  diffSelect.appendChild(opt);
+}
+
+const catalog = await (await fetch('/catalog-v4.json')).json();
+const baseBossTemplate = MONSTERS.find(m => m.id === 'orc-berserk') || { reward: 38 };
+
+function calcBossStats(stage, wave, diffId) {
+  const map = MAPS[stage - 1] || { name: `Mốc ${stage}`, healthScale: 1, damageScale: 1, speedScale: 1 };
+  const diff = difficultyOf(diffId);
+  const baseHp = 90 + stage * 10;
+  const basePow = 10 + stage * 2;
+  const baseSpd = 48 + stage;
+  const hp = Math.round(baseHp * diff.health * map.healthScale * (1 + (wave - 1) * 0.1) * (wave === 3 ? 10 : 5.6));
+  const power = Math.round(basePow * diff.damage * map.damageScale * 1.6);
+  const armor = +( (GEM_RULES.armor.bossBase + (stage - 1) * GEM_RULES.armor.bossPerStage) * (GEM_RULES.armor[diffId] || 1) ).toFixed(1);
+  const speed = Math.round(baseSpd * map.speedScale);
+  const reward = baseBossTemplate.reward * 12;
+  return { hp, power, armor, speed, reward, mapName: map.name };
+}
+
+function shapeLabel(s) {
+  if (s.shape === 'circle') return `Hình tròn · R ${s.radius}px`;
+  if (s.shape === 'cone') return `Hình quạt · Tầm ${s.length}px · Góc ${Math.round((s.angle || Math.PI / 2) * 180 / Math.PI)}°`;
+  if (s.shape === 'line') return `Đường thẳng · ${s.length}×${s.width}px`;
+  if (s.shape === 'ring') return `Vành khuyên · ${s.inner}→${s.radius}px`;
+  if (s.shape === 'multi') return `3 điểm liên hoàn · R ${s.radius}px (cách ${s.spread}px)`;
+  return 'Tự thân / Triệu hồi';
+}
+
+function describeBossSkillFull(s, bossStats) {
+  const chips = [`Báo trước: ${s.delay || 1.2}s`];
+  const notes = [];
+
+  if (s.mult > 0) {
+    const dmg = Math.round(bossStats.power * s.mult);
+    chips.push(`Sát thương: ${Math.round(s.mult * 100)}% Công (~${dmg})`);
+  } else {
+    chips.push('Không gây sát thương trực tiếp');
+  }
+
+  if (s.dash) notes.push('Boss lao thẳng tới vị trí đánh dấu khi kỹ năng kích hoạt.');
+  if (s.meteor) notes.push('Triệu hồi thiên thạch rơi chính xác xuống vùng chỉ định.');
+  if (s.summon) {
+    chips.push(`Triệu hồi: ${s.count} quái (${FAMILY_LABELS[s.summon] || s.summon})`);
+    notes.push(`Gọi ${s.count} viện binh ra chiến trường (tối đa 100 quái trên sân).`);
+  }
+  if (s.heal) {
+    const healHp = Math.round(bossStats.hp * s.heal);
+    chips.push(`Hồi máu: ${Math.round(s.heal * 100)}% HP (~${healHp})`);
+    notes.push(`Hồi ngay ${Math.round(s.heal * 100)}% máu tối đa cho Boss.`);
+  }
+  if (s.shield) {
+    const shHp = Math.round(bossStats.hp * s.shield);
+    chips.push(`Giáp ảo: ${Math.round(s.shield * 100)}% HP (~${shHp}) / 6s`);
+    notes.push(`Tạo lớp khiên hấp thụ sát thương trong 6 giây.`);
+  }
+  if (s.frenzy) {
+    chips.push(`Cuồng săn: +35% Tốc chạy · +40% Tốc đánh (${s.frenzy}s)`);
+    notes.push(`Tăng tốc di chuyển 1,35× và tốc đánh 1,4× trong ${s.frenzy}s.`);
+  }
+  if (s.drain) {
+    chips.push(`Hút máu: ${Math.round(s.drain * 100)}% sát thương thực`);
+    notes.push(`Hồi sinh lực cho Boss bằng ${Math.round(s.drain * 100)}% tổng sát thương gây lên Hero & Lính.`);
+  }
+  if (s.dot) {
+    chips.push(`Thiêu đốt: ${s.dot} dmg/s × 3s`);
+    notes.push(`Hero trúng đòn bị thiêu đốt ${s.dot} sát thương mỗi giây trong 3s.`);
+  }
+  if (s.poison) {
+    chips.push(`Trúng độc: ${s.poison}s`);
+    notes.push(`Gây nhiễm độc liên tục lên Hero trong ${s.poison} giây.`);
+  }
+  if (s.slow) {
+    chips.push(`Làm chậm: ${Math.round(s.slow * 100)}% (${s.slowTime || 2}s)`);
+    notes.push(`Giảm ${Math.round(s.slow * 100)}% tốc chạy (${s.slowType === 'ice' ? 'Băng' : 'Vật lý'}) trong ${s.slowTime || 2}s.`);
+  }
+  if (s.knockback) {
+    chips.push(`Đẩy lùi: ${s.knockback}px`);
+    notes.push(`Đẩy văng Hero & Lính ra xa ${s.knockback}px tính từ tâm chiêu.`);
+  }
+  if (s.duration) {
+    const tickDmg = Math.round(bossStats.power * s.mult * 0.55);
+    chips.push(`Vùng duy trì: ${s.duration}s (mỗi 0.8s: ~${tickDmg})`);
+    notes.push(`Để lại vùng nguy hiểm tồn tại ${s.duration}s, mỗi 0.8s gây 55% sát thương gốc của chiêu.`);
+  }
+
+  return { chips, desc: notes.join(' ') || 'Đòn đánh diện rộng theo vùng chỉ định.' };
+}
+
+function render() {
+  const diffId = diffSelect.value;
+  const wave = Number(waveSelect.value) || 3;
+  const fam = famSelect.value;
+  const q = searchInput.value.trim().toLowerCase();
+
+  listEl.innerHTML = '';
+  let count = 0;
+
+  for (const [i, b] of BOSSES.entries()) {
+    if (fam !== 'all' && b.family !== fam) continue;
+    const stage = i + 1;
+    const n = bossSkillCount(stage, wave);
+    const activeSkills = b.skills.slice(0, n);
+    const stats = calcBossStats(stage, wave, diffId);
+    const isFlying = ['dragon', 'harpy'].includes(b.family);
+
+    if (q) {
+      const matchBoss =
+        b.name.toLowerCase().includes(q) ||
+        stats.mapName.toLowerCase().includes(q) ||
+        (FAMILY_LABELS[b.family] || '').toLowerCase().includes(q) ||
+        activeSkills.some(id => (BOSS_SKILLS[id]?.name || '').toLowerCase().includes(q));
+      if (!matchBoss) continue;
+    }
+
+    count++;
+    const card = document.createElement('article');
+    card.className = 'boss-card';
+
+    card.innerHTML = `
+      <div class="boss-top">
+        <div class="boss-canvas-wrap">
+          <canvas width="200" height="175" aria-label="${b.name}"></canvas>
+        </div>
+        <div>
+          <div class="boss-meta-top">
+            <span class="badge">MỐC ${String(stage).padStart(2, '0')} · ${n} KỸ NĂNG</span>
+            <span class="badge ${isFlying ? 'air' : 'ground'}">${FAMILY_LABELS[b.family] || b.family} · ${isFlying ? 'Đơn vị Bay' : 'Mặt đất'}</span>
+          </div>
+          <h2 class="boss-name">${b.name}${wave < 3 ? ' · Tiên phong' : ''}</h2>
+          <div class="boss-loc">Chiến trường: ${stats.mapName}</div>
+          <div class="stats-grid">
+            <div class="stat-box"><span>Máu (HP)</span><strong>${stats.hp.toLocaleString('vi-VN')}</strong></div>
+            <div class="stat-box"><span>Công</span><strong>${stats.power}</strong></div>
+            <div class="stat-box"><span>Giáp</span><strong>${stats.armor}</strong></div>
+            <div class="stat-box"><span>Tốc chạy</span><strong>${stats.speed}</strong></div>
+            <div class="stat-box"><span>Đòn thường</span><strong>1.5s · Tầm 60</strong></div>
+            <div class="stat-box"><span>Thưởng hạ</span><strong>${stats.reward} vàng</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="skills-title">Bộ kỹ năng sử dụng ở đợt ${wave} (${n}/${b.skills.length} chiêu)</div>
+      <div class="skill-list"></div>
+    `;
+
+    const skillListEl = card.querySelector('.skill-list');
+    for (const id of activeSkills) {
+      const s = BOSS_SKILLS[id];
+      if (!s) continue;
+      const info = describeBossSkillFull(s, stats);
+      const item = document.createElement('div');
+      item.className = 'boss-skill-item';
+      item.innerHTML = `
+        <div class="bs-head">
+          <span class="bs-name">${s.name}</span>
+          <span class="bs-shape">${shapeLabel(s)}</span>
+        </div>
+        <div class="bs-chips">${info.chips.map(c => `<span class="bs-chip">${c}</span>`).join('')}</div>
+        <p class="bs-desc">${info.desc}</p>
+      `;
+      skillListEl.appendChild(item);
+    }
+
+    listEl.appendChild(card);
+    const canvas = card.querySelector('canvas');
+    monsterPreview(canvas, b.actor, catalog, { size: 135 });
+  }
+
+  if (!count) {
+    listEl.innerHTML = '<div class="empty-msg">Không tìm thấy Boss hoặc kỹ năng phù hợp.</div>';
+  }
+}
+
+diffSelect.addEventListener('change', render);
+waveSelect.addEventListener('change', render);
+famSelect.addEventListener('change', render);
+searchInput.addEventListener('input', render);
+render();
+</script>
+</body>
+</html>

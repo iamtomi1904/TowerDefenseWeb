@@ -1,4 +1,675 @@
-<!doctype html><html lang="vi"><meta charset="utf-8"><title>Kỹ năng mới · Giữ Cổng Thành</title><link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1">
-<style>body{margin:20px;background:#14251d;color:#f4dfad;font:16px system-ui}a{color:#abdfe6}main{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}article{background:#243a2b;border:1px solid #68764d;padding:12px;border-radius:10px}img{width:100%;height:155px;object-fit:contain}h2{font-size:16px;margin:8px 0}p{font-size:13px;line-height:1.5}@media(max-width:550px){main{grid-template-columns:repeat(2,minmax(0,1fr))}img{height:110px}}</style>
-<h1>Kỹ năng và nội tại anh hùng</h1><p><a href="/class-gallery.html">Xem hoạt ảnh Q / E / R và nội tại của từng tướng →</a></p><p><a href="/effect-lab.html">Xem chuyển động</a> · <a href="/">Vào game</a> · <a href="/boss-gallery.html">Boss</a></p><main></main>
-<script type="module">import {refreshedSkillIcon,REFRESHED_SKILL_IDS} from "./refreshed-skill-icons.js";import {ravagerIcon} from './ravager-art.js';import {windIcon} from './wind-vfx.js';import {vanguardIcon} from './vanguard-vfx.js';import {fallenIcon} from './fallen-vfx.js';import {holyIcon} from './holy-vfx.js';import {shadowIcon} from './shadow-art.js';import {SKILLS} from './skills.js';for(const c of ['windblade','duelist','vanguard','fallen','paladin','darkelf','assassin','berserker','ravager','ranger','stormcaller','guardian','pyromancer','tidecaller'])for(const s of SKILLS.filter(s=>s.classId===c)){const a=document.createElement('article'),img=document.createElement(REFRESHED_SKILL_IDS.includes(s.id)||['windblade','duelist','vanguard','fallen','paladin','assassin','darkelf','ravager'].includes(s.classId)?'span':'img'),h=document.createElement('h2'),p=document.createElement('p');img.src=['assassin','darkelf'].includes(s.classId)?'/assets/shadow/'+s.id+'.svg':'/assets/v4/'+s.id+'.png';img.alt=s.name;if(['windblade','duelist','vanguard','fallen','paladin','assassin','darkelf','ravager'].includes(s.classId)){img.removeAttribute('src');img.style.cssText='display:block;width:128px;height:128px;margin:auto;image-rendering:pixelated';if(['windblade','duelist'].includes(s.classId))windIcon(img,s.id);else if(s.classId==='vanguard')vanguardIcon(img,s.id);else if(s.classId==='fallen')fallenIcon(img,s.id);else if(s.classId==='paladin')holyIcon(img,s.id);else if(s.classId==='ravager')ravagerIcon(img,s.id);else shadowIcon(img,s.id);}if(refreshedSkillIcon(img,s.id)){img.removeAttribute('src');img.style.width='128px';img.style.height='128px';img.style.display='block';img.style.margin='auto';}h.textContent=s.slot+' · '+s.name;p.textContent=s.text;a.append(img,h,p);document.querySelector('main').append(a);}</script></html>
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thư Viện Kỹ Năng & Nội Tại · Ấn Thành</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1">
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#f8f4ea;
+  --panel:#fffdf9;
+  --panel-soft:#f3ecdc;
+  --ink:#192a21;
+  --muted:#56695e;
+  --emerald:#176148;
+  --emerald-soft:#e3efe9;
+  --gold:#9a6b16;
+  --gold-soft:#f6ead0;
+  --border:#c4b596;
+  --line:#dfd5c0;
+}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font:14.5px/1.55 "Segoe UI",system-ui,sans-serif;
+}
+main{
+  max-width:1240px;
+  margin:auto;
+  padding:22px 20px 36px;
+}
+a{color:var(--emerald);font-weight:700;text-decoration:none}
+a:hover{text-decoration:underline}
+.eyebrow{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--emerald);
+}
+h1{
+  font:800 28px Georgia,serif;
+  margin:4px 0 6px;
+  color:var(--ink);
+}
+.lead{
+  color:var(--muted);
+  margin:0 0 16px;
+}
+.controls{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:10px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px 14px;
+  margin-bottom:18px;
+  box-shadow:0 4px 14px rgba(25,42,33,.05);
+}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{
+  font-size:11.5px;
+  font-weight:800;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.ctrl select,.ctrl input{
+  width:100%;
+  background:#fff;
+  color:var(--ink);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:8px 10px;
+  font:inherit;
+  font-weight:600;
+  outline:none;
+}
+.ctrl select:focus,.ctrl input:focus{
+  border-color:var(--emerald);
+  box-shadow:0 0 0 2px rgba(23,97,72,.14);
+}
+.summary-bar{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:14px;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:600;
+}
+.hero-section{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:18px;
+  box-shadow:0 4px 16px rgba(25,42,33,.05);
+}
+.hero-header{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:12px;
+}
+.hero-title-wrap h2{
+  margin:0;
+  font:800 20px Georgia,serif;
+  color:var(--ink);
+}
+.hero-sub{
+  font-size:13px;
+  color:var(--muted);
+  margin-top:2px;
+  font-weight:600;
+}
+.hero-stats-pills{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.stat-pill{
+  background:var(--panel-soft);
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:4px 10px;
+  font-size:12px;
+  font-weight:700;
+  color:var(--ink);
+}
+.passive-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:14px;
+}
+@media(max-width:780px){
+  .passive-grid{grid-template-columns:1fr}
+}
+.passive-box{
+  background:var(--emerald-soft);
+  border:1px solid #b5d3c5;
+  border-radius:10px;
+  padding:10px 12px;
+}
+.passive-box.mastery{
+  background:var(--gold-soft);
+  border-color:#dfc083;
+}
+.passive-label{
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:var(--emerald);
+  margin-bottom:3px;
+}
+.passive-box.mastery .passive-label{color:var(--gold)}
+.passive-name{
+  font-weight:800;
+  font-size:14px;
+  margin-bottom:3px;
+}
+.passive-text{
+  margin:0;
+  font-size:13px;
+  color:var(--ink);
+}
+.skills-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+@media(max-width:960px){
+  .skills-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+  .skills-grid{grid-template-columns:1fr}
+}
+.skill-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+}
+.skill-top{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.skill-icon-wrap{
+  width:64px;
+  height:64px;
+  border-radius:10px;
+  background:#1b2e24;
+  border:1px solid #355242;
+  display:grid;
+  place-items:center;
+  flex-shrink:0;
+  overflow:hidden;
+}
+.skill-icon-wrap img,.skill-icon-wrap span,.skill-icon-wrap canvas{
+  width:56px !important;
+  height:56px !important;
+  object-fit:contain;
+  image-rendering:pixelated;
+  display:block;
+}
+.skill-head{min-width:0;flex:1}
+.slot-row{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-bottom:2px;
+}
+.slot-badge{
+  background:var(--emerald);
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+  padding:2px 7px;
+  border-radius:6px;
+}
+.slot-badge.R{background:#8f3a1c}
+.slot-badge.E{background:#1b557a}
+.rank-badge{
+  background:var(--gold-soft);
+  color:#7c540e;
+  border:1px solid #dfc083;
+  font-size:11px;
+  font-weight:800;
+  padding:1px 7px;
+  border-radius:6px;
+}
+.skill-name{
+  margin:0;
+  font-size:15.5px;
+  font-weight:800;
+  color:var(--ink);
+}
+.meta-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+}
+.chip{
+  background:var(--panel-soft);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:2px 7px;
+  font-size:11.5px;
+  font-weight:700;
+  color:var(--ink);
+}
+.calc-box{
+  background:#faf7ef;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px 10px;
+  font-size:12.5px;
+  display:grid;
+  gap:4px;
+}
+.calc-row{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+}
+.calc-row span:first-child{color:var(--muted);font-weight:600}
+.calc-row strong{color:var(--ink);text-align:right}
+.skill-desc{
+  margin:0;
+  font-size:13px;
+  color:var(--ink);
+}
+.skill-rank-note{
+  margin:0;
+  padding-top:6px;
+  border-top:1px dashed var(--line);
+  font-size:12px;
+  color:var(--muted);
+}
+.empty-msg{
+  background:var(--panel);
+  border:1px dashed var(--border);
+  border-radius:12px;
+  padding:28px;
+  text-align:center;
+  color:var(--muted);
+  font-weight:700;
+}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Bách Khoa Toàn Thư · Ấn Thành</div>
+  <h1>Thư Viện Kỹ Năng &amp; Nội Tại Anh Hùng</h1>
+  <p class="lead">Tra cứu đầy đủ bộ chiêu thức Q / E / R, nội tại gốc, Tinh thông Bậc 2, chi phí vàng mở khóa/nâng cấp và sát thương – hồi phục – khống chế theo cấp độ &amp; bậc kỹ năng. <a href="/class-gallery.html">Xem hoạt ảnh Q / E / R trong Xưởng Nhân Vật →</a></p>
+
+  <section class="controls" aria-label="Bộ lọc kỹ năng">
+    <div class="ctrl">
+      <label for="filter-hero">Anh hùng / Hệ phái</label>
+      <select id="filter-hero">
+        <option value="all">Tất cả 14 Anh Hùng</option>
+      </select>
+    </div>
+    <div class="ctrl">
+      <label for="filter-rank">Bậc kỹ năng hiển thị</label>
+      <select id="filter-rank">
+        <option value="1">Bậc 1 (Mới mở)</option>
+        <option value="3">Bậc 3 (Đầu trận)</option>
+        <option value="5">Bậc 5 (Giữa trận)</option>
+        <option value="max" selected>Bậc Tối Đa (Q/E: 10 · R: 6)</option>
+      </select>
+    </div>
+    <div class="ctrl">
+      <label for="filter-level">Cấp tướng tham chiếu</label>
+      <select id="filter-level">
+        <option value="1">Cấp 1 (Khởi đầu)</option>
+        <option value="10">Cấp 10 (Giữa trận)</option>
+        <option value="20" selected>Cấp 20 (Tối đa)</option>
+      </select>
+    </div>
+    <div class="ctrl">
+      <label for="filter-search">Tìm kỹ năng / hiệu ứng</label>
+      <input id="filter-search" type="search" placeholder="VD: choáng, giáp ảo, chảy máu, hồi máu...">
+    </div>
+  </section>
+
+  <div class="summary-bar">
+    <span id="summary-count">Đang hiển thị 14 anh hùng · 42 kỹ năng chủ động · 14 nội tại</span>
+    <span>Lưu ý: Sát thương hiển thị là sát thương trước Giáp dựa trên Công cơ bản ở cấp tướng đang chọn.</span>
+  </div>
+
+  <div id="skill-list"></div>
+</main>
+
+<script type="module">
+import {HEROES} from './content.js';
+import {CLASSES,SKILLS,skillAtRank,skillPrice,describeSkill} from './skills.js';
+import {PASSIVES} from './passives.js';
+import {VANGUARD} from './vanguard-config.js';
+import {PALADIN} from './paladin-config.js';
+import {FALLEN} from './fallen-config.js';
+import {refreshedSkillIcon,REFRESHED_SKILL_IDS} from './refreshed-skill-icons.js';
+import {ravagerIcon} from './ravager-art.js';
+import {windIcon} from './wind-vfx.js';
+import {vanguardIcon} from './vanguard-vfx.js';
+import {fallenIcon} from './fallen-vfx.js';
+import {holyIcon} from './holy-vfx.js';
+import {shadowIcon} from './shadow-art.js';
+
+const HERO_ORDER = [
+  'samurai','samurai-commander','warrior-3','knight-3','knight-2',
+  'dark-elf','goblin-assassin','warrior-1','warrior-2','samurai-archer',
+  'lightning-mage','knight-1','fire-wizard','wanderer-magican'
+];
+
+const heroSelect = document.getElementById('filter-hero');
+const rankSelect = document.getElementById('filter-rank');
+const levelSelect = document.getElementById('filter-level');
+const searchInput = document.getElementById('filter-search');
+const listEl = document.getElementById('skill-list');
+const countEl = document.getElementById('summary-count');
+
+const orderedHeroes = HERO_ORDER.map(id => HEROES.find(h => h.id === id)).filter(Boolean);
+for (const h of orderedHeroes) {
+  const opt = document.createElement('option');
+  opt.value = h.id;
+  opt.textContent = `${h.name} · ${CLASSES[h.classId].name}`;
+  heroSelect.appendChild(opt);
+}
+
+function calcHeroRefStats(h, level) {
+  const lv = Math.max(0, level - 1);
+  const cid = h.classId;
+  const hpLv = cid === 'guardian' ? 40 : ['berserker','ravager','vanguard'].includes(cid) ? 36 : cid === 'tidecaller' ? 34 : ['ranger','darkelf'].includes(cid) ? 22 : 32;
+  const powLv = cid === 'guardian' ? 2 : cid === 'assassin' ? 4.5 : ['ranger','darkelf','pyromancer'].includes(cid) ? 4 : cid === 'stormcaller' ? 3.5 : cid === 'duelist' ? 3.2 : 3;
+  const armLv = cid === 'guardian' ? Math.floor(lv * .75) : cid === 'paladin' ? Math.floor(lv / 2.5) : ['ranger','darkelf'].includes(cid) ? Math.floor(lv / 12) : ['pyromancer','stormcaller'].includes(cid) ? Math.floor(lv / 4.5) : cid === 'ravager' ? Math.floor(lv / 3.8) : Math.floor(lv / 3);
+  const hasteLv = cid === 'windblade' ? lv * .02 : ['ranger','darkelf'].includes(cid) ? lv * .015 : 0;
+  const hp = Math.round(h.hp + lv * hpLv);
+  const power = Math.round(h.power + lv * powLv);
+  const armor = +(h.armor + armLv).toFixed(1);
+  const aps = +(1 / (h.cooldown / (1 + hasteLv))).toFixed(2);
+  return { hp, power, armor, aps };
+}
+
+function totalSkillGoldToRank(s, targetRank) {
+  let sum = s.unlockCost || 0;
+  for (let r = 1; r < targetRank; r++) sum += skillPrice(s, r);
+  return sum;
+}
+
+function buildSkillIcon(s) {
+  const wrap = document.createElement('div');
+  wrap.className = 'skill-icon-wrap';
+  const useCustom = REFRESHED_SKILL_IDS.includes(s.id) || ['windblade','duelist','vanguard','fallen','paladin','assassin','darkelf','ravager'].includes(s.classId);
+  const el = document.createElement(useCustom ? 'span' : 'img');
+  if (!useCustom) {
+    el.src = '/assets/v4/' + s.id + '.png';
+    el.alt = s.name;
+  } else if (refreshedSkillIcon(el, s.id)) {
+    // rendered via refreshedSkillIcon
+  } else if (['windblade','duelist'].includes(s.classId)) windIcon(el, s.id);
+  else if (s.classId === 'vanguard') vanguardIcon(el, s.id);
+  else if (s.classId === 'fallen') fallenIcon(el, s.id);
+  else if (s.classId === 'paladin') holyIcon(el, s.id);
+  else if (s.classId === 'ravager') ravagerIcon(el, s.id);
+  else shadowIcon(el, s.id);
+  wrap.appendChild(el);
+  return wrap;
+}
+
+function computeSkillRows(s, a, ref) {
+  const rows = [];
+  // Sát thương
+  if (a.mult || s.id === 'fallen-sunder' || s.id === 'holy-slash' || s.id === 'vanguard-flurry') {
+    const scale = s.mult ? a.mult / s.mult : 1;
+    let totalMult = a.mult;
+    let label = 'Sát thương cơ bản';
+    if (s.id === 'vanguard-flurry') {
+      totalMult = (6 * 0.42 + 0.85) * scale;
+      label = 'Tổng 7 nhịp (6×42% + 85%)';
+    } else if (s.id === 'fallen-sunder') {
+      totalMult = (4 * 0.45 + 0.85 + 1.25) * scale;
+      label = 'Tổng Q1+Q2 (4×45% + 85% + 125%)';
+    } else if (s.id === 'holy-slash') {
+      totalMult = (0.9 + 1.15 + 1.9) * scale;
+      label = 'Tổng 3 lần Q (90%+115%+190%)';
+    } else if (s.id === 'elf-eclipse') {
+      const ticks = Math.floor((a.delay || 3) / (a.fallInterval || 0.5));
+      totalMult = ticks * (a.fallMult || 0.35) + a.mult;
+      label = `Tổng (${ticks} nhịp rơi + nổ)`;
+    } else if (s.id === 'chain-lightning') {
+      let sum = 0;
+      for (let i = 0; i < (a.targets || 4); i++) sum += Math.pow(0.8, i);
+      totalMult = a.mult * sum;
+      label = `Tổng nảy ${a.targets} mục tiêu`;
+    } else if (s.id === 'wind-storm') {
+      const ticks = Math.floor((a.duration || 5) / 0.5);
+      totalMult = a.mult * ticks;
+      label = `Tổng lý thuyết (${ticks} nhịp / ${a.duration}s)`;
+    } else if (s.id === 'arrow-rain') {
+      const ticks = Math.floor((a.duration || 5) / (a.interval || 0.2));
+      totalMult = a.mult * ticks;
+      label = `Tổng lý thuyết (${ticks} nhịp / ${a.duration}s)`;
+    } else if (['flamefield','tempest','blizzard'].includes(s.id)) {
+      const ticks = Math.floor((a.duration || 5) / (a.interval || 1));
+      totalMult = a.mult * ticks;
+      label = `Tổng vùng (${ticks} nhịp / ${a.duration}s)`;
+    } else if (s.id === 'frostnova') {
+      totalMult = a.mult * (a.hits || 3);
+      label = `Tổng ${a.hits || 3} đợt sóng`;
+    } else if (s.id === 'assassin-double') {
+      totalMult = a.mult * 2;
+      label = 'Tổng 2 nhát chém';
+    } else if (s.id === 'blood-cleave') {
+      totalMult = a.mult * 2;
+      label = 'Tổng 2 nhát chém';
+    } else if (s.id === 'bloodstorm') {
+      totalMult = a.mult * 6;
+      label = 'Tổng 6 nhịp xoay';
+    }
+    rows.push([label, `${Math.round(totalMult * 100)}% Công (~${Math.round(ref.power * totalMult)} dmg)`]);
+  } else {
+    rows.push(['Sát thương trực tiếp', 'Kỹ năng hỗ trợ / Biến hình']);
+  }
+
+  // Hồi máu / Giáp ảo
+  if (s.id === 'bulwark' && a.shield) {
+    rows.push(['Giáp ảo tạo ra', `${Math.round(a.shield * 100)}% HP (~${Math.round(ref.hp * a.shield)} HP) + 6 Giáp`]);
+  }
+  if (s.id === 'holy-slash') {
+    const sh = Math.round(ref.hp * PALADIN.q.shieldRatio);
+    const shM = Math.round(ref.hp * PALADIN.q.mountedShieldRatio * 1.25);
+    rows.push(['Giáp ảo Q3', `16% HP (${sh}) · Thiên Mã TT2: ${shM}`]);
+  }
+  if (s.id === 'healing-tide' && a.heal) {
+    const totalHealPct = +(a.heal * (a.duration || 6) * 100).toFixed(1);
+    rows.push(['Hồi máu vùng', `${+(a.heal * 100).toFixed(2)}%/s · Tổng ${totalHealPct}% (~${Math.round(ref.hp * a.heal * (a.duration || 6))} HP)`]);
+    rows.push(['Giảm sát thương nhận', '15% khi đứng trong vùng']);
+  } else if (a.heal) {
+    rows.push(['Hồi máu tức thì', `${+(a.heal * 100).toFixed(1)}% HP (~${Math.round(ref.hp * a.heal)} HP)`]);
+  }
+
+  // Khống chế & DoT
+  const ccParts = [];
+  if (a.stun) ccParts.push(`Choáng ${a.stun}s`);
+  if (a.airTime || s.id === 'wind-dash' || s.id === 'wind-storm') ccParts.push(`Hất tung ${a.airTime || 0.5}s`);
+  if (s.id === 'earthquake') ccParts.push('Hất tung 0.55s + Choáng 1.2s');
+  if (a.slow) ccParts.push(`Chậm ${Math.round(a.slow * 100)}%`);
+  if (ccParts.length) rows.push(['Khống chế (CC)', ccParts.join(' · ')]);
+
+  if (a.burn || a.poison || a.bleed) {
+    const dot = a.burn || a.poison || a.bleed;
+    const kindName = a.burn ? 'Thiêu đốt' : a.poison ? 'Độc' : 'Chảy máu';
+    rows.push([kindName, `${Math.round(dot * 100)}% Công/s (~${Math.round(ref.power * dot)}/s) × ${a.statusDuration}s`]);
+  }
+
+  // Buff
+  const buffParts = [];
+  if (a.haste) buffParts.push(`+${Math.round(a.haste * 100)}% Tốc đánh`);
+  if (a.lifesteal) buffParts.push(`+${Math.round(a.lifesteal * 100)}% Hút máu`);
+  if (a.speed) buffParts.push(`+${Math.round(a.speed * 100)}% Tốc chạy`);
+  if (a.reduction) buffParts.push(`-${Math.round(a.reduction * 100)}% Dmg nhận`);
+  if (buffParts.length) rows.push(['Cường hóa', buffParts.join(' · ')]);
+
+  return rows;
+}
+
+function render() {
+  const heroFilter = heroSelect.value;
+  const rankMode = rankSelect.value;
+  const level = Number(levelSelect.value) || 20;
+  const q = searchInput.value.trim().toLowerCase();
+
+  listEl.innerHTML = '';
+  let shownHeroes = 0;
+  let shownSkills = 0;
+
+  for (const h of orderedHeroes) {
+    if (heroFilter !== 'all' && h.id !== heroFilter) continue;
+    const cls = CLASSES[h.classId];
+    const passive = PASSIVES[h.id];
+    const heroSkills = SKILLS.filter(s => s.classId === h.classId);
+
+    const heroMatch = !q ||
+      h.name.toLowerCase().includes(q) ||
+      cls.name.toLowerCase().includes(q) ||
+      passive.name.toLowerCase().includes(q) ||
+      passive.text.toLowerCase().includes(q) ||
+      cls.passive.toLowerCase().includes(q);
+
+    const matchingSkills = heroMatch
+      ? heroSkills
+      : heroSkills.filter(s =>
+          s.name.toLowerCase().includes(q) ||
+          s.text.toLowerCase().includes(q) ||
+          s.slot.toLowerCase().includes(q)
+        );
+
+    if (!matchingSkills.length) continue;
+
+    shownHeroes++;
+    shownSkills += matchingSkills.length;
+
+    const ref = calcHeroRefStats(h, level);
+    const sec = document.createElement('section');
+    sec.className = 'hero-section';
+    sec.innerHTML = `
+      <div class="hero-header">
+        <div class="hero-title-wrap">
+          <h2>${h.name}</h2>
+          <div class="hero-sub">${cls.name} · ${h.role} · Năng lượng: ${cls.energy} MP (+${cls.regen}/s)</div>
+        </div>
+        <div class="hero-stats-pills">
+          <span class="stat-pill">Lv.${level}: ${ref.hp} HP</span>
+          <span class="stat-pill">${ref.power} Công</span>
+          <span class="stat-pill">${ref.armor} Giáp</span>
+          <span class="stat-pill">${ref.aps} đòn/s</span>
+        </div>
+      </div>
+      <div class="passive-grid">
+        <div class="passive-box">
+          <div class="passive-label">Nội tại gốc (P)</div>
+          <div class="passive-name">${passive.name}</div>
+          <p class="passive-text">${passive.text}</p>
+        </div>
+        <div class="passive-box mastery">
+          <div class="passive-label">Mở khóa Tinh thông Bậc 2</div>
+          <div class="passive-name">Cường hóa Nội tại &amp; Kỹ năng</div>
+          <p class="passive-text">${cls.passive}</p>
+        </div>
+      </div>
+      <div class="skills-grid"></div>
+    `;
+
+    const grid = sec.querySelector('.skills-grid');
+    for (const s of matchingSkills) {
+      const targetRank = rankMode === 'max' ? s.maxRank : Math.min(s.maxRank, Number(rankMode) || 1);
+      const a = skillAtRank(s, targetRank);
+      const totalGold = totalSkillGoldToRank(s, targetRank);
+      const card = document.createElement('article');
+      card.className = 'skill-card';
+
+      const top = document.createElement('div');
+      top.className = 'skill-top';
+      top.appendChild(buildSkillIcon(s));
+
+      const head = document.createElement('div');
+      head.className = 'skill-head';
+      head.innerHTML = `
+        <div class="slot-row">
+          <span class="slot-badge ${s.slot}">${s.slot}</span>
+          <span class="rank-badge">Bậc ${a.rank}/${s.maxRank}</span>
+        </div>
+        <h3 class="skill-name">${s.name}</h3>
+      `;
+      top.appendChild(head);
+      card.appendChild(top);
+
+      const chips = document.createElement('div');
+      chips.className = 'meta-chips';
+      const chipData = [
+        s.unlockCost ? `Mở: Lv.${s.requiredLevel} (${s.unlockCost}v)` : `Mở: Lv.${s.requiredLevel} (Miễn phí)`,
+        `Tổng vàng Bậc ${a.rank}: ${totalGold}v`,
+        `Hồi: ${a.cooldown}s`,
+        `Mana: ${a.cost} MP`
+      ];
+      if (a.range) chipData.push(`Tầm: ${a.range}`);
+      if (a.radius) chipData.push(`Bán kính: ${a.radius}`);
+      if (a.duration) chipData.push(`Hiệu lực: ${a.duration}s`);
+      if (a.targets) chipData.push(`${a.targets} mục tiêu`);
+      if (a.dashRange) chipData.push(`Lướt: ${a.dashRange}px`);
+      for (const txt of chipData) {
+        const sp = document.createElement('span');
+        sp.className = 'chip';
+        sp.textContent = txt;
+        chips.appendChild(sp);
+      }
+      card.appendChild(chips);
+
+      const calcBox = document.createElement('div');
+      calcBox.className = 'calc-box';
+      for (const [k, v] of computeSkillRows(s, a, ref)) {
+        const row = document.createElement('div');
+        row.className = 'calc-row';
+        row.innerHTML = `<span>${k}</span><strong>${v}</strong>`;
+        calcBox.appendChild(row);
+      }
+      card.appendChild(calcBox);
+
+      const desc = document.createElement('p');
+      desc.className = 'skill-desc';
+      desc.textContent = s.text;
+      card.appendChild(desc);
+
+      const note = document.createElement('p');
+      note.className = 'skill-rank-note';
+      note.textContent = describeSkill(s, targetRank, ref.power).replace(s.text, '').trim();
+      card.appendChild(note);
+
+      grid.appendChild(card);
+    }
+
+    listEl.appendChild(sec);
+  }
+
+  if (!shownHeroes) {
+    listEl.innerHTML = '<div class="empty-msg">Không tìm thấy kỹ năng hoặc nội tại phù hợp với từ khóa.</div>';
+  }
+  countEl.textContent = `Đang hiển thị ${shownHeroes} anh hùng · ${shownSkills} kỹ năng chủ động`;
+}
+
+heroSelect.addEventListener('change', render);
+rankSelect.addEventListener('change', render);
+levelSelect.addEventListener('change', render);
+searchInput.addEventListener('input', render);
+render();
+</script>
+</body>
+</html>

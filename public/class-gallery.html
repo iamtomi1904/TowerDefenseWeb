@@ -17,14 +17,21 @@ button:hover,select:hover{border-color:#176148}
 button[aria-pressed=true]{background:#176148;color:#fff;border-color:#0f4532}
 canvas{display:block;max-width:100%;height:auto;border:1px solid #c4b596;border-radius:10px;background:#182820}#skills{min-height:44px}
 label{display:inline-flex;align-items:center;gap:7px;margin-right:15px;font-weight:600;color:#192a21}
+#skill-detail-card{background:#fffdf9;border:1px solid #c4b596;border-radius:10px;padding:12px 15px;margin:10px 0 14px;box-shadow:0 3px 10px rgba(25,42,33,.05)}
+#skill-detail-card h3{margin:0 0 6px;font-size:16px;color:#192a21;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#skill-detail-card .sd-badge{background:#176148;color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px}
+#skill-detail-card .sd-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+#skill-detail-card .sd-chip{background:#f3ecdc;border:1px solid #d5cab4;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;color:#192a21}
+#skill-detail-card p{margin:4px 0;font-size:13.5px;color:#192a21}
+#skill-detail-card .sd-sub{color:#56695e;font-size:12.5px}
 footer{margin-top:20px;color:#56695e;font-size:13px}
 </style>
 <main><small>THE WORLD / XƯỞNG NHÂN VẬT</small><h1>Truyền thừa anh hùng</h1><p>Màu trang phục sâu hơn, kim loại sáng rõ và hiệu ứng riêng cho từng class — giữ nét pixel fantasy của chiến trường.</p>
 <nav id="classes" aria-label="Chọn class"></nav>
 <label>Động tác <select id="action"><option value="idle">Đứng</option><option value="walk">Di chuyển</option><option value="attack">Tấn công</option><option value="cast">Thi triển kỹ năng</option><option value="hurt">Bị thương</option><option value="dead">Gục ngã</option></select></label><label><input id="flip" type="checkbox">Quay trái</label><label><input id="accents" type="checkbox" checked>Hiệu ứng nhận diện</label>
 <label><input id="dual-form" type="checkbox">Kiếm Chủ: bắt đầu với song kiếm</label>
-<label><input id="poison-combo" type="checkbox">Cung thủ: dùng E trước Q/R tên độc</label>
-<label><input id="mounted-form" type="checkbox">Thánh/Hắc Kỵ: dạng cưỡi</label>
+<label><input id="poison-combo" type="checkbox">Cung thủ: E cường hóa tên độc cho đòn thường / Q / R</label>
+<label><input id="mounted-form" type="checkbox">Thánh/Hắc Kỵ &amp; Bất Khuất: dạng cưỡi / Cự Nhân</label>
 <label>Cấp ngoại hình <select id="visual-level"><option value="1">1</option><option value="6">6</option><option value="11">11</option><option value="16">16</option></select></label>
 <nav id="skills" aria-label="Thử kỹ năng"></nav>
 <section id="passive-panel" hidden aria-label="Xem từng tiến hóa và hành động nội tại">
@@ -33,6 +40,6 @@ footer{margin-top:20px;color:#56695e;font-size:13px}
 <button id="passive-restart" type="button">Phát lại từ đầu</button> <button id="passive-pause" type="button">Tạm dừng</button>
 <label><input id="passive-loop" type="checkbox" checked>Lặp lại</label><p id="passive-state" role="status"></p>
 </section>
-<p id="readout" role="status">Chọn Q/E/R/P để xem kỹ năng hoặc từng hành động nội tại.</p><div id="stage"></div><footer>Trái/phải: so sánh ngoại hình. Chọn kỹ năng để xem toàn sân ở kích thước trong trận, bậc 1, không trang bị ngọc. Nội tại có nút chọn từng hành động, dạng chiến đấu và mốc ngoại hình. Dữ liệu phát lại từ mô phỏng chiến đấu; mục tiêu tập đứng yên.<br><a href="/defense.html">Vào chiến trường</a> · <a href="/effect-lab.html">Xưởng hiệu ứng</a> · <a href="/height-lineup.html">So sánh chiều cao</a> · <a href="/troop-gallery.html">Xưởng lính</a> · <a href="/enemy-attack-gallery.html">Đòn đánh của quái</a></footer></main>
-<script src="/vendor/phaser.js"></script><script type="module" src="/class-gallery.js?v=animation-init-fix-1"></script></html>
+<p id="readout" role="status">Chọn Q/E/R/P để xem kỹ năng hoặc từng hành động nội tại.</p><section id="skill-detail-card" hidden aria-live="polite"></section><div id="stage"></div><footer>Chọn kỹ năng để xem toàn sân ở kích thước trong trận, bậc 1, không trang bị ngọc. Nội tại có nút chọn từng hành động, dạng chiến đấu và mốc ngoại hình. Dữ liệu phát lại từ mô phỏng chiến đấu; mục tiêu tập đứng yên.<br><a href="/defense.html">Vào chiến trường</a> · <a href="/effect-lab.html">Xưởng hiệu ứng</a> · <a href="/height-lineup.html">So sánh chiều cao</a> · <a href="/troop-gallery.html">Xưởng lính</a> · <a href="/enemy-attack-gallery.html">Đòn đánh của quái</a></footer></main>
+<script src="/vendor/phaser.js"></script><script type="module" src="/class-gallery.js?v=basic-projectiles-v1"></script></html>
 

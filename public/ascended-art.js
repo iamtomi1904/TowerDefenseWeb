@@ -4,7 +4,7 @@ export function preloadAscended(s){for(const id of ASCENDED_IDS)s.load.image('as
 export function ascendedId(u){return u.hero==='knight-2'?(u.holyMounted?'holy-mounted':'holy-foot'):u.hero==='knight-3'?(u.fallenMounted?'dark-mounted':'dark-foot'):ASCENDED_IDS.includes(u.hero)?u.hero:null;}
 export function applyAscended(s,u,obj){
  const id=ascendedId(u),sprite=obj.sprite;
- if(sprite.texture?.key?.startsWith('passive-action:')||sprite.texture?.key?.startsWith('guardian-actions')||['guardian-ultimate','warrior-windup','arctic-windup'].some(key=>sprite.texture?.key?.startsWith(key)))return false;
+ if(sprite.texture?.key?.startsWith('skill-action:')||sprite.texture?.key?.startsWith('ritual-actor:')||sprite.texture?.key?.startsWith('passive-action:')||sprite.texture?.key?.startsWith('guardian-actions')||['guardian-ultimate','warrior-windup','arctic-windup'].some(key=>sprite.texture?.key?.startsWith(key)))return false;
  if(!id||(u.level||1)<16){
   if(obj.ascendedBase&&sprite.texture?.key?.startsWith('ascended:')){
    const old=sprite.texture.getSourceImage(),base=s.textures.get(obj.ascendedBase).getSourceImage(),x=sprite.scaleX,y=sprite.scaleY,scaled=x===obj.ascendedScaleX&&y===obj.ascendedScaleY;

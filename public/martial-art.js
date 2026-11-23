@@ -1,3 +1,6 @@
+import {preloadMoonForestArt,playMoonForestCast} from './moon-forest-art.js';
+import {preloadBasicProjectiles} from './basic-projectile-art.js';
+import {preloadSkillActions,playSkillAction} from './skill-action-art.js';
 import {prewarmElementAnimations} from './element-animation.js';
 import {preloadWindupActors,playWindupActor} from './windup-actors.js';
 import {playGuardianAction} from './guardian-actions-art.js';
@@ -11,7 +14,7 @@ import {preloadPaintedSkills} from './painted-skill-art.js';
 import {preloadHeroRefresh,createHeroRefreshAnimations,playRefreshedHero} from './hero-refresh-art.js';
 import {preloadRavagerArt,createRavagerAnimations,playRavagerActor} from './ravager-art.js';
 import {preloadSlashArt} from './slash-art.js';
-export function preloadMartialArt(s){preloadWindupActors(s);preloadRitualCasting(s);preloadPassiveActions(s);preloadTroopArt(s);preloadAscended(s);preloadClassProgression(s);preloadPaintedSkills(s);preloadKnightRefresh(s);s.load.image("elemental-refresh","/assets/combat/elemental-refresh.png");preloadHeroRefresh(s);preloadRavagerArt(s);preloadSlashArt(s);s.load.image('katana-forms','/assets/blademaster/katana-forms.png');}
+export function preloadMartialArt(s){preloadBasicProjectiles(s);preloadMoonForestArt(s);preloadSkillActions(s);preloadWindupActors(s);preloadRitualCasting(s);preloadPassiveActions(s);preloadTroopArt(s);preloadAscended(s);preloadClassProgression(s);preloadPaintedSkills(s);preloadKnightRefresh(s);s.load.image("elemental-refresh","/assets/combat/elemental-refresh.png");preloadHeroRefresh(s);preloadRavagerArt(s);preloadSlashArt(s);s.load.image('katana-forms','/assets/blademaster/katana-forms.png');}
 export function createMartialAnimations(s){
  if(s.martialArtReady)return;
  prewarmElementAnimations(s);
@@ -26,6 +29,8 @@ export function createMartialAnimations(s){
  s.martialArtReady=true;
 }
 export function playMartialActor(s,u,obj,action){
+ if(playMoonForestCast(s,u,obj))return true;
+ if(playSkillAction(s,u,obj))return true;
  if(playWindupActor(s,u,obj))return true;
  if(playRitualCast(s,u,obj))return true;
  if(u.guardianR&&playGuardianAction(s,u,obj,action))return true;

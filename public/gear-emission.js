@@ -37,7 +37,7 @@ function textureFor(scene,sprite,id){
  return key;
 }
 export function updateGearEmission(scene,u,obj,time){
- if(!gearEmissionActive(u)||!obj.sprite.texture){obj.gearEmission?.setVisible(false);return;}
+ if(!gearEmissionActive(u)||!obj.sprite.texture||obj.sprite.texture.key?.startsWith('skill-action:')){obj.gearEmission?.setVisible(false);return;}
  const s=obj.sprite,key=textureFor(scene,s,u.classId);if(!key)return;
  if(!obj.gearEmission){obj.gearEmission=scene.add.image(s.x,s.y,key,s.frame.name).setBlendMode('ADD');const image=obj.gearEmission;s.once('destroy',()=>image.destroy());}
  obj.gearEmission.setVisible(true).setTexture(key,s.frame.name).setPosition(s.x,s.y).setOrigin(s.originX,s.originY).setScale(s.scaleX,s.scaleY).setFlipX(s.flipX).setFlipY(s.flipY).setRotation(s.rotation).setDepth(s.depth+.2).setAlpha(.68+Math.sin(time/180)*.12);

@@ -51,7 +51,7 @@ export const MONSTERS=[
 ];
 const infantry={hp:130,armor:2,power:16,range:54,speed:105,cooldown:.7};
 export const TROOPS=[
- {id:'forest-spirit',sprite:'forest-spirit',name:'Tinh linh cây',summoned:true,cost:0,hp:SHADOW.spirit.hp,power:28,armor:SHADOW.spirit.armor,speed:SHADOW.spirit.speed,range:SHADOW.spirit.range,cooldown:SHADOW.spirit.cooldown,description:'Đồng hành 60s · Rễ Trói / Lá Xoáy / Sinh Lực'},
+ {id:'forest-spirit',sprite:'forest-spirit',name:'Tinh Linh Ánh Trăng Rừng Xanh',summoned:true,cost:0,hp:SHADOW.spirit.hp,power:28,armor:SHADOW.spirit.armor,speed:SHADOW.spirit.speed,range:SHADOW.spirit.range,cooldown:SHADOW.spirit.cooldown,description:'Đồng hành 60s (+4s/bậc E), tự hồi 2% Máu/giây. Rễ Nguyệt Trói: 110% Công tinh linh, choáng 0,8s trong 125px, hồi 8s. Nguyệt Diệp: 3 đạn, mỗi đạn 80% Công trong 240px, hồi 12s. Nguyệt Hoa Sinh Lực: hồi 16% Máu tối đa cho đồng minh trong 180px, hồi 16s.'},
  {id:'gem-skeleton',sprite:'skeleton',name:'Xương đồng minh',summoned:true,cost:0,...infantry,hp:Math.round(infantry.hp*GEM_RULES.dark.skeletonHP),armor:infantry.armor*GEM_RULES.dark.skeletonArmor,description:'Triệu hồi bởi Ngọc Hắc Ám; tồn tại 25 giây, không chiếm suất lính thuê.'},
  {id:'militia',sprite:'soldier-1',name:'Bộ binh',cost:60,hp:130,power:16,range:54,speed:105,cooldown:.7,armor:2,description:'Cận chiến bảo vệ thành, tự tìm và chặn quái trong tầm. Không có kỹ năng chủ động.'},
  {id:'archer',sprite:'soldier-3',name:'Xạ thủ',cost:100,hp:90,power:19,range:220,speed:88,cooldown:.85,armor:0,description:'Bắn tên từ xa, tự chọn mục tiêu trong tầm; hỗ trợ tuyến trước và đánh quái bay.'},

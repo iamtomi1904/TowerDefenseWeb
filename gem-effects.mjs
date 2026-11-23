@@ -12,16 +12,17 @@ export function gemArmorDamage(p,e,n,options={}){
  const g=equippedGem(p),tier=gemTier(p);
  if(p.hero==='knight-2'){const base=p.holyMounted?.45:.25;n*=1+(enemyFamily(e)==='undead'?base*2:base);}
  if(p.hero==='samurai-archer'&&(p.focusStacks||0)>0)n*=1+(p.focusStacks||0)*.03;
- if(p.hero==='warrior-2'&&p.mastery>=2&&p._hpPct!==undefined&&p._hpPct<.4)n*=1+(.4-p._hpPct)*50*.005;
+ if(p.hero==='warrior-2'&&p.mastery>=2&&p._hpPct!==undefined&&p._hpPct<.4)n*=1+(.4-p._hpPct)*50*.005*(p.buffs?.some(b=>b.bloodRage&&b.time>0)?1.5:1);
  const poisonedFallen=g?.id==='poison'&&(e.gemEffects?.poison?.stacks||0)>0;
  if(p.classId==='fallen'&&(e.statuses?.bleed?.time>0||Object.values(e.fallenMarks||{}).some(m=>m.time>0)||poisonedFallen))n*=1+(p.fallenMounted?FALLEN.mountedWoundedBonus:FALLEN.woundedBonus);
  if(p.fallenAura?.woundedBonus&&e.statuses?.bleed?.time>0)n*=1+p.fallenAura.woundedBonus;
  if(e.fireCarpetAmp)n*=1+C.fire.carpetAmp;
  if(e.fireAmp5&&(e.statuses?.burn?.stacks||0)>=5)n*=1.05;
+ if(e.assassinWeakenTime>0)n*=1.1;
  let armor=Math.max(0,(e.armor||0)*(e.environment?.armor||1)*(1-Math.min(C.dark.maxStacks,e.gemEffects?.dark?.stacks||0)*C.dark.armorPerStack));
  if(e.fallenArmorBreakTime>0)armor*=.7;
  if(e.moonBreakTime>0)armor*=.8;
- if(p.classId==='fallen')armor=Math.max(0,armor-(p.fallenMounted?8:4));
+ if(p.classId==='fallen')armor=Math.max(0,armor-(p.fallenMounted?FALLEN.mountedPenetration:FALLEN.penetration));
  if(p.hero==='goblin-assassin'&&p.mastery>=2&&e.statuses?.bleed?.time>0)armor*=.6;
  if(p.hero==='samurai-commander'&&p.mastery>=2&&(p.duelStacks||0)>=20)armor*=.7;
  if(p.hero==='warrior-2'&&p.mastery>=2&&p._hpPct!==undefined&&p._hpPct<.15)armor*=.6;

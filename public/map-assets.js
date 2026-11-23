@@ -9,7 +9,7 @@ export function mapSceneryAssets(scene,stage){
  for(const [id,info]of Object.entries(scene.mapBakedProps||{}))if(info.shared||needed.has(id))result.push([id,info.url]);
  return result;
 }
-export function mapBuildingAssets(stage,scene){return [['castle-'+stage,'/assets/castles/castle-'+stage+'.png'],['stone-wall-'+stage,'/assets/v4/stone-tower-'+stage+'.png'],...mapSceneryAssets(scene,stage)];}
+export function mapBuildingAssets(stage,scene){return [['castle-'+stage,'/assets/castles/castle-forest-v2.png'],['stone-wall-'+stage,'/assets/v4/stone-tower-'+stage+'.png'],...mapSceneryAssets(scene,stage)];}
 export function preloadMapBuildings(scene,stage){for(const n of [stage,stage+1])if(n<=10)for(const [key,url]of mapBuildingAssets(n,scene))if(!scene.textures.exists(key))scene.load.image(key,url);}
 export function ensureMapBuildings(scene,stage){
  const jobs=scene.mapBuildingJobs??=new Map();if(jobs.has(stage))return jobs.get(stage);

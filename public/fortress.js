@@ -4,7 +4,7 @@ export function buildFortress(s,m,catalog){
  const b=m.base,f=m.fortress,objects=[];const texture=s.textures.get('castle');if(!texture.has('watchtower'))texture.add('watchtower',0,37,650,285,485);
  const floor=s.add.graphics().setDepth(b.y-210);floor.fillStyle(0x09110c,.3).fillEllipse(b.x+24,b.y+52,360*f.scale,96*f.scale);for(const p of m.fortifications||[])floor.fillStyle(0x0c1610,.28).fillEllipse(p.x+10,p.y+12,86,36);objects.push(floor);
  const keepKey=s.textures.exists('castle-'+m.id)?'castle-'+m.id:'castle';
- const keep=s.add.image(b.x,b.y+55,keepKey).setOrigin(.5,.94);if(keepKey==='castle')keep.setTint(f.tint);keep.setDisplaySize(380*f.scale,380*keep.height/keep.width*f.scale).setDepth(b.y+55);objects.push(keep);
+ const keep=s.add.image(b.x,b.y+55,keepKey).setOrigin(.5,.94);keep.setTint(f.tint);keep.setDisplaySize(380*f.scale,380*keep.height/keep.width*f.scale).setDepth(b.y+55);objects.push(keep);
  for(const [i,p]of (m.fortifications||[]).entries()){
   const size=f.layout==='citadel'?88:f.layout==='ruins'?70:75,tower=s.add.image(p.x,p.y+15,'castle','watchtower').setOrigin(.5,.92).setTint(f.tint).setDisplaySize(size,size*1.7).setDepth(p.y+16);objects.push(tower);
   const flag=s.add.graphics().setDepth(p.y+17);flag.lineStyle(2,0xd5c39b).lineBetween(p.x,p.y-110,p.x,p.y-135);flag.fillStyle(f.accent,.95).fillTriangle(p.x,p.y-135,p.x+21,p.y-130,p.x,p.y-124);objects.push(flag);

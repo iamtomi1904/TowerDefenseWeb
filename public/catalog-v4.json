@@ -3556,27 +3556,32 @@
         "idle": {
           "frames": 6,
           "start": 0,
-          "url": "/assets/shadow/forest-spirit.png"
+          "url": "/assets/moon-forest-v1/spirit.png"
         },
         "walk": {
           "frames": 6,
           "start": 6,
-          "url": "/assets/shadow/forest-spirit.png"
+          "url": "/assets/moon-forest-v1/spirit.png"
         },
         "attack": {
           "frames": 6,
           "start": 12,
-          "url": "/assets/shadow/forest-spirit.png"
+          "url": "/assets/moon-forest-v1/spirit.png"
         },
         "hurt": {
           "frames": 6,
           "start": 18,
-          "url": "/assets/shadow/forest-spirit.png"
+          "url": "/assets/moon-forest-v1/spirit.png"
         },
         "dead": {
           "frames": 6,
           "start": 24,
-          "url": "/assets/shadow/forest-spirit.png"
+          "url": "/assets/moon-forest-v1/spirit.png"
+        },
+        "cast": {
+          "frames": 6,
+          "start": 18,
+          "url": "/assets/moon-forest-v1/spirit.png"
         }
       }
     },

@@ -1,13 +1,8 @@
+import {RAVAGER_SKILL_IDS,refreshedSkillIcon} from './refreshed-skill-icons.js';
 import {playPassiveAction} from './passive-action-art.js';
 export const RAVAGER_ACTIONS=['idle','walk','attack','cast','hurt','dead'];
 export function ravagerIcon(el,id){
- const map={'blood-cleave':'/assets/v4/cleave.png','blood-rage':'/assets/v4/fury.png','bloodstorm':'/assets/v4/earthquake.png'};
- if(!map[id])return false;
- el.style.setProperty('--icon',`url("${map[id]}")`);
- el.style.setProperty('background-image','var(--icon)','important');
- el.style.setProperty('background-size','100% 100%','important');
- el.style.setProperty('background-position','50% 50%','important');
- return true;
+ return RAVAGER_SKILL_IDS.includes(id)&&refreshedSkillIcon(el,id);
 }
 // Grip/tip coordinates measured on the new sheet, not the previous helmet-and-shield sprite.
 export const RAVAGER_BLADES=[
@@ -51,7 +46,7 @@ function createRavagerBladeTexture(scene,source){
 export function updateRavagerBladeGlow(scene,u,obj){
  // Passive atlases have their own weapon poses (and painted max-level glow).
  // A six-by-six legacy weapon mask cannot follow a three-by-two body atlas.
- const active=!obj.sprite.texture?.key?.startsWith('passive-action:')&&ravagerGlowActive(u)&&scene.textures.exists?.('ravager-blade-glow');
+ const active=!obj.sprite.texture?.key?.startsWith('skill-action:')&&!obj.sprite.texture?.key?.startsWith('passive-action:')&&ravagerGlowActive(u)&&scene.textures.exists?.('ravager-blade-glow');
  if(!active){obj.ravagerBladeGlow?.setVisible(false);return;}
  const sprite=obj.sprite;
  if(!obj.ravagerBladeGlow){

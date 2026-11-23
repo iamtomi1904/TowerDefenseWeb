@@ -11,7 +11,7 @@ export function rainImpactArrowIndex(e,age,slot){const step=Math.max(.1,(e.field
 const key=id=>'action-fx:'+id;
 const textureCaches=new WeakMap();
 function texture(s,id){let cache=textureCaches.get(s);if(!cache){cache=new Map();textureCaches.set(s,cache);}if(!cache.has(id))cache.set(id,cleanEffectTexture(s,key(id),{columns:1,rows:1,matteFloor:22,maxSize:512}));return cache.get(id);}
-export function preloadActionSkills(s){preloadElementAnimations(s);for(const id of ACTION_FX)s.load.image(key(id),'/assets/combat/'+(id==='poison-vapor'?'gear-glows':'action-v1')+'/'+(id==='lightning-bolt'?'lightning-bolt-v2':id)+'.png');}
+export function preloadActionSkills(s){for(const [skill,layers]of [['tempest',['back']],['flamefield',['back','front']]])for(const layer of layers)s.load.image('baked-field:'+skill+':'+layer,'/assets/baked-skills/'+skill+'-'+layer+'.png');for(const layer of ['back','front'])s.load.image('baked-blizzard:'+layer,'/assets/baked-skills/blizzard-'+layer+'.png');preloadElementAnimations(s);for(const id of ACTION_FX)s.load.image(key(id),'/assets/combat/'+(id==='poison-vapor'?'gear-glows':'action-v1')+'/'+(id==='lightning-bolt'?'lightning-bolt-v2':id)+'.png');}
 export function createArcherQProjectile(s,e){
  if(e.skill!=='multishot'||!s.textures?.exists(key('archer-q')))return null;
  const l=ACTION_LAYOUT['archer-q'],images=[];
@@ -23,14 +23,18 @@ export function createActionSkill(s,e){
  const kind=actionKind(e);if(!kind||!ACTION_FX.every(id=>s.textures?.exists(key(id))))return null;
  const nodes=[];
  function add(id,role,count,depth=2501){const layout=ACTION_LAYOUT[id],tx=texture(s,id);for(let i=0;i<count;i++){const image=acquireSkillImage(s,e.x,e.y,tx).setDepth(depth).setOrigin(layout.cx,layout.cy);if(e.poisonEnchanted&&role==='rain-arrow')image.setTint?.(0xb5ff7b);nodes.push({id,role,i,image,layout,wscale:1/layout.width,hscale:1/layout.height,spawn:role==='rain-arrow'?i/(RAIN_ARROW_COUNT-1)*Math.max(.1,(e.fieldRemaining||5)-.17)-.48:0});}}
+ const fieldLayers=kind==='storm'?['back']:kind==='fire'?['back','front']:[],fieldSkill=kind==='storm'?'tempest':'flamefield';
+ const bakedField=fieldLayers.length>0&&fieldLayers.every(layer=>s.textures.exists('baked-field:'+fieldSkill+':'+layer));
+ if(bakedField)for(const layer of fieldLayers){const tx=s.textures.get('baked-field:'+fieldSkill+':'+layer),im=tx.getSourceImage(),fw=im.width/6,fh=im.height/4;for(let f=0;f<24;f++)if(!tx.has(f))tx.add(f,0,f%6*fw,Math.floor(f/6)*fh,fw,fh);const image=acquireSkillImage(s,e.x,e.y,'baked-field:'+fieldSkill+':'+layer,0).setDepth(kind==='storm'?2499:layer==='back'?25:2501).setOrigin(.5,.5);nodes.push({role:'baked-snow',i:0,image});}
  if(kind==='wave'){add('water-ring','crest',2);add('water-foam','foam',16);}
- if(kind==='snow'){add('spell-circle','ritual',1,24);add('ice-tornado','arctic-canopy',1);add('ice-tornado','ice-tornado',5);add('snow-flake','ice-fragment',28);add('frost-ground','frost-zone',1,23);add('blizzard-sweep','gust',8);add('snow-flake','snow',144);add('snow-flake','streak',72);add('snow-flake','frost',4,24);}
- if(kind==='storm'){add('spell-circle','ritual',1,24);add('storm-ground','storm-zone',1,23);add('storm-wisp','storm-cloud',3,2498);add('storm-wisp','storm-wind',3,2499);}
+ if(kind==='snow'&&['back','front'].every(layer=>s.textures.exists('baked-blizzard:'+layer))){add('spell-circle','ritual',1,24);add('frost-ground','frost-zone',1,23);add('snow-flake','frost',4,24);for(const layer of ['back','front']){const tx=s.textures.get('baked-blizzard:'+layer);for(let f=0;f<24;f++)if(!tx.has(f))tx.add(f,0,f%6*320,Math.floor(f/6)*320,320,320);const image=acquireSkillImage(s,e.x,e.y,'baked-blizzard:'+layer,0).setDepth(layer==='back'?2498:2503).setOrigin(.5,.5);nodes.push({role:'baked-snow',i:0,image});}}
+ else if(kind==='snow'){add('spell-circle','ritual',1,24);add('ice-tornado','arctic-canopy',1);add('ice-tornado','ice-tornado',5);add('snow-flake','ice-fragment',28);add('frost-ground','frost-zone',1,23);add('blizzard-sweep','gust',8);add('snow-flake','snow',144);add('snow-flake','streak',72);add('snow-flake','frost',4,24);}
+ if(kind==='storm'){add('spell-circle','ritual',1,24);add('storm-ground','storm-zone',1,23);if(!bakedField){add('storm-wisp','storm-cloud',3,2498);add('storm-wisp','storm-wind',3,2499);}}
  if(kind==='storm'||kind==='bolt'){add('lightning-bolt','bolt',kind==='storm'?12:1);add('lightning-bolt','contact',kind==='storm'?36:6,25);}
  if(kind==='bolt'){add('storm-wisp','strike-cloud',2,2499);add('storm-wisp','strike-cloud-flash',1,2500);}
  if(kind==='q-release')add('archer-q','q-release',3);
  if(kind==='q-hit'){add('volley-impact','q-hit',1);if(e.poisonEnchanted)add('poison-vapor','q-poison',2);}
- if(kind==='fire'){add('lava-pool','lava',1,23);add('fire-tuft','flame',6,25);add('fire-tuft','ember',8);}
+ if(kind==='fire'&&!bakedField){add('lava-pool','lava',1,23);add('fire-tuft','flame',6,25);add('fire-tuft','ember',8);}
  if(kind==='rain'){add('volley-arrow','rain-arrow',RAIN_ARROW_COUNT);add('volley-impact','rain-impact',rainImpactPoolCount(e),25);if(e.poisonEnchanted)add('poison-vapor','rain-poison',24,26);}
  return {isolatedKind:kind,nodes,secondaryCount:nodes.filter(n=>SECONDARY_ROLES.has(n.role)).length,image:nodes[0].image,parts:nodes.slice(1).map(n=>n.image)};
 }
@@ -40,9 +44,14 @@ export function snowMotion(e,age,i){
  const pos=stormBoundPoint(e,e.x+Math.cos(a)*d+Math.sin(age*2+i)*7,e.y+Math.sin(a)*d*.83-(1-phase)*75,18);return {...pos,phase};
 }
 export function strikeMotion(age,i){const clock=age/1.05+i*.263;return {cycle:Math.floor(clock),phase:fract(clock)};}
+const arrowTrajectories=new WeakMap();
 export function arrowRainMotion(e,age,i){
- const duration=e.fieldRemaining||5,flight=.48+i%4*.035,spawn=i/(RAIN_ARROW_COUNT-1)*Math.max(.1,duration-.17)-.48,local=age-spawn,fall=clamp(local/flight),a=i*2.399,r=(e.radius||190)*Math.sqrt((i%30+.5)/30)*.96;
- const x=e.x+Math.cos(a)*r,y=e.y+Math.sin(a)*r,height=205*(1-fall),sway=Math.sin(fall*Math.PI*1.6+i*.7)*30*Math.sin(fall*Math.PI)*(1-fall);
+ const duration=e.fieldRemaining||5,radius=e.radius||190;
+ let cache=arrowTrajectories.get(e);
+ if(!cache||cache.x!==e.x||cache.y!==e.y||cache.radius!==radius||cache.duration!==duration){cache={x:e.x,y:e.y,radius,duration,arrows:[]};arrowTrajectories.set(e,cache);}
+ let path=cache.arrows[i];
+ if(!path){const flight=.48+i%4*.035,spawn=i/(RAIN_ARROW_COUNT-1)*Math.max(.1,duration-.17)-.48,a=i*2.399,r=radius*Math.sqrt((i%30+.5)/30)*.96;path=cache.arrows[i]={flight,spawn,x:e.x+Math.cos(a)*r,y:e.y+Math.sin(a)*r};}
+ const {flight,spawn,x,y}=path,local=age-spawn,fall=clamp(local/flight),height=205*(1-fall),sway=Math.sin(fall*Math.PI*1.6+i*.7)*30*Math.sin(fall*Math.PI)*(1-fall);
  return {x,y,fall,local,landed:local>=flight,impact:clamp((local-flight)/.22),drawX:x-height*.24+sway,drawY:y-height,angle:-.23+Math.cos(fall*Math.PI*1.6+i*.7)*.14*(1-fall)};
 }
 export function updateActionSkill(s,v,t){
@@ -55,6 +64,14 @@ export function updateActionSkill(s,v,t){
    const hidden=!secondaryVisible(secondaryIndex++,s.secondaryFXRatio??1);
    if(hidden!==!!n.budgetHidden){image.setVisible?.(!hidden);n.budgetHidden=hidden;}
    if(hidden)continue;
+  }
+  if(role==='baked-snow'){
+   const frame=Math.floor(age*12)%24,alpha=fade*birth;
+   if(n.lastFrame!==frame){image.setFrame(frame);n.lastFrame=frame;}
+   if(n.lastX!==e.x||n.lastY!==e.y){image.setPosition(e.x,e.y);n.lastX=e.x;n.lastY=e.y;}
+   if(n.lastRadius!==r){image.setDisplaySize(r*500/205,r*500/205);n.lastRadius=r;}
+   if(n.lastAlpha!==alpha){image.setAlpha(alpha);n.lastAlpha=alpha;}
+   continue;
   }
   if(role==='rain-arrow'){if(age<n.spawn){if(!n.hidden){image.setAlpha(0);n.hidden=true;}continue;}if(n.planted){if(n.lastFade!==fade){image.setAlpha(fade*.72*.94);n.lastFade=fade;}continue;}}
   if(role==='q-release'){
@@ -120,14 +137,20 @@ export function updateActionSkill(s,v,t){
   }else if(role==='bolt'){
    const motion=p.isolatedKind==='bolt'?{cycle:0,phase:.2+t*.7}:strikeMotion(age,i),{cycle,phase}=motion,a=i*2.399+cycle*1.73,d=p.isolatedKind==='bolt'?0:r*(.2+fract(i*.37+cycle*.19)*.55),h=p.isolatedKind==='bolt'?185:170+i%2*20;
    const strike=phase<.18?0:phase<.23?clamp((phase-.18)/.025):clamp((.43-phase)/.2);
-   image.setBlendMode?.('ADD');image.setTint?.(0xe6faff);image.setOrigin(layout.cx,layout.foot).setPosition(e.x+Math.cos(a)*d,e.y+Math.sin(a)*d*.83).setDisplaySize(h*(p.isolatedKind==='bolt'?.58:.5)*wscale,h*hscale).setRotation(Math.sin(cycle*4+i)*.035).setAlpha(fade*strike*.98);
+   if(strike<=0){if(n.lastPulse!==0){image.setAlpha(0);n.lastPulse=0;}continue;}
+   n.lastPulse=strike;
+   if(!n.staticReady){image.setBlendMode?.('ADD');image.setTint?.(0xe6faff);image.setOrigin(layout.cx,layout.foot).setDisplaySize(h*(p.isolatedKind==='bolt'?.58:.5)*wscale,h*hscale);n.staticReady=true;}
+
+   image.setPosition(e.x+Math.cos(a)*d,e.y+Math.sin(a)*d*.83).setRotation(Math.sin(cycle*4+i)*.035).setAlpha(fade*strike*.98);
   }else if(role==='contact'){
    const bolt=p.isolatedKind==='bolt'?0:Math.floor(i/3),motion=p.isolatedKind==='bolt'?{cycle:0,phase:.2+t*.7}:strikeMotion(age,bolt),{cycle,phase}=motion;
    const a=bolt*2.399+cycle*1.73,d=p.isolatedKind==='bolt'?0:r*(.2+fract(bolt*.37+cycle*.19)*.55),spread=clamp((phase-.21)/.35),angle=i*2.399+cycle*.8;
    const pulse=phase<.21?0:Math.sin(spread*Math.PI),length=14+spread*(p.isolatedKind==='bolt'?66:52);
+   if(pulse<=0){if(n.lastPulse!==0){image.setAlpha(0);n.lastPulse=0;}continue;}
+   n.lastPulse=pulse;
    // Three drawn electric branches spread from each actual bolt contact, on the ground plane.
-   image.setBlendMode?.('ADD');image.setTint?.(0xc9f7ff);
-   image.setOrigin(layout.cx,layout.foot).setPosition(e.x+Math.cos(a)*d,e.y+Math.sin(a)*d*.83).setDisplaySize((9+spread*10)*wscale,length*hscale).setRotation(angle).setAlpha(fade*pulse*.95);
+   if(!n.staticReady){image.setBlendMode?.('ADD');image.setTint?.(0xc9f7ff);image.setOrigin(layout.cx,layout.foot);n.staticReady=true;}
+   image.setPosition(e.x+Math.cos(a)*d,e.y+Math.sin(a)*d*.83).setDisplaySize((9+spread*10)*wscale,length*hscale).setRotation(angle).setAlpha(fade*pulse*.95);
   }else if(role==='flame'){
    const a=i*2.399,d=i===0?0:r*Math.sqrt(i/10)*.76,w=62+i%3*12,h=28+Math.sin(age*(7+i%3)+i)*5;
    image.setOrigin(layout.cx,layout.foot).setPosition(e.x+Math.cos(a)*d,e.y+Math.sin(a)*d*.91).setDisplaySize(w*wscale,h*hscale).setRotation(Math.sin(age*3+i)*.025).setAlpha(fade*birth*.88);

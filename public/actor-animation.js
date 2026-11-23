@@ -5,6 +5,7 @@ export const ATTACK_TIMING={fallen:FALLEN.attack,berserker:{windupFraction:.2},r
 export function actorAction(unit,obj,moving,time,info){
  if(unit.hp<=0){obj.castUntil=0;obj.attackUntil=0;return info.actions.dead?'dead':'idle';}
  if(unit.stun>0){obj.castUntil=0;obj.attackUntil=0;obj.wasAttacking=false;obj.attackSequence=unit.attackCount;return 'idle';}
+ if(unit.type==='forest-spirit'&&unit.castAnim>0&&info.actions.cast)return 'cast';
  const attacking=unit.anim>0,sequence=unit.attackCount;
  const newAttack=unit.hero?sequence>0&&sequence!==obj.attackSequence:attacking&&(!obj.wasAttacking||(sequence!==undefined&&sequence!==obj.attackSequence));
  const newCast=unit.castAnim>0&&unit.castCount!==obj.castSequence;if(newCast)obj.castSequence=unit.castCount;

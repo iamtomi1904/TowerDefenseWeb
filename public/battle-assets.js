@@ -2,6 +2,10 @@ import {HEROES} from './content.js';
 const aliases={'holy-foot':'knight-2','holy-mounted':'knight-2','holy-paladin':'knight-2','dark-foot':'knight-3','dark-mounted':'knight-3','fallen-knight':'knight-3','fallen-mounted':'knight-3','vanguard-champion':'warrior-3','vanguard-giant':'warrior-3','wind-swordsman':'samurai'};
 export function heroOwner(id){return aliases[id]||HEROES.find(h=>h.id===id||h.classId===id||id.startsWith(h.classId+'-'))?.id;}
 const CLASS_TEXTURE_OWNERS={
+ 'basic-shot-v1:darkelf':['dark-elf'],'basic-shot-v1:ranger':['samurai-archer'],'basic-shot-v1:stormcaller':['lightning-mage'],'basic-shot-v1:tidecaller':['wanderer-magican'],'basic-shot-v1:pyromancer':['fire-wizard'],
+ 'moonforest-effects':['dark-elf'],'moonforest-caster':['dark-elf'],
+ 'baked-field:tempest:back':['lightning-mage'],'baked-field:flamefield:back':['fire-wizard'],'baked-field:flamefield:front':['fire-wizard'],
+ 'baked-blizzard:back':['wanderer-magican'],'baked-blizzard:front':['wanderer-magican'],
  'guardian-ultimate':['knight-1'],'guardian-dome':['knight-1'],'guardian-actions':['knight-1'],'guardian-fx':['knight-1'],
  'ravager-redesign':['warrior-2'],'katana-forms':['samurai-commander'],'warrior-windup':['warrior-1'],'arctic-windup':['wanderer-magican']
 };
@@ -17,7 +21,7 @@ export function installBattleAssetLoader(scene,manifest,heroes){
   const replacement={'ritual-actors-raw':'ritual-actor:0','katana-summon-raw':'katana-summon:blade','moonfall-atlas':'moonfall:moon','moon-animated-atlas':'moon-animated-atlas:clean-alpha-v1','moon-air-thin':'moon-air-thin:clean-alpha-v1','moon-sigil':'moon-sigil:clean-alpha-v1'};
   if(manifest[replacement[key]]?.extra)return scene.load;
   const family=key.split(':')[0],id=key.slice(family.length+1),owner=heroOwner(id);
-  if(heroes&&['refresh','ascended','passive-action','empowered','passive','knight-v2'].includes(family)&&owner&&!heroes.includes(owner))return scene.load;
+  if(heroes&&['skill-action','refresh','ascended','passive-action','empowered','passive','knight-v2'].includes(family)&&owner&&!heroes.includes(owner))return scene.load;
   return image(key,manifest[key]?.url||url,...rest);
  };
 }

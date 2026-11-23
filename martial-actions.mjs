@@ -31,9 +31,9 @@ export function castMartial(r,p,s,ctx){
   }
  }
  if(p.classId==='ravager'){
-  if(s.kind==='blood-rage'){p.buffs.push({time:s.duration,powerMultiplier:.25+((s.rank||1)-1)*.04,haste:s.haste,lifesteal:s.lifesteal});lock(p,.5,'blood-roar');event(ctx,p,'blood-roar',s,{duration:.7});return true;}
+  if(s.kind==='blood-rage'){p.buffs=(p.buffs||[]).filter(b=>!b.bloodRage);p.buffs.push({bloodRage:true,time:s.duration,speed:.3});lock(p,.5,'blood-roar');event(ctx,p,'blood-roar',s,{duration:.7});return true;}
   if(s.kind==='blood-cleave'){lock(p,1.3,'blood-cleave');event(ctx,p,'blood-charge',s,{duration:.7});for(let i=0;i<2;i++)queue(r,p,s,.7+i*.3,'blood-hit',{reverse:i===1});return true;}
-  if(s.kind==='bloodstorm'){lock(p,3.6,'bloodstorm');p.castAnim=.9;event(ctx,p,'blood-charge',s,{duration:.9});for(let i=0;i<6;i++)queue(r,p,s,.9+i*.45,'blood-hit',{radial:true,reverse:i%2===1});return true;}
+  if(s.kind==='bloodstorm'){p.bloodstormTime=3.6;lock(p,3.6,'bloodstorm');p.castAnim=.9;event(ctx,p,'blood-charge',s,{duration:.9});for(let i=0;i<6;i++)queue(r,p,s,.9+i*.45,'blood-hit',{radial:true,reverse:i%2===1});return true;}
  }
  if(p.classId==='berserker'){
   if(s.kind==='warrior-cleave'){lock(p,1.05,'axe-cut');event(ctx,p,'axe-charge',s,{duration:.68});queue(r,p,s,.68,'axe-hit',{radial:true});return true;}
@@ -48,13 +48,13 @@ export function tickMartial(r,dt,ctx,active){
  const pending=[];
  for(const p of r.players){
   p.martialLock=Math.max(0,(p.martialLock||0)-dt);if(!p.martialLock)p.martialPose=null;
-  if(p.martialLeap){p.martialLeap.time=Math.max(0,p.martialLeap.time-dt);const leap=p.martialLeap,t=1-leap.time/leap.duration;ctx.move(p,leap.fromX+(leap.tx-leap.fromX)*t,leap.fromY+(leap.ty-leap.fromY)*t,leap.range*dt/leap.duration+1);if(!p.martialLeap.time||p.hp<=0||p.stun>0)p.martialLeap=null;}
+  if(p.martialLeap){p.martialLeap.time=Math.max(0,p.martialLeap.time-dt);const leap=p.martialLeap,t=1-leap.time/leap.duration;ctx.move(p,leap.fromX+(leap.tx-leap.fromX)*t,leap.fromY+(leap.ty-leap.fromY)*t,leap.range*dt/leap.duration+1);if(!p.martialLeap.time||p.hp<=0)p.martialLeap=null;}
   if(p.hp<=0)p.dualSwords=false;
  }
  for(const a of r.martialActions||[]){
   if(a.action==='stun-after-fall'){if(active&&a.stage===r.stage){a.delay-=dt;if(a.delay>1e-8)pending.push(a);else{const e=r.enemies.find(e=>e.id===a.target&&e.hp>0);if(e)e.stun=Math.max(e.stun||0,a.s.stun);}}continue;}
   const p=r.players.find(p=>p.id===a.owner);
-  if(!active||a.stage!==r.stage||!p||(a.action!=='sword-impact'&&(p.hp<=0||p.stun>0))){if(p){p.martialLock=0;p.martialPose=null;p.martialLeap=null;p.castAnim=0;}continue;}
+  if(!active||a.stage!==r.stage||!p||p.hp<=0){if(p){p.martialLock=0;p.martialPose=null;p.martialLeap=null;p.castAnim=0;p.bloodstormTime=0;}continue;}
   a.delay-=dt;if(a.delay>1e-8){pending.push(a);continue;}
   const s=a.s;
   if(a.action==='stun-after-fall'){const e=r.enemies.find(e=>e.id===a.target&&e.hp>0);if(e)e.stun=Math.max(e.stun||0,s.stun);continue;}
@@ -77,11 +77,25 @@ export function tickMartial(r,dt,ctx,active){
   }
   if(a.dual||a.action==='blood-hit'){p.castCount=(p.castCount||0)+1;p.castAnim=.25;}
   event(ctx,p,a.action==='sword-hit'?(a.finisher?'sword-finish':a.dual?'dual-cut':'heavy-cut'):a.action==='blood-hit'?'blood-cut':'axe-cut',s,{dual:!!a.dual,reverse:!!a.reverse,duration:.45,radial:!!a.radial,angle:Math.atan2(a.aim.y,a.aim.x)});
-  for(const e of r.enemies)if(e.hp>0&&!e.flying&&(a.radial?distance(p,e)<=s.radius:coneHits(p,e,a.aim,s.radius,.05))&&(!ctx.clearLine||ctx.clearLine(p,e))){
-   ctx.damage(e,ctx.stats(p).power*s.mult,p);
-   if(a.action==='blood-hit')ctx.status(e,{bleed:.2,statusDuration:3},p,ctx.stats(p).power);
-   if(a.action==='axe-hit')ctx.status(e,{bleed:.3,statusDuration:4},p,ctx.stats(p).power);
+  const isBloodstorm=s.id==='bloodstorm';
+  let bloodstormMult=1,hitAny=false;
+  if(isBloodstorm){
+   const st=ctx.stats(p),hasteBonus=Math.max(0,.7/st.cooldown-1);
+   const rageBuff=p.buffs?.find(b=>b.bloodRage&&b.time>0);
+   const rageSteal=p.hp>0&&(p._hpPct??1)<.5?(p.mastery>=2&&(p._hpPct??1)<.15?.3:.15)*(rageBuff?1.5:1):0;
+   const buffSteal=p.buffs?.filter(b=>b.time>0).reduce((m,b)=>Math.max(m,b.lifesteal||0),0)||0;
+   bloodstormMult=1+hasteBonus*.5+rageSteal+buffSteal;
   }
+  p._inBloodstorm=isBloodstorm;
+  try{
+   for(const e of r.enemies)if(e.hp>0&&!e.flying&&(a.radial?distance(p,e)<=s.radius:coneHits(p,e,a.aim,s.radius,.05))&&(!ctx.clearLine||ctx.clearLine(p,e))){
+    hitAny=true;
+    ctx.damage(e,ctx.stats(p).power*s.mult*bloodstormMult,p);
+    if(a.action==='blood-hit'&&!isBloodstorm)ctx.status(e,{bleed:.2,statusDuration:3},p,ctx.stats(p).power);
+    if(a.action==='axe-hit')ctx.status(e,{bleed:.3,statusDuration:4},p,ctx.stats(p).power);
+   }
+  }finally{p._inBloodstorm=false;}
+  if(isBloodstorm&&hitAny)for(const b of p.buffs||[])if(b.bloodRage&&b.time>0)b.time+=.5;
  }
  r.martialActions=pending;
 }

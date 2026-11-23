@@ -152,16 +152,25 @@ export function passiveHit(r,p,target,power,stats,applyStatus,kill,kind='basic')
   const s=stats(p);
   if(basic){
    if(p.hp>1)p.hp=Math.max(1,p.hp-s.hp*.03);
-   for(const e of r.enemies)if(e!==target&&e.hp>0&&dist(target,e)<=30){e.hp=Math.max(0,e.hp-gemArmorDamage(p,e,power*.4));applyStatus(e,{bleed:.18,statusDuration:3},p,power);kill(r,e,p);}
+   for(const e of r.enemies)if(e!==target&&e.hp>0&&dist(target,e)<=30){e.hp=Math.max(0,e.hp-gemArmorDamage(p,e,power*.4));applyStatus(e,{bleed:.2,statusDuration:2},p,power);kill(r,e,p);}
   }
-  applyStatus(target,{bleed:.18,statusDuration:3},p,power);
+  if(!p._inBloodstorm)applyStatus(target,{bleed:.2,statusDuration:2},p,power);
  }
- // 7. Warrior-3 Tier 2: every 4th basic
- if(h==='warrior-3'&&basic&&p.mastery>=2&&p.attackCount%4===0){
-  passivePose(r,p,'vanguard',target);
-  applyStatus(target,{stun:.4},p,power);
-  if(p.vanguardTime>0&&(p.vanguardExtended||0)<15){const add=Math.min(.5,15-(p.vanguardExtended||0));p.vanguardTime+=add;p.vanguardExtended=(p.vanguardExtended||0)+add;}
-  if(p.vanguardTime>0)target.vanguardWeakenTime=3;
+ // 7. Warrior-3: Ý Chí Bất Khuất + Tinh thông bậc 2
+ if(h==='warrior-3'&&basic){
+  const maxHp=stats(p).hp,vanStacks=p.hp>0?Math.min(4,Math.floor(Math.max(0,1-p.hp/Math.max(1,maxHp))/.1)):0;
+  if(vanStacks>0){
+   const bonusRaw=maxHp*vanStacks*.01,before=target.hp,dealt=gemArmorDamage(p,target,bonusRaw);
+   target.hp=Math.max(0,target.hp-dealt);
+   const actualBonus=Math.max(0,before-target.hp);
+   if(actualBonus>0)healing(r,p,actualBonus,maxHp,target);
+  }
+  if(p.mastery>=2&&p.attackCount%4===0){
+   passivePose(r,p,'vanguard',target);
+   applyStatus(target,{stun:.4},p,power);
+   if(p.vanguardTime>0&&(p.vanguardExtended||0)<15){const add=Math.min(.5,15-(p.vanguardExtended||0));p.vanguardTime+=add;p.vanguardExtended=(p.vanguardExtended||0)+add;}
+   if(p.vanguardTime>0)target.vanguardWeakenTime=3;
+  }
  }
  // 8. Knight-2: Thánh Ước Quang Minh
  if(h==='knight-2'){
@@ -179,15 +188,15 @@ export function passiveHit(r,p,target,power,stats,applyStatus,kill,kind='basic')
  }
  // 9. Knight-3: Lời Thề Phá Giáp
  if(h==='knight-3'){
-  if(basic&&p.mastery>=2)applyStatus(target,{bleed:.2,statusDuration:3},p,power);
+  if(basic&&p.mastery>=2&&(r.random||Math.random)()<.3)applyStatus(target,{bleed:.2,statusDuration:2},p,power);
   target.darkOathStacks=(target.darkOathStacks||0)+1;
   if(target.darkOathStacks>=4){
    passiveFX(r,p,target);
    target.darkOathStacks=0;
-   const boom=Math.max(1,power*.5*armorMultiplier(Math.max(0,(target.armor||0)*.5)));
+   const boom=Math.max(1,power*.4*armorMultiplier(Math.max(0,(target.armor||0)*.7)));
    target.hp=Math.max(0,target.hp-boom);
-   applyStatus(target,{bleed:.2,slow:.2,statusDuration:2},p,power);
-   if(p.mastery>=2){target.fallenArmorBreakTime=4;p.fallenDoubleHealTime=2;}
+   applyStatus(target,{bleed:.2,slow:.15,statusDuration:2},p,power);
+   if(p.mastery>=2){target.fallenArmorBreakTime=3;p.fallenDoubleHealTime=3;}
    r.events.push({id:randomUUID(),type:'dot',x:target.x,y:target.y-45,text:'THA HÓA −'+Math.round(boom),color:0xb69be0});
   }
  }
@@ -215,12 +224,18 @@ export function passiveHit(r,p,target,power,stats,applyStatus,kill,kind='basic')
  }
  // 12. Goblin Assassin: Ám Sát Chí Mạng
  if(h==='goblin-assassin'){
-  const backstab=(p.x-target.x)*(target.face||1)<-8,stealthed=(p.stealthGraceTime||0)>0;
+  if(p.mastery>=2&&target?.boss&&target.statuses?.bleed?.time>0){
+   for(const id of ['assassin-double','assassin-veil','assassin-flurry'])if(p.cooldowns?.[id]>0)p.cooldowns[id]=Math.max(0,p.cooldowns[id]-1);
+   p.buffs=(p.buffs||[]).filter(b=>!b.assassinBoss);
+   p.buffs.push({time:2,haste:.2,speed:.25,assassinBoss:true});
+  }
+  const backstab=(p.x-target.x)*(target.face||1)<-8,stealthed=(p.stealthGraceTime||0)>0||p.buffs?.some(b=>b.stealth&&b.time>0);
   if(backstab||stealthed){
    if(basic)passivePose(r,p,'assassin',target);passiveFX(r,p,target);
    if(stealthed)p.stealthGraceTime=0;
-   const extra=gemArmorDamage(p,target,power*.5);target.hp=Math.max(0,target.hp-extra);
-   applyStatus(target,{bleed:.22,statusDuration:3},p,power);
+   const mult=p._inAssassinR?.5:1;
+   const extra=gemArmorDamage(p,target,power*mult);target.hp=Math.max(0,target.hp-extra);
+   applyStatus(target,{bleed:.22,statusDuration:3},p,basic?power:stats(p).power);
    r.events.push({id:randomUUID(),type:'dot',x:target.x,y:target.y-45,text:'ÁM SÁT −'+Math.round(extra),color:0xffd787});
   }
  }

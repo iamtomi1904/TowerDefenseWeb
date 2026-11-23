@@ -34,12 +34,12 @@ function hurtPlayers(r,boss,cast,spec,ctx,multiplier=1){
  let drained=0;
  for(const u of [...r.players,...r.troops]){
   if(u.hp<=0||!insideBossShape(u,cast))continue;
-  const armor=u.hero?(ctx.stats?ctx.stats(u).armor:0):(u.armor??2),raw=Math.max(1,boss.power*terrainModifiers(MAPS[r.stage-1]||{},boss).power*spec.mult*multiplier*armorMultiplier(armor))*(u.guard?.3:1)*(1-(u.holyAura?.reduction||0))*(1-vanguardReduction(u))*(1-windReduction(u))*(1-tideReduction(r,u)),absorbed=Math.min(u.shield||0,raw),damage=raw-absorbed;
-  u.shield=Math.max(0,(u.shield||0)-absorbed);drained+=Math.min(u.hp,damage);u.hp=Math.max(0,u.hp-damage);
+  const armor=u.hero?(ctx.stats?ctx.stats(u).armor:0):(u.armor??2),raw=Math.max(1,boss.power*terrainModifiers(MAPS[r.stage-1]||{},boss).power*spec.mult*multiplier*armorMultiplier(armor))*(u.guard?.3:1)*(1-(u.holyAura?.reduction||0))*(1-vanguardReduction(u))*(1-windReduction(u))*(1-tideReduction(r,u)),absMount=Math.min(u.holyMountShield||0,raw),absorbed=Math.min(u.shield||0,raw-absMount),damage=raw-absMount-absorbed;
+  u.holyMountShield=Math.max(0,(u.holyMountShield||0)-absMount);u.shield=Math.max(0,(u.shield||0)-absorbed);drained+=Math.min(u.hp,damage);u.hp=Math.max(0,u.hp-damage);
   if(spec.poison&&u.hero){u.poisonTime=spec.poison;u.poisonClock=1;}
   if(spec.dot&&u.hero){u.bossBurn=3;u.bossBurnDamage=spec.dot;u.bossBurnClock=1;}
   if(spec.slow){u.bossSlow=(spec.slowTime||2)*(u.classId==='vanguard'&&u.vanguardTime>0?1-VANGUARD.giant.controlResist:1);u.bossSlowFactor=1-spec.slow;u.slowType=spec.slowType||'physical';}
-  if(spec.knockback){const dx=u.x-cast.x,dy=u.y-cast.y,d=Math.hypot(dx,dy)||1;for(let step=0;step<spec.knockback*(u.classId==='vanguard'&&u.vanguardTime>0?1-VANGUARD.giant.controlResist:1);step+=6){const x=u.x+dx/d*6,y=u.y+dy/d*6;if(ctx.canStand&&!ctx.canStand(x,y))break;u.x=x;u.y=y;}}
+  if(spec.knockback&&!(u.bloodstormTime>0||u.assassinRTime>0)){const dx=u.x-cast.x,dy=u.y-cast.y,d=Math.hypot(dx,dy)||1;for(let step=0;step<spec.knockback*(u.classId==='vanguard'&&u.vanguardTime>0?1-VANGUARD.giant.controlResist:1);step+=6){const x=u.x+dx/d*6,y=u.y+dy/d*6;if(ctx.canStand&&!ctx.canStand(x,y))break;u.x=x;u.y=y;}}
  }
  if(spec.drain&&drained)healing(r,boss,drained*spec.drain,boss.maxHp);
 }

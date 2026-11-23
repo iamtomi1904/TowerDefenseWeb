@@ -1,4 +1,5 @@
 import {emitFloatingText,updateFloatingTexts,clearFloatingTexts} from './floating-text-pool.js';
+import {createBasicProjectile,updateBasicProjectile,createBasicImpact,updateBasicImpact,destroyBasicProjectile} from './basic-projectile-art.js';
 import {renderViews,effectInView,setRenderDormant,prepareEffectBudget} from './render-budget.js';
 import {meteorEvent,updateMeteors,clearMeteors} from './meteor-painted.js';
 import {handleRitualEvent,updateRitualFX,clearRitualFX,clearRitualActor} from './ritual-casting-art.js';
@@ -27,7 +28,7 @@ import {addBossVFX,updateBossVFX,clearBossVFX} from './boss-vfx.js';
 import {ENEMY_FAMILIES} from './enemy-families.js';
 const TAU=Math.PI*2;
 const colorOf=e=>e.color??(e.fx?.includes('fire')||e.fx==='explosion'?0xffb05e:e.fx?.includes('water')?0x9beaff:e.fx?.includes('lightning')?0xb2e6ff:0xdbe9b2);
-function remember(s,record){s.liveVFX||=[];if(s.liveVFX.length>=180){const old=s.liveVFX.shift();old.rune?.destroy();destroyPaintedSkill(old.impactGround);destroyPaintedSkill(old);destroySlashVisual(old.slash);old.elemental?.image.destroy();destroyFieldRims(old.rimSprites,'tide');for(const key of ['g','body','rock','overlay','label'])old[key]?.destroy();}record.rune=createSpellCircle(s,record.e);if(record.e.type==='meteor-impact')record.impactGround={e:{...record.e,action:'quake-land'},age:0,painted:createPaintedSkill(s,{e:{...record.e,action:'quake-land'}})};record.painted=createPaintedSkill(s,record);record.elemental=createElementalVisual(s,record);s.liveVFX.push(record);return record;}
+function remember(s,record){s.liveVFX||=[];if(s.liveVFX.length>=180){const old=s.liveVFX.shift();old.rune?.destroy();destroyBasicProjectile(old);destroyPaintedSkill(old.impactGround);destroyPaintedSkill(old);destroySlashVisual(old.slash);old.elemental?.image.destroy();destroyFieldRims(old.rimSprites,'tide');for(const key of ['g','body','rock','overlay','label'])old[key]?.destroy();}record.rune=createSpellCircle(s,record.e);if(record.e.type==='meteor-impact')record.impactGround={e:{...record.e,action:'quake-land'},age:0,painted:createPaintedSkill(s,{e:{...record.e,action:'quake-land'}})};record.painted=createPaintedSkill(s,record);record.elemental=createElementalVisual(s,record);s.liveVFX.push(record);return record;}
 function spriteFX(s,key,x,y,size,alpha=.8){
  if(!s.anims.exists('fx:'+key))return null;const sprite=s.add.sprite(x,y,'fx:'+key).setDisplaySize(size,size).setAlpha(alpha).setDepth(2600).play('fx:'+key);sprite.once('animationcomplete',()=>sprite.destroy());return sprite;
 }
@@ -59,14 +60,14 @@ export function renderEvent(s,e,seen){
  if(e.type==='boss-warning'||e.type==='boss-impact'||e.type==='enemy-summon'){if(e.forestLeader&&e.type==='boss-impact'){const points=e.points||[{x:e.x,y:e.y}];for(const point of points)addShadowVFX(s,{action:'forest-burst-'+e.family,x:point.x,y:point.y,radius:Math.min(140,e.radius||e.width||85),duration:.85,angle:e.angle,color:e.color});}addBossVFX(s,e);return;}
  if(e.type==='relic-pickup'){const label=s.add.text(e.x,e.y-48,e.text+' · VĨNH VIỄN',{fontFamily:'Segoe UI',fontSize:'12px',fontStyle:'bold',color:'#'+e.color.toString(16).padStart(6,'0'),stroke:'#15241f',strokeThickness:4}).setOrigin(.5).setDepth(3200);remember(s,{kind:'relic',g:s.add.graphics().setDepth(3000),label,e,age:0,duration:1.4});return;}
  if(e.family&&['effect','impact'].includes(e.type)){if(e.forestLeader)addShadowVFX(s,{action:'forest-burst-'+e.family,x:e.tx??e.x,y:e.ty??e.y,radius:32,duration:.45,color:e.color});remember(s,{kind:'monster-hit',g:s.add.graphics().setDepth(2500),e,age:0,duration:.5});return;}
- if(e.type==='projectile-hit'){const v=s.liveVFX?.find(v=>v.e.id===e.shotId);if(v){if(v.e.skill==='elf-piercer')addShadowVFX(s,{action:'arrow-hit',x:e.x,y:e.y,radius:42,angle:Math.atan2(v.e.ty-v.e.y,v.e.tx-v.e.x),color:0xc9b8ef});v.age=v.duration;v.body?.setVisible(false);}return;}
+ if(e.type==='projectile-hit'){const v=s.liveVFX?.find(v=>v.e.id===e.shotId);if(v){if(v.e.skill==='elf-piercer')addShadowVFX(s,{action:'arrow-hit',x:e.x,y:e.y,radius:42,angle:Math.atan2(v.e.ty-v.e.y,v.e.tx-v.e.x),color:0xc9b8ef});v.age=v.duration;v.body?.setVisible(false);v.basicProjectile?.head.setVisible(false);v.basicProjectile?.trail.setVisible(false);}return;}
  if(e.type==='healing'){remember(s,{kind:'healing',g:s.add.graphics().setDepth(3000),e,age:0,duration:1,points:Array.from({length:12},(_,i)=>({x:(i%4-1.5)*14,y:Math.floor(i/4)*17,phase:i*.16}))});if(e.drainFrom)renderEvent(s,{id:e.id+':drain',type:'drain',x:e.drainFrom.x,y:e.drainFrom.y,tx:e.x,ty:e.y,color:0xdf728f},seen);renderEvent(s,{id:e.id+':amount',type:'dot',x:e.x,y:e.y-30,text:'+'+e.amount,color:0x6af18c},seen);return;}
  if(e.type==='assassin-vfx'){if(e.action==='double'||e.action==='flurry')addShadowVFX(s,{...e,action:'dagger',radius:90});remember(s,{kind:'assassin',g:s.add.graphics().setDepth(2600),e,color:e.color,age:0,duration:e.action==='veil'?.8:.32});return;}
  if(e.type==='gem-hit'){pulse(s,{...e,radius:22,fx:e.gem==='fire'?'fireball':e.gem==='ice'?'waterball':e.gem==='thunder'?'lightning':'poison'},{duration:.35,particles:5});return;}
  if(e.type==='melee-swing'){const identity=CLASS_ART[s.actorObjects?.get(e.sourceId)?.actor]?.classId,action=identity==='berserker'?'axe-cut':identity==='ravager'?'blood-cut':e.dual?'dual-cut':'heavy-cut',event={...e,action,basic:true,profile:identity==='guardian'?'holy':undefined},slash=createSlashVisual(s,event);remember(s,{kind:'swing',g:s.add.graphics().setDepth(2500),e:{...event,slashArt:!!slash},slash,age:0,duration:.25});return;}
  if(['gold','dot'].includes(e.type)){emitFloatingText(s,e,colorOf(e));return;}
  if(e.type==='projectile'){if(e.projectileType==='leaf')addShadowVFX(s,{...e,action:'leaf-cast',radius:35,duration:.45});
-  if(e.silent)return;const g=s.add.graphics().setDepth(2550),body=s.add.container(e.x,e.y).setDepth(2600),shape=s.add.graphics(),color=colorOf(e);
+  if(e.silent)return;const basicProjectile=createBasicProjectile(s,e);if(basicProjectile){const v=remember(s,{kind:'painted-projectile',basicProjectile,e,age:0,duration:e.duration||.4});updateBasicProjectile(s,v,0);return;}const g=s.add.graphics().setDepth(2550),body=s.add.container(e.x,e.y).setDepth(2600),shape=s.add.graphics(),color=colorOf(e);
   if(e.family){drawMonsterProjectile(shape,e.family,0,e.element);}
   else if(drawElementProjectile(shape,e)){}
   else if(e.gem&&e.skill!=='elf-piercer'){const c=color;shape.lineStyle(4,c,.2).lineBetween(-24,0,10,0);shape.lineStyle(2,c,1);if(e.gem==='thunder'){shape.beginPath().moveTo(-20,-3).lineTo(-3,-7).lineTo(-8,1).lineTo(15,-2).lineTo(0,9).lineTo(3,2).lineTo(-20,-3).strokePath();}else if(e.gem==='ice'){shape.fillStyle(c,.9).fillTriangle(17,0,-12,-7,-12,7).lineStyle(1,0xf0ffff,1).lineBetween(-12,0,12,0);}else if(e.gem==='wind'){shape.beginPath().arc(0,0,14,-1.1,1.1).strokePath();shape.lineStyle(1,0xd5fff5,.8).beginPath().arc(-6,0,14,-1,1).strokePath();}else if(e.gem==='fire'){shape.fillStyle(c,.9).fillCircle(3,0,9).fillTriangle(-24,-7,5,0,-24,7).fillStyle(0xffe2a0).fillCircle(5,0,4);}else if(e.gem==='poison'){shape.fillStyle(c,.8).fillCircle(3,0,9).fillCircle(-11,-3,4).fillCircle(-19,3,2).fillStyle(0xd8f18c,.9).fillCircle(5,-2,3);}else{shape.fillStyle(0x261638,.9).fillCircle(0,0,11).lineStyle(2,c,.9).strokeCircle(0,0,11).fillStyle(c,.65).fillCircle(0,0,5);}body.setScale(e.enhanced?1.25:1);}
@@ -96,6 +97,7 @@ export function renderEvent(s,e,seen){
  }
  if(e.type==='aoe'){pulse(s,e,{duration:e.previewDuration||(e.skill==='blizzard'||e.skill==='flamefield'?1.05:.8),particles:e.radius>100?24:12});return;}
  if(e.type==='aura'||e.type==='heal'){pulse(s,{...e,fx:null,radius:e.skill==='rally'&&(e.radius||0)>120?e.radius:Math.min(e.radius||e.size/2||60,90)},{duration:e.skill==='rally'?.95:.8,particles:e.skill==='rally'?24:10});return;}
+ if(e.type==='impact'){const basicImpact=createBasicImpact(s,e);if(basicImpact){remember(s,{kind:'painted-basic-impact',basicImpact,e,age:0,duration:basicImpact.profile.life});return;}}
  if(e.type==='impact'||e.type==='enemy-death'){pulse(s,{...e,radius:Math.min(e.radius||30,110)},{duration:.45,particles:e.radius>60?18:7});return;}
 
  if(e.type==='lightning'||e.type==='drain'||e.type==='trail'||e.type==='bolt'){
@@ -107,7 +109,9 @@ export function updateVFX(s,dt){updateFloatingTexts(s,dt);const views=renderView
  updateRitualFX(s,dt);
  updateWindVFX(s,dt);updateVanguardVFX(s,dt);updateFallenVFX(s,dt);updateHolyStrikes(s,dt);updateShadowVFX(s,dt);updateBossVFX(s,dt);
  const alive=[];for(const v of s.liveVFX||[]){v.age+=dt;const t=Math.min(1,v.age/v.duration),fade=1-t,g=v.g;setRenderDormant(v,!effectInView(s,v,views));if(t<1&&!v.renderDormant){g?.clear();updateElementalVisual(s,v,t);updateSpellCircle(s,v,t);if(v.impactGround){v.impactGround.age=v.age;updatePaintedSkill(s,v.impactGround,Math.min(1,v.age/1.2));}
-  if(updatePaintedSkill(s,v,t)){
+  if(updateBasicProjectile(s,v,t)||updateBasicImpact(v,t)){
+   // Flight, wake and contact are painted frames; no Graphics redraw is needed.
+  }else if(updatePaintedSkill(s,v,t)){
    // Painted frame sequences replace the rejected geometric sketches.
   }else if(v.kind==='fire-region'){drawFireRegion(g,v.e,v.age,v.radius,Math.min(1,(v.duration-v.age)/.3));
   }else if(v.kind==='storm-region'){drawStormStrike(g,v.e,v.age,v.radius,Math.min(1,(v.duration-v.age)/.25));
@@ -148,10 +152,10 @@ export function updateVFX(s,dt){updateFloatingTexts(s,dt);const views=renderView
    if(v.overlay){v.overlay.setAlpha(fade*(v.e.alpha??.75)).setScale(v.overlay.displayWidth/v.overlay.width*(.995+ease*.009));if(v.spin)v.overlay.rotation+=dt*v.spin;}
   }
   }
-  if(t>=1){v.rune?.destroy();destroyPaintedSkill(v.impactGround);destroyPaintedSkill(v);destroySlashVisual(v.slash);v.elemental?.image.destroy();destroyFieldRims(v.rimSprites,'tide');g?.destroy();v.body?.destroy();v.rock?.destroy();v.overlay?.destroy();v.label?.destroy();}else alive.push(v);
+  if(t>=1){v.rune?.destroy();destroyBasicProjectile(v);destroyPaintedSkill(v.impactGround);destroyPaintedSkill(v);destroySlashVisual(v.slash);v.elemental?.image.destroy();destroyFieldRims(v.rimSprites,'tide');g?.destroy();v.body?.destroy();v.rock?.destroy();v.overlay?.destroy();v.label?.destroy();}else alive.push(v);
  }s.liveVFX=alive;
 }
-export function clearVFX(s){clearFloatingTexts(s);clearMeteors(s);clearRitualFX(s);clearWindVFX(s);clearVanguardVFX(s);clearFallenVFX(s);clearHolyStrikes(s);clearShadowVFX(s);clearBossVFX(s);s.lootGraphics?.clear();for(const v of s.liveVFX||[]){v.rune?.destroy();destroyPaintedSkill(v.impactGround);destroyPaintedSkill(v);destroySlashVisual(v.slash);v.elemental?.image.destroy();destroyFieldRims(v.rimSprites,'tide');v.g?.destroy();v.body?.destroy();v.rock?.destroy();v.overlay?.destroy();v.label?.destroy();}s.liveVFX=[];}
+export function clearVFX(s){clearFloatingTexts(s);clearMeteors(s);clearRitualFX(s);clearWindVFX(s);clearVanguardVFX(s);clearFallenVFX(s);clearHolyStrikes(s);clearShadowVFX(s);clearBossVFX(s);s.lootGraphics?.clear();for(const v of s.liveVFX||[]){v.rune?.destroy();destroyBasicProjectile(v);destroyPaintedSkill(v.impactGround);destroyPaintedSkill(v);destroySlashVisual(v.slash);v.elemental?.image.destroy();destroyFieldRims(v.rimSprites,'tide');v.g?.destroy();v.body?.destroy();v.rock?.destroy();v.overlay?.destroy();v.label?.destroy();}s.liveVFX=[];}
 export function clearActorVFX(s,obj){
  clearRitualActor(obj);
  obj.passiveArt?.destroy();obj.passiveArt=null;obj.passiveValue=undefined;obj.passivePulse=undefined;for(const im of obj.guardImages||[])im.destroy();obj.guardImages=null;obj.guardLastWave=0;

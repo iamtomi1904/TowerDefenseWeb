@@ -22,7 +22,11 @@ export function drawCastleCourt(c,scene,map){
  const stone=scene.textures.get(map.roadTile).getSourceImage();
  c.save();
 
- c.fillStyle='#131d1588';
+ // Beveled footprint with softer ground contact, baked once into map terrain.
+ const edge=24;
+ const outline=()=>{c.beginPath();c.moveTo(r.left+edge,r.top);c.lineTo(r.right-edge,r.top);c.lineTo(r.right,r.top+edge);c.lineTo(r.right,r.bottom-edge);c.lineTo(r.right-edge,r.bottom);c.lineTo(r.left+edge,r.bottom);c.lineTo(r.left,r.bottom-edge);c.lineTo(r.left,r.top+edge);c.closePath();};
+ c.save();outline();c.clip();
+ c.fillStyle='#131d1538';
  c.fillRect(r.left-8,r.top-6,w+16,h+16);
 
  c.fillStyle=theme.bed;
@@ -34,36 +38,38 @@ export function drawCastleCourt(c,scene,map){
  for(let y=r.top;y<r.bottom;y+=T)for(let x=r.left;x<r.right;x+=T)c.drawImage(stone,24,24,32,32,x,y,T,T);
 
  c.globalAlpha=1;
- const bw=32,bh=24;
+ const bw=24,bh=16;
  for(let row=0,y=r.top;y<r.bottom;row++,y+=bh){
   const off=(row%2)*(bw/2);
   for(let col=0,x=r.left-off;x<r.right;col++,x+=bw){
    const shade=((row*13+col*29+map.id)%5);
    c.fillStyle=theme.stones[shade];
    c.fillRect(x+1,y+1,bw-2,bh-2);
-   c.fillStyle='#ffffff22';
+   c.fillStyle='#ffffff14';
    c.fillRect(x+2,y+2,bw-4,2);
-   c.fillStyle='#00000033';
+   c.fillStyle='#00000026';
    c.fillRect(x+1,y+bh-2,bw-2,2);
   }
  }
 
  c.strokeStyle=theme.curb;
  c.lineWidth=10;
- c.strokeRect(r.left+5,r.top+5,w-10,h-10);
+ outline();c.stroke();
  c.strokeStyle='#ffffff28';
  c.lineWidth=2;
- c.strokeRect(r.left+10,r.top+10,w-20,h-20);
+ c.strokeRect(r.left+12,r.top+12,w-24,h-24);
+ // Sparse moss and chipped joints soften the meeting with each biome.
+ for(let i=0;i<80;i++){const x=r.left+12+(i*97%(w-24)),y=i%2?r.top+10+(i%3)*3:r.bottom-16-(i%4)*2;c.fillStyle=i%3?'#34433366':'#b8b39a44';c.fillRect(x,y,3+i%5,2);}
 
  const gx=map.base.x-58,gy=map.base.y+36,gw=116,gh=r.bottom-gy;
- c.fillStyle=theme.carpet;
+ c.fillStyle=theme.bed;
  c.fillRect(gx,gy,gw,gh);
- c.fillStyle=theme.trim;
- c.fillRect(gx+8,gy,gw-16,gh);
+ for(let row=0,y=gy;y<r.bottom;y+=18,row++)for(let col=0;col<4;col++){c.fillStyle=theme.stones[(row+col+2)%5];c.fillRect(gx+col*29+2,y+1,26,15);c.fillStyle='#ffffff18';c.fillRect(gx+col*29+3,y+2,23,1);}
  c.fillStyle=theme.curb;
  c.fillRect(gx-4,gy,4,gh);
  c.fillRect(gx+gw,gy,4,gh);
 
+ c.restore();
  c.restore();
  c.restore();
 }

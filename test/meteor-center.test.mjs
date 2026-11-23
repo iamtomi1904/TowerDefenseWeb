@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {meteorFallPose} from '../public/meteor-painted.js';
+test('meteor reaches the exact spell-circle center and grows with its radius',()=>{for(const e of [{x:480,y:620,radius:205},{x:75,y:100,radius:300}]){const impact=meteorFallPose(e,1);assert.equal(impact.x,e.x);assert.equal(impact.y,e.y);assert.equal(impact.diameter,e.radius*1.2);const before=meteorFallPose(e,.99);assert.ok(before.x<e.x&&before.y<e.y);assert.deepEqual(meteorFallPose(e,2),impact);}});
