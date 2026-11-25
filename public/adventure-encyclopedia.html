@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#142c29">
+  <title>Bách khoa Rừng Khởi Nguyên · The World</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/adventure-encyclopedia.css">
+  <style>
+    .hero-sprite,.character-sprite{width:64px;height:64px;background-image:url('/openworld-art/v2/human.png');background-position:0 0;background-repeat:no-repeat;image-rendering:pixelated;flex:none}
+    .hero-sprite{position:relative;z-index:1;transform:scale(4);filter:drop-shadow(0 8px 7px #071714aa)}
+    .character-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .character-card{display:flex;align-items:center;gap:28px;min-height:210px;padding:25px;background:#1a3830;border:1px solid #b3bf9460;border-radius:11px}
+    .character-sprite{margin:40px;transform:scale(2.2)}
+    .hooded-sprite{background-image:url('/openworld-art/v2/hooded.png')}
+    .character-card h3{font-family:Georgia,serif;font-size:24px;font-weight:400;color:#f1dcaa;margin:0 0 8px}
+    .character-card p{color:#c6d6c6;font-size:14px;margin:0}
+    @media(max-width:700px){.character-grid{grid-template-columns:1fr}.character-card{min-height:170px}}
+    .illustrated{display:flex;align-items:center;gap:28px}
+    .illustrated img{width:95px;height:125px;object-fit:contain;image-rendering:pixelated;flex:none}
+    .specimen{font-family:Georgia,serif;font-size:70px;color:#d9c27c;width:95px;text-align:center;flex:none}
+    @media(max-width:560px){.illustrated{gap:12px}.illustrated img,.specimen{width:65px}}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="/adventure.html">✦ <span>THE WORLD</span></a>
+    <nav aria-label="Điều hướng chính"><a href="/">Trang chủ</a><a href="/adventure.html">Vào game</a></nav>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="hero-copy"><p class="eyebrow">CẨM NANG NGƯỜI LỮ HÀNH</p><h1>Bách khoa<br><em>Rừng Khởi Nguyên</em></h1><p>Những điều cần biết để dựng nơi trú ẩn đầu tiên, sống sót trước slime và tiếp tục khám phá khu rừng.</p><a class="play-link" href="/adventure.html">Bắt đầu hành trình <span aria-hidden="true">↗</span></a></div>
+      <div class="hero-art"><div class="hero-sprite" role="img" aria-label="Nhân vật thám hiểm trong Rừng Khởi Nguyên"></div></div>
+    </section>
+    <nav class="contents" aria-label="Mục lục bách khoa"><a href="#nhan-vat">Nhân vật</a><a href="#vung-dat">Vùng đất</a><a href="#cay-coi">Cây cối</a><a href="#da">Đá</a><a href="#nha">Nhà</a><a href="#sinh-vat">Quái</a><a href="#hanh-trinh">Hành trình</a><a href="#tai-nguyen">Tài nguyên</a><a href="#che-tao">Chế tạo</a><a href="#sinh-ton">Sinh tồn</a><a href="#dieu-khien">Điều khiển</a></nav>
+    <section id="nhan-vat" class="chapter"><p class="eyebrow">NGƯỜI LỮ HÀNH</p><h2>Chọn diện mạo của bạn</h2><div class="character-grid"><article class="character-card"><div class="character-sprite human-sprite" role="img" aria-label="Nhà thám hiểm"></div><div><h3>Nhà thám hiểm</h3><p>Nhân vật người bắt đầu hành trình tại khu đèn hiệu.</p></div></article><article class="character-card"><div class="character-sprite hooded-sprite" role="img" aria-label="Lữ khách trùm mũ"></div><div><h3>Lữ khách trùm mũ</h3><p>Diện mạo thứ hai có thể chọn trước khi vào rừng.</p></div></article></div></section>
+    <section id="vung-dat" class="chapter"><p class="eyebrow">BẢN ĐỒ</p><h2>Những vùng đất có thể khám phá</h2><div class="card-grid"><article class="card"><span class="glyph">✦</span><h3>Quảng Trường Pha Lê</h3><p>Vùng khởi đầu quanh đèn hiệu. Khu vực gần đèn hiệu bảo vệ bạn khỏi đòn tấn công của slime.</p></article><article class="card"><span class="glyph">❧</span><h3>Thảo Nguyên Vô Tận</h3><p>Vùng đất trải rộng bên ngoài điểm xuất phát, có cây cối, đá và tài nguyên để thu thập.</p></article><article class="card"><span class="glyph">≈</span><h3>Sông Xanh</h3><p>Vùng nước chia cắt địa hình. Tìm nền đất khô và bằng phẳng để dựng nhà.</p></article><article class="card"><span class="glyph">△</span><h3>Đồi Cao</h3><p>Địa hình cao hơn mặt bằng xung quanh. Chênh lệch cao độ ảnh hưởng đến việc tương tác và đặt nhà.</p></article></div></section>
+    <section id="cay-coi" class="chapter"><p class="eyebrow">THỰC VẬT</p><h2>Cây cối và nấm</h2><div class="feature-grid"><article class="feature illustrated"><img src="/openworld-art/v2/pine.png" alt="Cây thông trong game" loading="lazy"><div><h3>Cây thông</h3><p>Tiếp cận gốc cây rồi click để thu hoạch. Mỗi cây cho 3 gỗ dùng để chế rìu hoặc xây nhà.</p></div></article><article class="feature illustrated"><span class="specimen" aria-hidden="true">♧</span><div><h3>Nấm rừng</h3><p>Nhặt nấm để thêm 2 nấm vào túi. Dùng nấm khi cần hồi máu xa nhà.</p></div></article></div></section>
+    <section id="da" class="chapter"><p class="eyebrow">KHOÁNG VẬT</p><h2>Đá và tàn tích</h2><div class="feature-grid"><article class="feature illustrated"><span class="specimen" aria-hidden="true">◆</span><div><h3>Tảng đá</h3><p>Tiếp cận và click vào chân tảng đá để nhận 3 đá. Đá là nguyên liệu cho rìu tốt và căn nhà.</p></div></article><article class="feature illustrated"><span class="specimen" aria-hidden="true">▥</span><div><h3>Cột đá cổ</h3><p>Một dạng đá trong thế giới mở. Khi thu hoạch được, cột đá cũng cho 3 đá.</p></div></article></div></section>
+    <section id="nha" class="chapter"><p class="eyebrow">NƠI TRÚ ẨN</p><h2>Căn nhà đầu tiên</h2><div class="feature-grid"><article class="feature"><h3>Chọn vị trí</h3><p>Chế rìu tốt trước, chuẩn bị 8 gỗ và 4 đá, rồi chọn nền đất bằng và trống cách nhân vật khoảng 3–9 bước. Tránh nước, vật cản, quái và vùng sát đèn hiệu.</p></article><article class="feature"><h3>Trở về nhà</h3><p>Nhà là vùng an toàn. Khi đứng gần, bấm <kbd>H</kbd> để hồi đầy máu miễn phí. Nếu gục ngã, bạn có thể hồi sinh tại nhà.</p></article></div></section>
+    <section id="hanh-trinh" class="chapter"><p class="eyebrow">KHỞI ĐẦU</p><h2>Hành trình đầu tiên</h2><div class="steps"><article><span>01</span><h3>Thu thập</h3><p>Đến gần cây và đá, nhấp vào phần chân để lấy gỗ và đá. Nấm giúp bạn hồi sức khi rời xa nhà.</p></article><article><span>02</span><h3>Chế rìu tốt</h3><p>Đổi 4 gỗ và 2 đá lấy rìu tốt. Mỗi đòn đánh tăng từ 10 lên 20 sát thương.</p></article><article><span>03</span><h3>Dựng nhà</h3><p>Thu thêm 8 gỗ và 4 đá. Chọn nền đất trống, bằng phẳng để dựng nhà và tạo nơi hồi sinh.</p></article><article><span>04</span><h3>Khám phá</h3><p>Hạ 3 slime ở bìa rừng để hoàn thành mục tiêu mở đầu. Sau đó bạn có thể tiếp tục khám phá tự do.</p></article></div></section>
+    <section id="tai-nguyen" class="chapter"><p class="eyebrow">TÚI ĐỒ</p><h2>Tài nguyên trong rừng</h2><div class="card-grid"><article class="card"><span class="glyph">▰</span><h3>Gỗ</h3><p>Thu từ cây. Mỗi lần thu hoạch nhận 3 gỗ. Dùng để chế rìu và dựng nhà.</p></article><article class="card"><span class="glyph">◆</span><h3>Đá</h3><p>Thu từ tảng đá hoặc cột đá. Mỗi lần thu hoạch nhận 3 đá.</p></article><article class="card"><span class="glyph">♧</span><h3>Nấm</h3><p>Nhặt nấm để nhận 2 nấm hồi sức. Bạn bắt đầu hành trình với 3 nấm.</p></article><article class="card"><span class="glyph">◈</span><h3>Lõi slime</h3><p>Nhận 1 lõi sau khi hạ một slime. Lõi được giữ trong túi đồ.</p></article></div></section>
+    <section id="che-tao" class="chapter"><p class="eyebrow">CHẾ TẠO & XÂY DỰNG</p><h2>Từ rìu thô đến căn nhà đầu tiên</h2><div class="feature-grid"><article class="feature"><h3>Rìu tốt</h3><p class="cost">4 gỗ · 2 đá</p><p>Bấm <kbd>C</kbd> hoặc nút Chế rìu. Rìu tốt gây 20 sát thương mỗi đòn.</p></article><article class="feature"><h3>Căn nhà</h3><p class="cost">8 gỗ · 4 đá</p><p>Bấm <kbd>B</kbd>, rồi chọn nền đất trống và bằng phẳng, cách nhân vật khoảng 3–9 bước. Tránh vùng nước, cây, đá, slime và khu đèn hiệu.</p></article></div></section>
+    <section id="sinh-vat" class="chapter"><p class="eyebrow">QUÁI VẬT</p><h2>Slime xanh</h2><div class="creature"><div class="creature-mark" aria-hidden="true">◉</div><div><p>Slime có <strong>30 máu</strong> và gây <strong>14 sát thương</strong> khi đánh trúng. Trước đòn tấn công, một vòng đỏ xuất hiện trong khoảng 0,6 giây. Hãy bước ra khỏi vòng để né.</p><p>Slime đuổi theo khi bạn lại gần và quay về khu vực của nó nếu bạn chạy xa. Hạ slime để nhận một lõi. Khu đèn hiệu và vùng quanh nhà là nơi an toàn.</p></div></div></section>
+    <section id="sinh-ton" class="chapter"><p class="eyebrow">SỐNG SÓT</p><h2>Hồi sức, hồi sinh và lưu game</h2><div class="card-grid three"><article class="card"><h3>Hồi sức</h3><p>Bấm <kbd>H</kbd> để dùng 1 nấm hồi 35 máu. Khi đứng gần nhà, bấm <kbd>H</kbd> để nghỉ và hồi đầy máu miễn phí.</p></article><article class="card"><h3>Hồi sinh</h3><p>Khi hết máu, chọn hồi sinh tại nhà đã dựng hoặc đèn hiệu. Túi đồ và căn nhà được giữ lại.</p></article><article class="card"><h3>Lưu hành trình</h3><p>Game tự lưu trên trình duyệt sau các tương tác và định kỳ. Mở lại bằng cùng trình duyệt và địa chỉ web để tiếp tục.</p></article></div></section>
+    <section id="dieu-khien" class="chapter"><p class="eyebrow">THAO TÁC</p><h2>Điều khiển</h2><dl class="controls"><div><dt>Di chuyển</dt><dd>Click mặt đất, <kbd>WASD</kbd> hoặc phím mũi tên</dd></div><div><dt>Tương tác & đánh</dt><dd>Click vào chân cây, đá hoặc slime khi ở gần</dd></div><div><dt>Chạy & nhảy</dt><dd><kbd>Shift</kbd> và <kbd>Space</kbd></dd></div><div><dt>Chế tạo & xây dựng</dt><dd><kbd>C</kbd> chế rìu, <kbd>B</kbd> đặt nhà</dd></div><div><dt>Hồi sức & menu</dt><dd><kbd>H</kbd> hồi sức, <kbd>Esc</kbd> mở menu</dd></div><div><dt>Góc nhìn</dt><dd><kbd>Q</kbd>/<kbd>E</kbd> hoặc kéo chuột để xoay, cuộn để thu phóng</dd></div></dl></section>
+    <footer><a class="play-link" href="/adventure.html">Vào Rừng Khởi Nguyên <span aria-hidden="true">↗</span></a><p>THE WORLD · RỪNG KHỞI NGUYÊN</p></footer>
+  </main>
+</body>
+</html>
