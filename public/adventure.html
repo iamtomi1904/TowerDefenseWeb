@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#142c29">
+  <title>Rừng Khởi Nguyên · The World</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/adventure.css">
+</head>
+<body data-mode="adventure">
+  <div id="viewport" aria-label="Thế giới Rừng Khởi Nguyên"></div>
+  <header class="game-header">
+    <div class="game-brand"><span class="brand-rune" aria-hidden="true">✦</span><div><small>THE WORLD · PHIÊU LƯU ĐƠN</small><h1>Rừng Khởi Nguyên</h1></div></div>
+    <div class="vital"><span>Máu <b id="player-hp">100 / 100</b></span><div class="hp-track"><i id="hp-fill"></i></div></div>
+    <button id="pause-adventure" aria-label="Tạm dừng và mở menu">Menu <kbd>Esc</kbd></button>
+  </header>
+  <aside class="quest-panel" aria-label="Mục tiêu hiện tại"><small>HÀNH TRÌNH ĐẦU TIÊN</small><h2 id="quest-title">Dụng cụ của người lữ hành</h2><p id="quest-text">Thu thập gỗ và đá để chế rìu.</p><span id="location-label"></span></aside>
+  <div id="resource-feed" role="status" aria-live="polite"></div>
+  <div id="build-hint" role="status"></div>
+  <footer class="game-footer">
+    <div class="inventory" aria-label="Túi đồ"><span><i aria-hidden="true">▰</i> Gỗ <b id="inventory-wood">0</b></span><span><i aria-hidden="true">◆</i> Đá <b id="inventory-stone">0</b></span><span><i aria-hidden="true">◈</i> Lõi <b id="inventory-gel">0</b></span><span><i aria-hidden="true">♧</i> Nấm <b id="inventory-food">3</b></span></div>
+    <div class="hotbar"><button id="craft-axe" disabled>C · Chế rìu (4 gỗ, 2 đá)</button><button id="build-house" disabled>B · Xây nhà (8 gỗ, 4 đá)</button><button id="heal-player">H · Hồi sức / Nghỉ tại nhà</button></div>
+    <div class="footer-meta"><span id="tool-label">Rìu thô · 10 sát thương</span><span id="save-status" role="status">Tự động lưu hành trình</span></div>
+    <details class="control-help"><summary>Điều khiển</summary><p>Click mặt đất để đi tới; click chân cây/đá/slime để tiếp cận và tương tác<br>WASD / phím mũi tên: di chuyển và hủy lệnh đi · Shift: chạy · Space: nhảy<br>Né vòng đỏ trước khi quái ra đòn · B: đặt nhà · C: chế rìu · H: hồi sức · Esc: tạm dừng<br>Q / E hoặc kéo chuột: xoay góc nhìn · Cuộn: thu phóng</p></details>
+  </footer>
+  <section id="adventure-menu" class="menu-overlay" aria-label="Menu phiêu lưu">
+    <div class="menu-card">
+      <span class="menu-eyebrow">THE WORLD · CHẾ ĐỘ CHƠI MỘT MÌNH</span>
+      <span class="menu-emblem" aria-hidden="true">✦</span>
+      <h2 id="menu-title">Một nơi để trở về.<br>Một thế giới để khám phá.</h2>
+      <p id="menu-description">Bạn tới một vùng rừng chưa được khai phá. Đốn cây, lấy đá, chế rìu và dựng căn nhà đầu tiên. Từ đó, lên đường khám phá và chiến đấu với những sinh vật ngoài bìa rừng.</p>
+      <label class="avatar-picker" for="avatar-select">Người đồng hành của bạn<select id="avatar-select"><option value="human">Người — Nhà thám hiểm</option><option value="hooded">Lữ khách trùm mũ</option></select></label>
+      <button id="play-adventure" class="primary-action">Vào hành trình</button>
+      <p class="menu-note">Click để đi / thu thập / đánh · WASD để di chuyển · H để hồi sức<br>Hành trình tự lưu trên trình duyệt này. Bạn có thể tiếp tục lần sau.</p>
+      <nav class="menu-links" aria-label="Điều hướng chế độ"><a href="/">Trang chủ The World</a><a href="/openworld.html" target="_blank">Trang thiết kế</a><a href="/openworld-art/" target="_blank">Thư viện asset</a><button id="save-adventure">Lưu ngay</button></nav>
+    </div>
+  </section>
+  <!-- Shared renderer bindings; design controls are kept on /openworld.html. -->
+  <div hidden aria-hidden="true"><select id="preset-select"></select><input id="seed-input" type="number"><button id="random-seed"></button><button id="respawn-btn"></button><button id="cam-toggle-btn"></button><button id="weather-btn"></button><button id="normal-btn"></button><button id="sun-btn"></button><button id="save-btn"></button><span id="preset-desc"></span><span id="telemetry"></span></div>
+  <script type="module" src="/openworld/openworld.js?v=adventure-1"></script>
+</body>
+</html>

@@ -151,13 +151,15 @@ const server=http.createServer(async(req,res)=>{
   }
   if(path==='/api/rooms'&&req.method==='GET'){
    const session=await auth.findSession(req);if(!session){json(res,401,{error:'Cần đăng nhập.'});return;}
+   const serializeRoom=r=>({code:r.code,phase:r.phase,difficulty:r.difficulty,stage:r.stage,hostId:r.host,members:r.players.map(p=>({player_id:p.id,account_id:p.accountId,player_name:p.name,hero:p.hero,locked:!!p.locked,is_host:p.id===r.host,connected:p.connected!==false}))});
    const code=urlObj.searchParams.get('code');
    if(code){
-    const dbRoom=await store.getRoom(code);
-    if(!dbRoom){json(res,404,{error:'Không tìm thấy phòng.'});return;}
-    json(res,200,{room:dbRoom});return;
+    const liveRoom=rooms.get(String(code).trim().toUpperCase());
+    if(!liveRoom||liveRoom.phase!=='lobby'||liveRoom.players.length===0){json(res,404,{error:'Không tìm thấy phòng.'});return;}
+    json(res,200,{room:serializeRoom(liveRoom)});return;
    }
-   json(res,200,{rooms:await store.listRooms()});return;
+   const liveRooms=[...rooms.values()].filter(r=>r.phase==='lobby'&&r.players.length>0).map(serializeRoom);
+   json(res,200,{rooms:liveRooms});return;
   }
   if(['/defense.html','/index.html','/lobby.html','/mmorpg/index.html'].includes(path)&&!await auth.findSession(req)){res.writeHead(302,{Location:'/login.html?next='+encodeURIComponent(path)}).end();return;}
   const base=resolve(root,'public');const vendor=path==='/vendor/phaser.js';

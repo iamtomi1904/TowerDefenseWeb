@@ -151,9 +151,10 @@ export function spawnEnemy(r,random=Math.random,portal=true){
  if(boss)definition={...MONSTERS.find(m=>m.id==='orc-berserk'),hp:90+r.stage*10,power:10+r.stage*2,speed:48+r.stage,range:60,cooldown:1.5};
  const elite=boss||(r.stage>=3&&r.wave===3&&r.spawn===1);
  const laneIndex=(r.spawn+r.wave)%map.lanes.length,lane=map.lanes[laneIndex];
- const hp=Math.round(definition.hp*difficultyOf(r.difficulty).health*map.healthScale*(1+(r.wave-1)*.1)*(1+(r.players.length-1)*(boss?BOSS_COOP.healthPerExtraPlayer:.18))*(boss?(r.wave===3?10:5.6):elite?2.3:1));
- const e={...definition,id:randomUUID(),sprite:definition.id,x:lane[0][0],y:lane[0][1],hp,maxHp:hp,power:Math.round(definition.power*difficultyOf(r.difficulty).damage*map.damageScale*(boss?1.6:elite?1.2:1)),speed:definition.speed*map.speedScale,reward:definition.reward*(boss?12:elite?3:1),lane:laneIndex,waypoint:1,elite,boss,cd:.5,healCd:4,anim:0,face:1};
- if(boss){Object.assign(e,bossDefinition(r.stage,r.wave));e.armor=(GC.armor.bossBase+(r.stage-1)*GC.armor.bossPerStage)*(GC.armor[r.difficulty]||1);}
+ const extraPlayers=Math.max(0,r.players.length-1);
+ const hp=Math.round(definition.hp*difficultyOf(r.difficulty).health*map.healthScale*(1+(r.wave-1)*.1)*(1+extraPlayers*(boss?BOSS_COOP.healthPerExtraPlayer:.18))*(boss?(r.wave===3?10:5.6):elite?2.3:1));
+ const e={...definition,id:randomUUID(),sprite:definition.id,x:lane[0][0],y:lane[0][1],hp,maxHp:hp,power:Math.round(definition.power*difficultyOf(r.difficulty).damage*map.damageScale*(boss?1.6*(1+extraPlayers*BOSS_COOP.damagePerExtraPlayer):elite?1.2:1)),speed:definition.speed*map.speedScale,reward:definition.reward*(boss?12:elite?3:1),lane:laneIndex,waypoint:1,elite,boss,cd:.5,healCd:4,anim:0,face:1};
+ if(boss){Object.assign(e,bossDefinition(r.stage,r.wave));e.armor=+((GC.armor.bossBase+(r.stage-1)*GC.armor.bossPerStage)*(GC.armor[r.difficulty]||1)*(1+extraPlayers*BOSS_COOP.armorPerExtraPlayer)).toFixed(1);}
  if(e.flying){e.x=clamp(e.x+(random()-.5)*180,25,(map.width||WORLD.width)-25);e.y=clamp(e.y+(random()-.5)*90,35,(map.height||WORLD.height)-25);}
  r.enemies.push(e);if(portal)r.events.push({id:randomUUID(),type:'enemy-summon',x:e.x,y:e.y,family:enemyFamily(e),boss:e.boss,sourceId:e.id});return e;
 }

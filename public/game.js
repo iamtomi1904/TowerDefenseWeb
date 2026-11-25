@@ -72,16 +72,16 @@ function send(m){if(m.type==='buy')m.requestId=crypto.randomUUID();if(socket.rea
 function notify(text){$('error').textContent=text;$('notice').textContent=text;noticeUntil=Date.now()+4000;}
 socket.onopen=()=>{
  $('connection').textContent='● SERVER SẴN SÀNG';
- for(const id of ['solo','create','join'])if($(id))$(id).disabled=false;
+ for(const id of ['create','join'])if($(id))$(id).disabled=false;
  if(urlParams.get('autostart')==='1'){
   if(urlParams.get('difficulty')&&$('difficulty'))$('difficulty').value=urlParams.get('difficulty');
   const code=(urlParams.get('code')||'').trim();
-  const mode=urlParams.get('mode')||'solo';
+  const mode=urlParams.get('mode')||'coop';
   const stage=Number(urlParams.get('stage'))||undefined;
   join(code?{code,stage,replaceSession:true}:mode==='coop'?{stage,replaceSession:true}:{solo:true,stage,replaceSession:true});
  }
 };
-socket.onclose=event=>{if(event.code===4002){$('status').textContent='Không thể vào lại phòng: '+event.reason;notify('Phòng đã hết thời gian giữ chỗ. Hãy về sảnh tạo phòng mới.');$('again').hidden=false;return;}if(event.code===4001){location.replace('/login.html?next=/defense.html');return;}for(const k in held)held[k]=false;$('connection').textContent='● MẤT KẾT NỐI';for(const id of ['solo','create','join','start','next'])if($(id))$(id).disabled=true;notify('Mất kết nối. Đang tự kết nối lại, giữ trận tối đa 60 giây.');if(state)$('status').textContent='Đang kết nối lại…';};
+socket.onclose=event=>{if(event.code===4002){$('status').textContent='Không thể vào lại phòng: '+event.reason;notify('Phòng đã hết thời gian giữ chỗ. Hãy về sảnh tạo phòng mới.');$('again').hidden=false;return;}if(event.code===4001){location.replace('/login.html?next=/defense.html');return;}for(const k in held)held[k]=false;$('connection').textContent='● MẤT KẾT NỐI';for(const id of ['create','join','start','next'])if($(id))$(id).disabled=true;notify('Mất kết nối. Đang tự kết nối lại, giữ trận tối đa 60 giây.');if(state)$('status').textContent='Đang kết nối lại…';};
 socket.onerror=()=>notify('Không kết nối được server.');
 function join(extra){$('error').textContent='';writeLocal('gct-name',$('name').value);send({type:'join',waitForAssets:true,name:$('name').value,hero,difficulty:$('difficulty').value,...extra});}
 function openLobbyRoom(mode,code=''){
@@ -91,10 +91,56 @@ function openLobbyRoom(mode,code=''){
  if(code)q.set('code',code);
  location.href='/lobby.html?'+q.toString();
 }
+async function loadRooms(filterCode=''){
+ const listEl=$('room-list');if(!listEl)return;
+ listEl.innerHTML='<div class="room-empty">Đang tải danh sách phòng…</div>';
+ try{
+  const q=filterCode.trim().toUpperCase();
+  let rooms=[];
+  if(q){
+   const res=await fetch('/api/rooms?code='+encodeURIComponent(q));
+   if(res.ok){const d=await res.json();if(d.room)rooms=[d.room];}
+   if(!rooms.length){
+    const allRes=await fetch('/api/rooms');
+    if(allRes.ok){const d=await allRes.json();rooms=(d.rooms||[]).filter(r=>r.code.includes(q)||(r.members||[]).some(m=>(m.player_name||m.username||'').toUpperCase().includes(q)));}
+   }
+  }else{
+   const res=await fetch('/api/rooms');
+   if(res.ok){const d=await res.json();rooms=d.rooms||[];}
+  }
+  listEl.replaceChildren();
+  if($('room-count'))$('room-count').textContent=`${rooms.length} phòng`;
+  if(!rooms.length){listEl.innerHTML=`<div class="room-empty">${q?`Không tìm thấy phòng phù hợp với "${q}".`:'Chưa có phòng nào đang chờ. Hãy bấm "+ Tạo phòng mới" ở cột bên phải!'}</div>`;return;}
+  for(const r of rooms){
+   const members=r.members||[];
+   const host=members.find(m=>m.is_host)||members[0];
+   const hostName=host?.player_name||host?.username||'Chỉ huy';
+   const diffName=difficultyOf(r.difficulty).name;
+   const row=document.createElement('div');row.className='room-row';
+   const codeBadge=document.createElement('span');codeBadge.className='room-code-badge';codeBadge.textContent='#'+r.code;
+   const info=document.createElement('div');info.className='room-info';
+   const title=document.createElement('div');title.className='room-title';title.textContent=`Phòng của ${hostName}`;
+   info.append(title);
+   const diffBadge=document.createElement('span');diffBadge.className='room-diff-badge';diffBadge.textContent=diffName;
+   const slots=document.createElement('div');slots.className='room-slots';
+   const pips=document.createElement('span');pips.className='slot-pips';
+   for(let i=0;i<4;i++){const pip=document.createElement('i');pip.className='slot-pip'+(i<members.length?' filled':'');pips.append(pip);}
+   const slotText=document.createElement('span');slotText.textContent=`${members.length}/4`;
+   slots.append(pips,slotText);
+   const btn=document.createElement('button');btn.type='button';btn.className='room-join-btn';btn.textContent=members.length>=4?'Đã đầy':'Vào phòng →';
+   btn.disabled=members.length>=4;
+   btn.onclick=()=>openLobbyRoom('join',r.code);
+   row.append(codeBadge,info,diffBadge,slots,btn);listEl.append(row);
+  }
+ }catch{if($('room-count'))$('room-count').textContent='0 phòng';listEl.innerHTML='<div class="room-empty">Không tải được danh sách phòng.</div>';}
+}
 buildInventory(send);
-$('solo').onclick=()=>openLobbyRoom('solo');
-$('create').onclick=()=>openLobbyRoom('coop');
-$('join').onclick=()=>{const code=$('code').value.trim().toUpperCase();if(!code){notify('Nhập mã phòng của bạn bè.');return;}openLobbyRoom('join',code);};
+if($('create'))$('create').onclick=()=>openLobbyRoom('coop');
+if($('find-room'))$('find-room').onclick=()=>loadRooms($('code').value);
+if($('code'))$('code').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();loadRooms($('code').value);}};
+if($('refresh-rooms'))$('refresh-rooms').onclick=()=>{$('code').value='';loadRooms();};
+if($('join'))$('join').onclick=()=>{const code=$('code').value.trim().toUpperCase();if(!code){notify('Nhập mã phòng của bạn bè.');return;}openLobbyRoom('join',code);};
+loadRooms();
 $('start').onclick=()=>send({type:'start'});$('next').onclick=()=>send({type:'next'});$('again').onclick=()=>location.replace('/defense.html');$('range').onclick=()=>{showRange=!showRange;$('range').textContent=showRange?'ẨN TẦM ĐÁNH':'TẦM ĐÁNH';};
 for(const b of document.querySelectorAll('[data-panel]'))b.onclick=()=>{for(const other of document.querySelectorAll('[data-panel]'))other.classList.toggle('active',other===b);$('skills-panel').hidden=b.dataset.panel!=='skills';$('army-panel').hidden=b.dataset.panel!=='army';};
 function statsMarkup(h){return [['Máu',h.classId==='paladin'?Math.round(h.hp*1.25):h.hp],['Công',h.classId==='fallen'?Math.round(h.power*(1+FALLEN.power)):h.power],['Giáp',h.armor+(h.classId==='paladin'?4:0)],['Tốc chạy',h.classId==='vanguard'?Math.round(h.speed*(1+VANGUARD.speedBonus)):h.speed],['Tầm đánh',h.range],['Đòn / giây',(1/h.cooldown).toFixed(1)]].map(([n,v])=>`<div class="stat">${n}<b>${v}</b></div>`).join('');}
@@ -108,7 +154,7 @@ function selectHero(id){
 }
 if($('hero-grid')){for(const h of HEROES){const b=document.createElement('button');b.className='hero-card';b.dataset.hero=h.id;b.innerHTML=`${REFRESH_HEROES[h.id]?'<span style="display:block;width:42px;height:62px;flex-shrink:0;background:url(/assets/heroes-v2/'+h.id+'.png) 0 0/600% 600%"></span>':['knight-2','knight-3','warrior-3','samurai','warrior-2','samurai-commander'].includes(h.id)?'<span style="display:block;width:42px;height:62px;flex-shrink:0;background:url(/assets/'+(h.id==='knight-2'?'knights-v2/holy-foot':h.id==='knight-3'?'knights-v2/dark-foot':h.id==='samurai-commander'?'blademaster/katana-forms':h.id==='warrior-2'?'ravager/hero-v2':h.id==='samurai'?'windblade/hero-v1':h.id==='warrior-3'?'vanguard/foot-v2':h.id==='knight-3'?'fallen/foot-v1':'paladin/foot')+'.png) 0 0/600% '+(h.id==='warrior-3'?'700':'600')+'%"></span>':'<img src="/assets/v2/'+h.id+'/portrait.png" alt="">'}<span><strong>${h.name}</strong><small>${CLASSES[h.classId].name}</small></span>`;b.onclick=()=>selectHero(h.id);$('hero-grid').append(b);}}selectHero(hero);
 const hex=n=>'#'+n.toString(16).padStart(6,'0');
-for(const m of MAPS){const card=document.createElement('div');card.className='map-card';card.dataset.stage=m.id;card.innerHTML=`<span class="map-tag">MỐC ${String(m.id).padStart(2,'0')}</span><svg viewBox="0 0 ${m.width} ${m.height}" aria-hidden="true"><rect width="${m.width}" height="${m.height}" fill="${hex(m.ground)}"/>${m.props.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="${p.radius+16}" fill="#273d2c" opacity=".7"/>`).join('')}${m.lanes.map(l=>`<polyline points="${l.map(p=>p.join(',')).join(' ')}" fill="none" stroke="${hex(m.road)}" stroke-width="80"/>`).join('')}<rect x="${m.base.x-100}" y="${m.base.y-70}" width="200" height="130" fill="#d9c892"/></svg><h3>${m.name}</h3><p>${m.description}</p><small>${m.lanes.length} hướng · ${m.width} × ${m.height}</small>`;$('map-grid').append(card);}
+if($('map-grid')){for(const m of MAPS){const card=document.createElement('div');card.className='map-card';card.dataset.stage=m.id;card.innerHTML=`<span class="map-tag">MỐC ${String(m.id).padStart(2,'0')}</span><svg viewBox="0 0 ${m.width} ${m.height}" aria-hidden="true"><rect width="${m.width}" height="${m.height}" fill="${hex(m.ground)}"/>${m.props.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="${p.radius+16}" fill="#273d2c" opacity=".7"/>`).join('')}${m.lanes.map(l=>`<polyline points="${l.map(p=>p.join(',')).join(' ')}" fill="none" stroke="${hex(m.road)}" stroke-width="80"/>`).join('')}<rect x="${m.base.x-100}" y="${m.base.y-70}" width="200" height="130" fill="#d9c892"/></svg><h3>${m.name}</h3><p>${m.description}</p><small>${m.lanes.length} hướng · ${m.width} × ${m.height}</small>`;$('map-grid').append(card);}}
 for(const t of TROOPS.filter(t=>!t.summoned)){const div=document.createElement('div');div.className='shop-item';div.innerHTML=`<div class="description"><b>${t.name}</b><small>${t.description} · HP ${t.hp}</small></div><button data-buy="${t.id}">${t.cost} ◈</button>`;$('shop').append(div);}
 for(const id of ['power','vitality','repair']){const b=document.createElement('button');b.className='upgrade secondary';b.dataset.buy=id;$('shop-upgrades').append(b);}
 for(const b of document.querySelectorAll('[data-buy]'))b.onclick=()=>send({type:'buy',choice:b.dataset.buy});$('mastery').onclick=()=>send({type:'buy',choice:'mastery'});
@@ -144,7 +190,7 @@ function updateUI(m,p){
  const teamSig=m.players.map(t=>`${t.id}:${t.name}:${t.hero}:${t.level}`).join('|');
  if(uiCache.teamSig!==teamSig){uiCache.teamSig=teamSig;$('team').replaceChildren();for(const t of m.players){const el=document.createElement('div');el.className='team-member';el.textContent=`${t.id===myId?'◆':'◇'} ${t.name} · ${heroById(t.hero).name} · Cấp ${t.level}`;$('team').append(el);}}
  const mapSig=`${m.stage}:${m.phase==='victory'}`;
- if(uiCache.mapSig!==mapSig){uiCache.mapSig=mapSig;for(const card of $('map-grid').children){const n=Number(card.dataset.stage);card.classList.toggle('current',n===m.stage);card.classList.toggle('done',n<m.stage||m.phase==='victory');}}
+ if($('map-grid')&&uiCache.mapSig!==mapSig){uiCache.mapSig=mapSig;for(const card of $('map-grid').children){const n=Number(card.dataset.stage);card.classList.toggle('current',n===m.stage);card.classList.toggle('done',n<m.stage||m.phase==='victory');}}
  if(m.players.some(player=>player.assetsReady===false)&&m.phase==='lobby')setText('status','Đang chờ chỉ huy tải xong chiến trường…');
  if(Date.now()>noticeUntil){$('notice').textContent='';$('error').textContent='';}updateCombatWindow(m,p,catalog);updateGemUI(m,p);updateStatusHUD(m,p);updateBattleNotice(m);document.querySelector('#arena>.toolbar').hidden=['battle','prepare'].includes(m.phase);
 }
@@ -197,8 +243,8 @@ function boot(){
 function sendInput(){if(!myId)return;const x=Number(!!(held.KeyD||held.ArrowRight||held.right))-Number(!!(held.KeyA||held.ArrowLeft||held.left)),y=Number(!!(held.KeyS||held.ArrowDown||held.down))-Number(!!(held.KeyW||held.ArrowUp||held.up)),p=state?.players.find(p=>p.id===myId),facing=[[0,1],[0,-1],[-1,0],[1,0]][p?.direction]||[p?.face||1,0];let aimX=x||y?x:facing[0],aimY=x||y?y:facing[1];if(held.pointerAim&&Number.isFinite(held.aimX)&&Number.isFinite(held.aimY)){aimX=held.aimX;aimY=held.aimY;}const length=Math.hypot(aimX,aimY)||1;send({type:'input',aimDistance:held.pointerAim?held.aimDistance:undefined,aimX:aimX/length,aimY:aimY/length,x,y,attack:!!(held.KeyJ||held.mouse||held.attack),guard:!!(held.Space||held.KeyK||held.guard),q:!!(held.KeyQ||held.spellQ),e:!!(held.KeyE||held.spellE),r:!!(held.KeyR||held.spellR)});}
 setInterval(sendInput,50);
 window.addEventListener('blur',()=>{for(const k in held)held[k]=false;sendInput();});for(const b of document.querySelectorAll('[data-key]')){b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);held[b.dataset.key]=true;sendInput();};for(const event of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(event,()=>{held[b.dataset.key]=false;sendInput();});}
-async function history(){try{const rows=await fetch('/api/history').then(r=>r.json());$('history').replaceChildren();if(!rows.length)$('history').textContent='Chưa có trận hoàn tất.';for(const row of rows){const div=document.createElement('div');div.className='record';for(const value of [row.result==='victory'?'⚑ THẮNG CHIẾN DỊCH':row.result==='clear'?'⚑ VƯỢT MỐC':'THẤT THỦ',`Mốc ${row.stage||1} · ${difficultyOf(row.difficulty).name} · Phòng ${row.room}`,`${row.players} người · ${row.kills} hạ gục`,row.ended_at+' UTC']){const span=document.createElement('span');span.textContent=value;div.append(span);}$('history').append(div);}}catch{$('history').textContent='Chưa tải được lịch sử.';}}
-$('refresh').onclick=history;history();
+async function history(){if(!$('history'))return;try{const rows=await fetch('/api/history').then(r=>r.json());$('history').replaceChildren();if(!rows.length)$('history').textContent='Chưa có trận hoàn tất.';for(const row of rows){const div=document.createElement('div');div.className='record';for(const value of [row.result==='victory'?'⚑ THẮNG CHIẾN DỊCH':row.result==='clear'?'⚑ VƯỢT MỐC':'THẤT THỦ',`Mốc ${row.stage||1} · ${difficultyOf(row.difficulty).name} · Phòng ${row.room}`,`${row.players} người · ${row.kills} hạ gục`,row.ended_at+' UTC']){const span=document.createElement('span');span.textContent=value;div.append(span);}$('history').append(div);}}catch{$('history').textContent='Chưa tải được lịch sử.';}}
+if($('refresh'))$('refresh').onclick=history;history();
 
 
 

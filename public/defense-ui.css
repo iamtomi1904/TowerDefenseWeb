@@ -15,6 +15,7 @@ body.defense-page{color-scheme:light;background:radial-gradient(ellipse at 18% 0
 .defense-header nav a[aria-current]{color:#176148;border-bottom:1px solid #c4b596}
 .defense-header #connection{letter-spacing:1px;font-size:9px;white-space:nowrap;padding:8px 10px;border:1px solid #c4b596;border-radius:4px;color:#176148;background:#e2f0e9}
 .defense-page main{max-width:1320px;margin:42px auto 0;padding:0 28px;gap:30px;grid-template-columns:minmax(0,1.65fr) minmax(310px,1fr)}
+body.defense-page:not(.in-battle) main{max-width:1260px;margin:28px auto 0;grid-template-columns:1fr}
 .defense-page h1,.defense-page h2,.defense-page h3{font-family:Georgia,'Times New Roman',serif;font-weight:500;color:#192a21}
 .defense-page h2{font-size:27px;letter-spacing:-.5px}
 .defense-page .eyebrow{color:#9e6d16;letter-spacing:2px;font-size:9px;font-weight:600}
@@ -40,12 +41,42 @@ body.defense-page{color-scheme:light;background:radial-gradient(ellipse at 18% 0
 .campaign-entry label{color:#56695e;font-size:9px;letter-spacing:1.5px;font-weight:600}
 .campaign-entry input,.campaign-entry select{background:#fffdf9;border:1px solid #c4b596;border-radius:4px;color:#192a21;padding:12px 13px;font-size:12px;width:100%;margin-top:9px;min-height:43px}
 .campaign-entry .difficulty-picker{margin:18px 0}.campaign-entry .difficulty-picker small{font-size:10px;color:#56695e;min-height:16px;line-height:1.6}
-.campaign-entry #solo,.campaign-entry #create{width:100%;display:flex;justify-content:space-between;align-items:center;min-height:45px;padding:12px 15px;margin:10px 0;font-size:12px;letter-spacing:.2px}
-.campaign-entry #solo{background:#176148;color:#fffdf9;border-color:#176148;font-weight:700}.campaign-entry #solo:hover:not(:disabled){background:#0f4532}.campaign-entry #solo:disabled{opacity:.6}
-.campaign-entry #create{background:#f5efe0;border-color:#c4b596}.campaign-entry #create span{font-size:10px;color:#56695e}
-.entry-divider{display:flex;align-items:center;gap:12px;margin:24px 0 15px}.entry-divider:before,.entry-divider:after{content:'';height:1px;flex:1;background:#dcd2be}.entry-divider span{font-size:8px;letter-spacing:1.6px;color:#56695e}
-.campaign-entry .join{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.campaign-entry .join input{margin:0;text-transform:uppercase;letter-spacing:2px;font-size:10px}.campaign-entry .join button{padding:10px 14px;font-size:11px;white-space:nowrap;background:#e2f0e9}
-.campaign-entry .entry-note{font-size:10px;color:#56695e;line-height:1.8;margin-top:17px}.campaign-entry #error:empty{display:none}
+.campaign-entry #create{width:100%;display:flex;justify-content:space-between;align-items:center;min-height:45px;padding:12px 15px;margin:10px 0;font-size:12px;letter-spacing:.2px;background:#176148;color:#fffdf9;border-color:#176148;font-weight:700}.campaign-entry #create:hover:not(:disabled){background:#0f4532}.campaign-entry #create:disabled{opacity:.6}.campaign-entry #create span{font-size:10px;color:#d6ebe2}
+.entry-divider{display:flex;align-items:center;gap:12px;margin:20px 0 13px}.entry-divider:before,.entry-divider:after{content:'';height:1px;flex:1;background:#dcd2be}.entry-divider span{font-size:8px;letter-spacing:1.6px;color:#56695e}
+.gunny-lobby{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;align-items:start}
+.room-browser{padding:24px!important;display:flex;flex-direction:column;gap:18px;min-height:540px}
+.room-browser-top{display:flex;flex-direction:column;gap:14px;padding-bottom:16px;border-bottom:1px solid #dcd2be}
+.room-browser-top h2{margin:6px 0 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.room-count-pill{font:600 11px/1 'Segoe UI',sans-serif;padding:5px 10px;border-radius:999px;background:#e2f0e9;color:#176148;border:1px solid #b8d8c8}
+.room-toolbar .join{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:8px}
+.room-toolbar .join input{margin:0;background:#fffdf9;border:1px solid #c4b596;border-radius:5px;color:#192a21;padding:10px 13px;font-size:12px;min-height:42px}
+.room-toolbar .join button{padding:10px 14px;font-size:12px;font-weight:600;white-space:nowrap;min-height:42px}
+.room-toolbar .join #find-room{background:#f5efe0;border-color:#c4b596;color:#192a21}
+.room-toolbar .join #join{background:#e2f0e9;color:#0f4532}
+.room-toolbar .join #refresh-rooms{background:#fffdf9;color:#56695e}
+.room-table-head{display:grid;grid-template-columns:104px minmax(0,1fr) 128px 136px 118px;gap:12px;align-items:center;padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:1.2px;color:#56695e;background:#f5efe0;border:1px solid #dcd2be;border-radius:6px}
+.gunny-room-list{display:flex;flex-direction:column;gap:8px;max-height:500px;overflow-y:auto;padding-right:4px}
+.room-row{display:grid;grid-template-columns:104px minmax(0,1fr) 128px 136px 118px;gap:12px;align-items:center;background:#faf6eb;border:1px solid #d5cab4;border-radius:7px;padding:10px 14px;transition:border-color .15s,background-color .15s}
+.room-row:hover{border-color:#176148;background:#fffdf9}
+.room-code-badge{justify-self:start;font:700 12px/1 monospace;letter-spacing:1.2px;padding:6px 10px;border-radius:5px;background:#176148;color:#fffdf9}
+.room-diff-badge{justify-self:start;font:600 11px/1 'Segoe UI',sans-serif;padding:5px 10px;border-radius:999px;background:#f5efe0;color:#8c5d11;border:1px solid #d8c6a0;white-space:nowrap}
+.room-info{min-width:0}
+.room-title{font-size:14px;font-weight:700;color:#192a21;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.room-slots{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#56695e;white-space:nowrap}
+.slot-pips{display:inline-flex;gap:4px}
+.slot-pip{width:9px;height:9px;border-radius:50%;border:1px solid #9eb8ab;background:#fffdf9}
+.slot-pip.filled{background:#176148;border-color:#176148}
+.room-join-btn{justify-self:end;padding:8px 14px;font-size:12px;font-weight:700;background:#176148;color:#fffdf9;border-color:#176148;white-space:nowrap}
+.room-join-btn:hover:not(:disabled){background:#0f4532;color:#fffdf9}
+.room-empty{font-size:13px;color:#56695e;text-align:center;padding:56px 16px;background:#faf6eb;border:1px dashed #d5cab4;border-radius:8px}
+.room-sidebar{padding:24px!important}
+.room-sidebar .entry-heading{margin-bottom:18px}
+.room-sidebar .entry-heading h3{font-size:22px;margin:8px 0 6px}
+.sidebar-tips{margin-top:18px;padding:13px 14px;background:#faf6eb;border:1px solid #dcd2be;border-radius:6px;font-size:11.5px;color:#56695e;line-height:1.65}
+.sidebar-tips strong{display:block;color:#192a21;margin-bottom:6px;font-size:12px}
+.sidebar-tips ul{margin:0;padding-left:16px;display:grid;gap:4px}
+.campaign-entry #error:empty{display:none}
+@media(max-width:960px){.gunny-lobby{grid-template-columns:1fr}.room-table-head{display:none}.room-row{grid-template-columns:1fr auto;gap:8px}.room-toolbar .join{grid-template-columns:1fr 1fr}}
 .defense-page .defense-guide{background:none;border:0;border-top:1px solid #dcd2be;padding:29px 0 0;border-radius:0;margin-top:13px}
 .defense-page .section-head h2{margin:8px 0 0}.defense-page .section-head>a{font-size:11px}
 .defense-page .update-cards{gap:16px;margin:24px 0 18px}.defense-page .update-cards article{padding:22px;background:#fffdf9;border:1px solid #dcd2be;border-radius:5px}

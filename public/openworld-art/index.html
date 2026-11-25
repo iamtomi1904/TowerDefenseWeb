@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="vi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Xem thử asset — Thế Giới Mở</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#142b2a;color:#e9edda;font:16px/1.5 system-ui,sans-serif}main{max-width:1100px;margin:auto;padding:28px}h1{font-size:26px;color:#f2d496;margin:0 0 8px}p{color:#bdcec2}a{color:#f2d496}nav{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:24px 0}select,button{font:inherit;background:#223e3b;border:1px solid #638475;color:#eef1df;border-radius:6px;padding:7px 10px}label{display:flex;align-items:center;gap:8px}.art{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}article{background:#1c3532;border:1px solid #436357;border-radius:10px;padding:18px;text-align:center}h2{font-size:18px;margin:0 0 12px}canvas{image-rendering:pixelated;display:block;margin:auto;max-width:100%;height:auto;background:repeating-conic-gradient(#324a41 0% 25%,#2c423b 0% 50%) 50%/20px 20px;border-radius:4px}small{display:block;color:#a9c4b5;margin-top:10px}.links{display:flex;flex-direction:column;gap:7px;margin-top:16px}#status{color:#a5d1b2} @media(max-width:760px){.art{grid-template-columns:1fr}main{padding:18px}}
+</style>
+<main>
+  <a href="/openworld.html">Về thế giới mở</a>
+  <h1>Cây thông & hai nhân vật</h1>
+  <p>Giữ nhân vật trùm mũ và thêm một nhân vật người sáng màu. Mỗi nhân vật có 48 khung, ba hướng nhìn; trái dùng ảnh phản chiếu của hướng phải.</p>
+  <nav>
+    <label>Hoạt ảnh <select id="action"><option value="idle">Đứng</option><option value="walk">Đi bộ</option><option value="run">Chạy</option><option value="attack">Vung rìu</option><option value="hit">Trúng đòn</option></select></label>
+    <label>Hướng <select id="direction"><option value="0">Trước</option><option value="1">Phải</option><option value="2">Sau</option><option value="3">Trái</option></select></label>
+    <label><input id="normal" type="checkbox"> Xem normal map</label>
+    <button id="pause">Tạm dừng</button>
+  </nav>
+  <div class="art">
+    <article><h2>Cây thông mới</h2><canvas id="tree" width="256" height="384"></canvas><small>64 × 96 · nền trong suốt</small><div class="links"><a href="v2/pine.png">PNG cây</a><a href="v2/pine-normal.png">Normal map cây</a></div></article>
+    <article><h2>Lữ khách trùm mũ</h2><canvas id="hooded" width="256" height="256"></canvas><small>Mẫu nhân vật ban đầu</small><div class="links"><a href="v2/hooded.png">Sheet đi / vung rìu / trúng đòn</a><a href="v2/hooded-run.png">Sheet chạy riêng</a><a href="v2/hooded-normal.png">Normal map</a></div></article>
+    <article><h2>Người — Nhà thám hiểm</h2><canvas id="human" width="256" height="256"></canvas><small>Tóc nâu · áo sáng · mặt nhìn rõ</small><div class="links"><a href="v2/human.png">Sheet đi / vung rìu / trúng đòn</a><a href="v2/human-run.png">Sheet chạy riêng</a><a href="v2/human-normal.png">Normal map</a></div></article>
+  </div>
+  <p id="status">Đang tải asset...</p>
+</main>
+<script type="module">
+const $=id=>document.getElementById(id), images=new Map();
+async function load(name){const image=new Image();image.src=`v2/${name}.png`;await image.decode();images.set(name,image);}
+try{
+  await Promise.all(['pine','pine-normal',...['human','hooded'].flatMap(id=>[id,id+'-normal',id+'-run',id+'-run-normal'])].map(load));
+  $('status').textContent='Đã tải đủ asset. Mỗi khung 64 × 64, điểm chân cố định; trúng đòn ở đây là xem thử hoạt ảnh.';
+}catch(error){$('status').textContent='Không tải được asset: '+error.message;throw error;}
+let paused=false,elapsed=0,previous=performance.now();
+$('pause').onclick=()=>{paused=!paused;$('pause').textContent=paused?'Tiếp tục':'Tạm dừng';};
+function tick(now){requestAnimationFrame(tick);if(!paused)elapsed+=(now-previous)/1000;previous=now;
+  const action=$('action').value, selectedDirection=Number($('direction').value),direction=selectedDirection===3?1:selectedDirection,normal=$('normal').checked;
+  const tree=$('tree').getContext('2d');tree.imageSmoothingEnabled=false;tree.clearRect(0,0,256,384);tree.drawImage(images.get(normal?'pine-normal':'pine'),0,0,256,384);
+  const frame=action==='idle'?0:Math.floor(elapsed*(action==='run'?12:action==='attack'?10:7))%4;
+  for(const id of ['hooded','human']){const ctx=$(id).getContext('2d');ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,256,256);
+    const run=action==='run',row=(action==='attack'?3:action==='hit'?6:0)+direction,name=id+(run?'-run':'')+(normal?'-normal':'');
+    ctx.save();if(selectedDirection===3){ctx.translate(256,0);ctx.scale(-1,1);}ctx.drawImage(images.get(name),frame*64,(run?direction:row)*64,64,64,0,0,256,256);ctx.restore();
+  }
+}requestAnimationFrame(tick);
+</script>
+</html>

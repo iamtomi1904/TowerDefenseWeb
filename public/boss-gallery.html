@@ -292,6 +292,15 @@ h1{
       <select id="f-diff"></select>
     </div>
     <div class="ctrl">
+      <label for="f-players">Số người chơi (Co-op)</label>
+      <select id="f-players">
+        <option value="1" selected>1 người (Solo)</option>
+        <option value="2">2 người (+95% HP · +22% Công · +15% Giáp)</option>
+        <option value="3">3 người (+190% HP · +44% Công · +30% Giáp)</option>
+        <option value="4">4 người (+285% HP · +66% Công · +45% Giáp)</option>
+      </select>
+    </div>
+    <div class="ctrl">
       <label for="f-wave">Đợt xuất hiện</label>
       <select id="f-wave">
         <option value="3" selected>Đợt 3 (Boss Chính · Đủ kỹ năng)</option>
@@ -326,6 +335,7 @@ import {BOSS_SKILLS,bossSkillCount} from './boss-skills.js';
 import {MAPS,MONSTERS} from './content.js';
 import {DIFFICULTIES,difficultyOf} from './difficulty.js';
 import {GEM_RULES} from './gems.js';
+import {BOSS_COOP} from './shadow-config.js';
 import {monsterPreview} from './monster-preview.js';
 
 const FAMILY_LABELS = {
@@ -338,6 +348,7 @@ const FAMILY_LABELS = {
 };
 
 const diffSelect = document.getElementById('f-diff');
+const playersSelect = document.getElementById('f-players');
 const waveSelect = document.getElementById('f-wave');
 const famSelect = document.getElementById('f-family');
 const searchInput = document.getElementById('f-search');
@@ -353,15 +364,16 @@ for (const [id, d] of Object.entries(DIFFICULTIES)) {
 const catalog = await (await fetch('/catalog-v4.json')).json();
 const baseBossTemplate = MONSTERS.find(m => m.id === 'orc-berserk') || { reward: 38 };
 
-function calcBossStats(stage, wave, diffId) {
+function calcBossStats(stage, wave, diffId, players = 1) {
   const map = MAPS[stage - 1] || { name: `Mốc ${stage}`, healthScale: 1, damageScale: 1, speedScale: 1 };
   const diff = difficultyOf(diffId);
+  const extraPlayers = Math.max(0, players - 1);
   const baseHp = 90 + stage * 10;
   const basePow = 10 + stage * 2;
   const baseSpd = 48 + stage;
-  const hp = Math.round(baseHp * diff.health * map.healthScale * (1 + (wave - 1) * 0.1) * (wave === 3 ? 10 : 5.6));
-  const power = Math.round(basePow * diff.damage * map.damageScale * 1.6);
-  const armor = +( (GEM_RULES.armor.bossBase + (stage - 1) * GEM_RULES.armor.bossPerStage) * (GEM_RULES.armor[diffId] || 1) ).toFixed(1);
+  const hp = Math.round(baseHp * diff.health * map.healthScale * (1 + (wave - 1) * 0.1) * (1 + extraPlayers * BOSS_COOP.healthPerExtraPlayer) * (wave === 3 ? 10 : 5.6));
+  const power = Math.round(basePow * diff.damage * map.damageScale * 1.6 * (1 + extraPlayers * BOSS_COOP.damagePerExtraPlayer));
+  const armor = +( (GEM_RULES.armor.bossBase + (stage - 1) * GEM_RULES.armor.bossPerStage) * (GEM_RULES.armor[diffId] || 1) * (1 + extraPlayers * BOSS_COOP.armorPerExtraPlayer) ).toFixed(1);
   const speed = Math.round(baseSpd * map.speedScale);
   const reward = baseBossTemplate.reward * 12;
   return { hp, power, armor, speed, reward, mapName: map.name };
@@ -438,6 +450,7 @@ function describeBossSkillFull(s, bossStats) {
 
 function render() {
   const diffId = diffSelect.value;
+  const players = Number(playersSelect.value) || 1;
   const wave = Number(waveSelect.value) || 3;
   const fam = famSelect.value;
   const q = searchInput.value.trim().toLowerCase();
@@ -450,7 +463,7 @@ function render() {
     const stage = i + 1;
     const n = bossSkillCount(stage, wave);
     const activeSkills = b.skills.slice(0, n);
-    const stats = calcBossStats(stage, wave, diffId);
+    const stats = calcBossStats(stage, wave, diffId, players);
     const isFlying = ['dragon', 'harpy'].includes(b.family);
 
     if (q) {
@@ -521,6 +534,7 @@ function render() {
 }
 
 diffSelect.addEventListener('change', render);
+playersSelect.addEventListener('change', render);
 waveSelect.addEventListener('change', render);
 famSelect.addEventListener('change', render);
 searchInput.addEventListener('input', render);
